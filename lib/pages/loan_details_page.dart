@@ -6,7 +6,7 @@ import 'package:reactive_forms/reactive_forms.dart';
 
 class LoanDetailsPage extends StatelessWidget {
   final String title;
-
+  final ValueNotifier<bool> isFormDirty = ValueNotifier<bool>(true);
   LoanDetailsPage(String s, {super.key, required this.title});
 
   final form = FormGroup({
@@ -18,10 +18,21 @@ class LoanDetailsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return WillPopScope(
+      onWillPop: () async {
+        if (isFormDirty.value) {
+          final shouldLeave = await showExitConfirmationDialog(context);
+          return shouldLeave ?? false;
+        }
+        return true;
+      },
+      child: Scaffold(
       appBar: AppBar(title: Text("Loan Details")),
       body: ReactiveForm(
         formGroup: form,
+        //  onChanged: () {
+        //     isFormDirty.value = form.dirty;
+        //   },
         child: SafeArea(
           child: SingleChildScrollView(
             child: Column(
@@ -101,6 +112,29 @@ class LoanDetailsPage extends StatelessWidget {
           ),
         ),
       ),
+    )
+    );
+  }
+
+   Future<bool?> showExitConfirmationDialog(BuildContext context) {
+    return showDialog<bool>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('Unsaved Changes'),
+          content: Text('You have unsaved changes. Do you really want to leave?'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(true),
+              child: Text('Leave'),
+            ),
+          ],
+        );
+      },
     );
   }
 }
