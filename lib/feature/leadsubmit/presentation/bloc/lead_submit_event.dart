@@ -16,4 +16,18 @@ class LeadSubmitPageInitEvent extends LeadSubmitEvent {
   LeadSubmitPageInitEvent({required this.personalData});
 }
 
-class LeadSubmitPushEvent extends LeadSubmitEvent {}
+class LeadSubmitPushEvent extends LeadSubmitEvent {
+  final LoanType loanType;
+  final LoanProduct loanProduct;
+  final Dedupe dedupe;
+  final PersonalData? personalData;
+  final AddressData? addressData;
+
+  LeadSubmitPushEvent({
+    required this.loanType,
+    required this.loanProduct,
+    required this.dedupe,
+    required this.personalData,
+    required this.addressData,
+  });
+}

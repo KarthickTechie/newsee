@@ -10,10 +10,17 @@ class DedupeEvent {}
 
 class FetchDedupeEvent extends DedupeEvent {
   DedupeRequest request;
-  FetchDedupeEvent({required this.request});
+  final String constitution;
+  FetchDedupeEvent({required this.request, required this.constitution});    
 }
 
 class ValiateAadharEvent extends DedupeEvent {
   final AadharvalidateRequest request;
   ValiateAadharEvent({required this.request});
+}
+
+class SearchCifEvent extends DedupeEvent {
+  final CIFRequest request;
+  final String constitution;
+  SearchCifEvent({required this.request, required this.constitution});
 }

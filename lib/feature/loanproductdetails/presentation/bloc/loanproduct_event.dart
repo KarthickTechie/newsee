@@ -48,3 +48,13 @@ class ResetShowBottomSheet extends LoanproductEvent {
   final ProductMaster selectedProduct;
   ResetShowBottomSheet({required this.selectedProduct});
 }
+
+/* 
+  event will be dispatched Save product schema , main and subcategory 
+ */
+
+class SaveLoanProduct extends LoanproductEvent {
+  final Map<String, Object?> choosenProduct;
+
+  SaveLoanProduct({required this.choosenProduct});
+}

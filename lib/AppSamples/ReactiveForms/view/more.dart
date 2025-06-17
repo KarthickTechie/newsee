@@ -17,6 +17,9 @@ import 'package:flutter_svg/flutter_svg.dart';
 //Define the function take context pharameters
 
 void moreActionSheet(BuildContext context, String action) {
+  final size = MediaQuery.of(context).size;
+  final screenWidth = size.width;
+  final screenHeight = size.height;
   //popup the action sheet
   showCupertinoModalPopup<void>(
     context: context,
@@ -26,242 +29,76 @@ void moreActionSheet(BuildContext context, String action) {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Padding(
-                padding: const EdgeInsets.only(top: 20, bottom: 40, right: 20),
+                padding:  EdgeInsets.only(
+                  top: screenHeight * 0.02, bottom: screenHeight * 0.02, right: screenWidth *0.02),
                 child: Text(
                   'More',
                   style: TextStyle(
-                    fontSize: 20,
+                    fontSize: screenWidth * 0.05,
                     fontWeight: FontWeight.bold,
                     color: Colors.black,
                   ),
                 ),
               ),
 
-              //First Row of Loan options
+            
               SingleChildScrollView(
-                child: Container(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      //Retail Loan
-                      GestureDetector(
-                        onTap: (){
-                        },
-                        child: Container(
-                          decoration: BoxDecoration(
-                            border: Border.all(
-                              color: const Color.fromARGB(130, 158, 158, 158),
-                              width: 2.0,
-                              
-                            ),
-                            
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(15),
-                            child: Column(
-                              children: [
-                                  SvgPicture.asset(
-                                      'assets/Retail_loan.svg',
-                                      height: 40,
-                                      width: 40,
-                                    ),       
-                                Text(
-                                  'Retail Loan',
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.normal,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                      //Agree Loan
-                      GestureDetector(
-                        onTap: () {
-
-                        },
-                        child: Container(
-                          decoration: BoxDecoration(
-                            border: Border.all(
-                              color: const Color.fromARGB(130, 158, 158, 158),
-                              width: 2.0,
-                            ),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(15),
-                            child: Column(
-                              children: [
-                                SvgPicture.asset(
-                                      'assets/Agri_Loan.svg',
-                                      height: 40,
-                                      width: 40,
-                                    ),
-                                Text(
-                                  'Agree Loan',
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.normal,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                      //MSME Loan
-                      GestureDetector(
-                          onTap: () {
-
-                        },
-                        child: Container(
-                          decoration: BoxDecoration(
-                            border: Border.all(
-                              color: const Color.fromARGB(130, 158, 158, 158),
-                              width: 2.0,
-                            ),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(15),
-                            child: Column(
-                              children: [
-                               SvgPicture.asset(
-                                      'assets/MSME.svg',
-                                      height: 40,
-                                      width: 40,
-                                    ),
-                                Text(
-                                  'MSME Loan',
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.normal,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
+                     child: Wrap(
+              spacing: screenWidth * 0.03,
+              runSpacing: screenHeight * 0.02,
+              children: [
+                LoanOption(
+                  context,
+                  screenWidth,
+                  screenHeight,
+                  'Retail Loan',
+                  'assets/Retail_loan.svg',
+                  onTap: () {},
                 ),
-              ),
-              SizedBox(height: 20),
-
-              // Second row of loan options
-              SingleChildScrollView(
-                child: GestureDetector(
-                    onTap: () {
-
-                        },
-                  child: Container(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        //home Loan
-                        Container(
-                          decoration: BoxDecoration(
-                            border: Border.all(
-                              color: const Color.fromARGB(130, 158, 158, 158),
-                              width: 2.0,
-                            ),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(15),
-                            child: Column(
-                              children: [
-                                SvgPicture.asset(
-                                      'assets/Home_Loan.svg',
-                                      height:50,
-                                      width: 50,
-                                    ),
-                                Text(
-                                  'Home Loan',
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.normal,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        //vehicle Loan
-                        Container(
-                          decoration: BoxDecoration(
-                            border: Border.all(
-                              color: const Color.fromARGB(130, 158, 158, 158),
-                              width: 2.0,
-                            ),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(15),
-                            child: Column(
-                              children: [
-                               SvgPicture.asset(
-                                      'assets/Vehicle_Loan.svg',
-                                      height: 50,
-                                      width: 50,
-                                    ),
-                                Text(
-                                  'Vehicle Loan',
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.normal,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        //Gold Loan
-                        GestureDetector(
-                            onTap: () {
-
-                        },
-                          child: Container(
-                            decoration: BoxDecoration(
-                              border: Border.all(
-                                color: const Color.fromARGB(130, 158, 158, 158),
-                                width: 2.0,
-                              ),
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.all(15),
-                              child: Column(
-                                children: [
-                                 SvgPicture.asset(
-                                      'assets/Gold_Loan.svg',
-                                      height: 45,
-                                      width: 45,
-                                    ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(top: 10),
-                                    child: Text(
-                                      'Gold Loan',
-                                      style: TextStyle(
-                                        color: Colors.black,
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.normal,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+                LoanOption(
+                  context,
+                  screenWidth,
+                  screenHeight,
+                  'Agri Loan',
+                  'assets/Agri_Loan.svg',
+                  onTap: () {},
                 ),
-              ),
+                LoanOption(
+                  context,
+                  screenWidth,
+                  screenHeight,
+                  'MSME Loan',
+                  'assets/MSME.svg',
+                  onTap: () {},
+                ),
+                LoanOption(
+                  context,
+                  screenWidth,
+                  screenHeight,
+                  'Home Loan',
+                  'assets/Home_Loan.svg',
+                  onTap: () {},
+                ),
+                LoanOption(
+                  context,
+                  screenWidth,
+                  screenHeight,
+                  'Vehicle Loan',
+                  'assets/Vehicle_Loan.svg',
+                  onTap: () {},
+                ),
+                LoanOption(
+                  context,
+                  screenWidth,
+                  screenHeight,
+                  'Gold Loan',
+                  'assets/Gold_Loan.svg',
+                  onTap: () {},
+                ),
+              ],
+            ),
+          ),
+
 
               SizedBox(height: 20),
 
@@ -392,5 +229,44 @@ void moreActionSheet(BuildContext context, String action) {
             ),
           ],
         ),
+  );
+}
+
+Widget LoanOption(BuildContext context, double screenWidth, double screenHeight,
+    String title, String assetPath,
+    {required VoidCallback onTap}) {
+  return GestureDetector(
+    onTap: onTap,
+    child: Container(
+      width: screenWidth * 0.26, 
+      decoration: BoxDecoration(
+        border: Border.all(
+          color: Color.fromARGB(130, 158, 158, 158),
+          width: 2.0,
+        ),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      padding: EdgeInsets.all(screenWidth * 0.03),
+      child: Column(
+        children: [
+          SvgPicture.asset(
+            assetPath,
+            height: screenHeight * 0.08,
+            width: screenWidth * 0.04,
+            fit: BoxFit.contain,
+          ),
+          SizedBox(height: screenHeight * 0.01),
+          Text(
+            title,
+            style: TextStyle(
+              color: Colors.black,
+              fontSize: screenWidth * 0.030,
+              fontWeight: FontWeight.normal,
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
+    ),
   );
 }

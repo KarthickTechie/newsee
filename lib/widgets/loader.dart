@@ -28,7 +28,7 @@ class Loader extends StatelessWidget {
 }
 
 // for display loader use this function at time of calling api's like in presentLoading(context, 'fetching..')
-void presentLoading(BuildContext context, String message) {
+presentLoading(BuildContext context, String message) {
   showDialog(
     context: context,
     barrierDismissible: false,

@@ -37,8 +37,6 @@ class MasterDownload extends StatelessWidget {
           child: BlocBuilder<ProgressBloc, ProgressState>(
             builder: (context, state) {
               return DownloadProgressWidget(
-                scrwidth: scrwidth,
-                scrheight: scrheight,
                 downloadProgress: state.downloadProgress,
               );
             },

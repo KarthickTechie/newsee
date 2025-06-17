@@ -35,8 +35,8 @@ class ProgressBarExample extends StatelessWidget {
             children: [
               // Displays a circular progress indicator
               SizedBox(
-                width: 120,
-                height: 120,
+                width: 100,
+                height: 100,
                 child: CircularProgressIndicator(
                   value: progressValue,
                   backgroundColor: Colors.grey[300],

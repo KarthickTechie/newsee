@@ -11,10 +11,10 @@ part 'cif_state.dart';
 final class CifBloc extends Bloc<CifEvent, CifState> {
 
   CifBloc():super(CifState()) {
-    on<SearchCifEvent>(_onSearchCif);
+    on<SearchingCifEvent>(_onSearchCif);
   }
 
-  Future _onSearchCif(SearchCifEvent event, Emitter<CifState> emit) async {
+  Future _onSearchCif(SearchingCifEvent event, Emitter<CifState> emit) async {
     emit(state.copyWith(status: CifStatus.loading));
     CifRepository dedupeRepository = CifRepositoryImpl();
     final response = await dedupeRepository.searchCif(event.request);
@@ -22,7 +22,7 @@ final class CifBloc extends Bloc<CifEvent, CifState> {
       emit(
         state.copyWith(
           status: CifStatus.success,
-          cifResponseModel: response.right,
+          // cifResponseModel: response.right,
         )
       );
     } else {

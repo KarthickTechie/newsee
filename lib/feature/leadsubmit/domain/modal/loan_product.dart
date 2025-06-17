@@ -2,9 +2,9 @@
 import 'dart:convert';
 
 class LoanProduct {
-  final String mainCategory;
-  final String subCategory;
-  final String producrId;
+  final String? mainCategory;
+  final String? subCategory;
+  final String? producrId;
   LoanProduct({
     required this.mainCategory,
     required this.subCategory,

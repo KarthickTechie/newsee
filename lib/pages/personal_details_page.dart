@@ -82,42 +82,45 @@ class PersonalDetailsPage extends StatelessWidget {
                     'SHEIKH',
                     'SIR',
                   ],
+                  selItem: () {},
                 ),
                 IntegerTextField(
-                  controlName: 'mobilenumber', 
+                  controlName: 'mobilenumber',
                   label: 'Mobile Number',
                   mantatory: true,
-                  maxlength: 10
+                  maxlength: 10,
                 ),
                 CustomTextField(
-                  controlName: 'emailid', 
+                  controlName: 'emailid',
                   label: 'Email Id',
-                  mantatory: true
+                  mantatory: true,
                 ),
                 CustomTextField(
                   controlName: 'address',
                   label: 'Address',
-                  mantatory: true
+                  mantatory: true,
                 ),
                 CustomTextField(
                   controlName: 'addressline1',
                   label: 'Address Line 1',
-                  mantatory: true
+                  mantatory: true,
                 ),
                 SearchableDropdown(
                   controlName: 'state',
                   label: 'State',
                   items: ['Tamil Nadu', 'Kerala', 'Karnataka'],
+                  selItem: () {},
                 ),
                 SearchableDropdown(
                   controlName: 'city',
                   label: 'City',
                   items: ['Chennai', 'Madurai', 'Bangalore'],
+                  selItem: () {},
                 ),
                 IntegerTextField(
-                  controlName: 'pincode', 
+                  controlName: 'pincode',
                   label: 'Pincode',
-                  mantatory: true
+                  mantatory: true,
                 ),
                 Padding(
                   padding: const EdgeInsets.all(16),

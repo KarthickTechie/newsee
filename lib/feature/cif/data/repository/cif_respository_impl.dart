@@ -8,29 +8,22 @@ import 'package:newsee/core/api/http_connection_failure.dart';
 import 'package:newsee/core/api/http_exception_parser.dart';
 import 'package:newsee/feature/cif/data/datasource/cif_remote_datasource.dart';
 import 'package:newsee/feature/cif/domain/model/user/cif_request.dart';
-import 'package:newsee/feature/cif/domain/model/user/cif_response_model.dart';
+import 'package:newsee/feature/cif/domain/model/user/cif_response.dart';
 import 'package:newsee/feature/cif/domain/repository/cif_repository.dart';
 
 class CifRepositoryImpl implements CifRepository {
   @override
-  Future<AsyncResponseHandler<Failure, CifResponseModel>> searchCif(
+  Future<AsyncResponseHandler<Failure, CifResponse>> searchCif(
     CIFRequest req,
   ) async {
     try {
       print('CIF Search request payload => $req');
-      // final payload =  {
-      //   "custId": "902534",
-      //   "uniqueId": "3",
-      //   "cifId": '121212',
-      //   "type": "borrower",
-      //   "token": "U2FsdGVkX1/Wa6+JeCIOVLl8LTr8WUocMz8kIGXVbEI9Q32v7zRLrnnvAIeJIVV3"
-      // };
       final payload = req.toJson();
       var response = await CifRemoteDatasource(dio: ApiClient().getDio()).searchCif(payload);
 
       if (response.data[ApiConfig.API_RESPONSE_SUCCESS_KEY]) {
-        var cifResponse = CifResponseModel.fromJson(
-          response.data[ApiConfig.API_RESPONSE_RESPONSE_KEY],
+        var cifResponse = CifResponse.fromJson(
+          response.data[ApiConfig.API_RESPONSE_RESPONSE_KEY]['lpretLeadDetails'],
         );
         print('ChifResponseModel => ${cifResponse.toString()}');
         return AsyncResponseHandler.right(cifResponse);

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:newsee/Utils/utils.dart';
 import 'package:newsee/feature/loanproductdetails/presentation/bloc/loanproduct_bloc.dart';
 import 'package:newsee/feature/masters/domain/modal/product.dart';
 import 'package:newsee/feature/masters/domain/modal/product_master.dart';
@@ -67,7 +68,7 @@ class Loan extends StatelessWidget {
     final _context = context;
     return PopScope(
       canPop: false,
-      onPopInvokedWithResult: (x,y) async {
+       onPopInvokedWithResult: (x,y) async {
         if (isFormDirty.value) {
           final shouldLeave = await showExitConfirmationDialog(context);
           if (shouldLeave ?? false) {
@@ -81,51 +82,48 @@ class Loan extends StatelessWidget {
           title: Text("Loan Details"),
           automaticallyImplyLeading: false,
         ),
-        body: BlocConsumer<LoanproductBloc, LoanproductState>(
-          listener: (context, state) {
-            BuildContext ctxt = context;
+      body: BlocConsumer<LoanproductBloc, LoanproductState>(
+          listener: (context,state){
+                      BuildContext ctxt = context;
             print('LoanProductBlocListener:: log =>  ${state.showBottomSheet}');
-      
-              if (state.showBottomSheet == true) {
-                openBottomSheet(
-                  context,
-                  0.7,
-                  0.5,
-                  0.9,
-                  (context, scrollController) => Expanded(
-                    child: ListView.builder(
-                      itemCount: state.productmasterList.length,
-                      itemBuilder: (context, index) {
-                        final product = state.productmasterList[index];
-                        return Padding(
-                          padding: EdgeInsets.all(5.0),
-                          child: InkWell(
-                            // card widget for showing products
-                            onTap: () {
-                              ProductMaster selectedProduct = product;
-                              ctxt.read<LoanproductBloc>().add(
-                                ResetShowBottomSheet(
-                                  selectedProduct: selectedProduct,
-                                ),
-                              );
-                            },
-                            child: ProductCard(productId:product.prdCode,productDescription: product.prdDesc, amountFrom: product.prdamtFromRange, amountTo: product.prdamtToRange)
+            if (state.showBottomSheet == true) {
+              openBottomSheet(
+                context,
+                0.7,
+                0.5,
+                0.9,
+                (context, scrollController) => Expanded(
+                  child: ListView.builder(
+                    itemCount: state.productmasterList.length,
+                    itemBuilder: (context, index) {
+                      final product = state.productmasterList[index];
+                      return Padding(
+                        padding: EdgeInsets.all(5.0),
+                        child: InkWell(
+                          // card widget for showing products
+                          onTap: () {
+                            ProductMaster selectedProduct = product;
+                            ctxt.read<LoanproductBloc>().add(
+                              ResetShowBottomSheet(
+                                selectedProduct: selectedProduct,
+                              ),
+                            );
+                          },
+                          child: ProductCard(
+                            productId: product.prdCode,
+                            productDescription: product.prdDesc,
+                            amountFrom: formatAmount(product.prdamtFromRange),
+                            amountTo: formatAmount(product.prdamtToRange),
                           ),
-                      );
-                    },
+                        )
+                        );
+                    }
+                    ),
                   ),
-                ),
-              );
+                );
             }
       
-      
-            if (state.selectedProduct != null && state.showBottomSheet == false) {
-              print('poping current route');
-              LoanproductState.init();
-              Navigator.of(_context).pop();
-            }
           },
-          // child: BlocBuilder<LoanproductBloc, LoanproductState>(
           builder: (context, state) {
             return ReactiveForm(
               formGroup: form,
@@ -138,14 +136,24 @@ class Loan extends StatelessWidget {
                         label: 'Type Of Loan',
                         items: state.productSchemeList,
                         onChangeListener: (ProductSchema val) {
-                          isFormDirty.value = true;
+                           isFormDirty.value = true;
                           form.controls['typeofloan']?.updateValue(
-                            val.optionDesc,
+                            val.optionValue,
                           );
       
                           context.read<LoanproductBloc>().add(
                             LoanProductDropdownChange(field: val),
                           );
+                        },
+                        selItem: () {
+                          if (state.selectedProductScheme != null) {
+                            form.controls['typeofloan']?.updateValue(
+                              state.selectedProductScheme?.optionValue,
+                            );
+                            return state.selectedProductScheme;
+                          } else {
+                            return null;
+                          }
                         },
                       ),
                       SearchableDropdown(
@@ -155,12 +163,22 @@ class Loan extends StatelessWidget {
                         onChangeListener: (Product val) {
                           isFormDirty.value = true;
                           form.controls['maincategory']?.updateValue(
-                            val.lsfFacDesc,
+                            val.lsfFacId,
                           );
       
                           context.read<LoanproductBloc>().add(
                             LoanProductDropdownChange(field: val),
                           );
+                        },
+                        selItem: () {
+                          if (state.selectedMainCategory != null) {
+                            form.controls['maincategory']?.updateValue(
+                              state.selectedMainCategory?.lsfFacId,
+                            );
+                            return state.selectedMainCategory;
+                          } else {
+                            return null;
+                          }
                         },
                       ),
                       SearchableDropdown(
@@ -169,13 +187,21 @@ class Loan extends StatelessWidget {
                         items: state.subCategoryList,
                         onChangeListener: (Product val) {
                           isFormDirty.value = true;
-                          form.controls['subcategory']?.updateValue(
-                            val.lsfFacDesc,
-                          );
+                          form.controls['subcategory']?.updateValue(val.lsfFacId);
       
                           context.read<LoanproductBloc>().add(
                             LoanProductDropdownChange(field: val),
                           );
+                        },
+                        selItem: () {
+                          if (state.selectedSubCategoryList != null) {
+                            form.controls['subcategory']?.updateValue(
+                              state.selectedSubCategoryList?.lsfFacId,
+                            );
+                            return state.selectedSubCategoryList;
+                          } else {
+                            return null;
+                          }
                         },
                       ),
       
@@ -184,16 +210,18 @@ class Loan extends StatelessWidget {
                             state.selectedProduct != null
                                 ? [
                                   ProductCard(
-                                    productId:state.selectedProduct!.prdCode,
+                                    productId: state.selectedProduct!.prdCode,
                                     productDescription:
                                         state.selectedProduct!.prdDesc,
-                                    amountFrom:
-                                        state.selectedProduct!.prdamtFromRange,
-                                    amountTo:
-                                        state.selectedProduct!.prdamtToRange,
+                                    amountFrom: formatAmount(
+                                      state.selectedProduct!.prdamtFromRange,
+                                    ),
+                                    amountTo: formatAmount(
+                                      state.selectedProduct!.prdamtToRange,
+                                    ),
                                   ),
                                 ]
-                                : [Text('No product')],
+                                : [Text('')],
                       ),
                       Center(
                         child: ElevatedButton(
@@ -210,13 +238,9 @@ class Loan extends StatelessWidget {
                           ),
                           onPressed: () {
                             if (form.valid) {
-                              final tabController = DefaultTabController.of(
-                                context,
+                              context.read<LoanproductBloc>().add(
+                                SaveLoanProduct(choosenProduct: form.value),
                               );
-                              if (tabController.index <
-                                  tabController.length - 1) {
-                                tabController.animateTo(tabController.index + 1);
-                              }
                             } else {
                               form.markAllAsTouched();
                             }
@@ -229,13 +253,19 @@ class Loan extends StatelessWidget {
                 ),
               ),
             );
-          },
-        ),
+          }
+        )
       ),
     );
+      
   }
 }
 
+/* 
+@author   : Sandhiya A  17/06/2025
+@desc     : When user trying to navigate incase of form partially filled,show alert message to the user.
+
+ */
 Future<bool?> showExitConfirmationDialog(BuildContext context) {
     return showDialog<bool>(
       context: context,

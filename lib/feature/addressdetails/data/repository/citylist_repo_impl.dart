@@ -36,23 +36,27 @@ class CitylistRepoImpl implements Cityrepository {
         List<dynamic> cityResponse =
             response.data[ApiConfig.API_RESPONSE_RESPONSE_KEY][ApiConfig
                 .API_RESPONSE_RESPONSE_KEY];
-        List<GeographyMaster> cityList = [];
-        if (cityDistrictRequest.cityCode != null) {
-          cityList =
-              cityResponse.map((e) {
-                e['stateParentId'] = cityDistrictRequest.stateCode;
-                e['cityParentId'] = cityDistrictRequest.cityCode;
-                return GeographyMaster.fromMap(e);
-              }).toList();
+        if (cityResponse.isNotEmpty) {
+          List<GeographyMaster> cityList = [];
+          if (cityDistrictRequest.cityCode != null) {
+            cityList =
+                cityResponse.map((e) {
+                  e['stateParentId'] = cityDistrictRequest.stateCode;
+                  e['cityParentId'] = cityDistrictRequest.cityCode;
+                  return GeographyMaster.fromMap(e);
+                }).toList();
+          } else {
+            cityList =
+                cityResponse.map((e) {
+                  e['stateParentId'] = cityDistrictRequest.stateCode;
+                  e['cityParentId'] = "0";
+                  return GeographyMaster.fromMap(e);
+                }).toList();
+          }
+          return AsyncResponseHandler.right(cityList);
         } else {
-          cityList =
-              cityResponse.map((e) {
-                e['stateParentId'] = cityDistrictRequest.stateCode;
-                e['cityParentId'] = "0";
-                return GeographyMaster.fromMap(e);
-              }).toList();
+          return AsyncResponseHandler.right(<GeographyMaster>[]);
         }
-        return AsyncResponseHandler.right(cityList);
       } else {
         var errorMessage = response.data['ErrorMessage'];
         print('on Error request.data["ErrorMessage"] => $errorMessage');

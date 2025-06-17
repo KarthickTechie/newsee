@@ -265,3 +265,170 @@
 //     );
 //   }
 // }
+
+
+// need for Dedupe Page Response show
+
+
+ // SizedBox(
+                      //   child: BlocBuilder<DedupeBloc, DedupeState>(
+                      //     builder: (context, state) {
+                      //       if (state.status == DedupeFetchStatus.success && state.aadharvalidateResponse == null) {
+                      //         dataList = [
+                      //           {"icon": Icons.currency_rupee, "label": "CBS", "value": "true"},
+                      //           {"icon": Icons.assignment_add, "label": "Remarks", "value": state.dedupeResponse?.remarks as String},
+                      //         ];
+                      //         return Column(
+                      //           children: [
+                      //             SizedBox(
+                      //               height: 30,
+                      //             ),
+                      //             Text("Dedupe Response", style: TextStyle(fontWeight: FontWeight.bold),),
+                      //             ResponseWidget(heightSize: 0.32, dataList: dataList, buttonshow: false, onpressed: () {})
+                      //           ],
+                      //         );
+                      //       } else if (state.status == DedupeFetchStatus.success && state.aadharvalidateResponse != null) {
+                      //         dataList = [
+                      //           {
+                      //             "icon": Icons.person,
+                      //             "label": "Name",
+                      //             "value": state.aadharvalidateResponse?.name as String,
+                      //           },
+                      //           {
+                      //             "icon":
+                      //                 state.aadharvalidateResponse?.gender == "MALE"
+                      //                     ? Icons.male
+                      //                     : Icons.female,
+                      //             "label": "Gender",
+                      //             "value":
+                      //                 state.aadharvalidateResponse?.gender as String,
+                      //           },
+                      //           {
+                      //             "icon": Icons.calendar_month,
+                      //             "label": "DOB",
+                      //             "value":
+                      //                 state.aadharvalidateResponse?.dateOfBirth
+                      //                     as String,
+                      //           },
+                      //           {
+                      //             "icon": Icons.contact_phone,
+                      //             "label": "Mobile",
+                      //             "value": "",
+                      //           },
+                      //           {
+                      //             "icon": Icons.home,
+                      //             "label": "Address",
+                      //             "value":
+                      //                 '${state.aadharvalidateResponse?.house} ${state.aadharvalidateResponse?.street} ${state.aadharvalidateResponse?.locality} ${state.aadharvalidateResponse?.vtcName} ${state.aadharvalidateResponse?.postOfficeName}',
+                      //           },
+                      //         ];
+                      //         return Column(
+                      //           children: [
+                      //             SizedBox(
+                      //               height: 30,
+                      //             ),
+                      //             Text("Aadhaar Response", style: TextStyle(fontWeight: FontWeight.bold),),
+                      //             ResponseWidget(heightSize: 0.4, dataList: dataList, buttonshow: false, onpressed: () {})
+                      //           ],
+                      //         );
+                      //       }
+                      //       return SizedBox(height: 50) ;
+                      //     }
+                      //   ),
+                      // ),
+                          
+                      // BlocBuilder<DedupeBloc, DedupeState>(
+                      //   builder: (context, state) {
+                      //     if (state.status == DedupeFetchStatus.success && state.cifResponseModel != null) {
+                      //       var formattedDate = getDateFormat(state.cifResponseModel?.lpretLeadDetails['lleaddob']),
+                      //       dataList = [
+                      //         {
+                      //           "icon": Icons.person,
+                      //           "label": "Name",
+                      //           "value": [
+                      //             state
+                      //                     .cifResponseModel
+                      //                     ?.lpretLeadDetails['lleadfrstname'] ??
+                      //                 '',
+                      //             state
+                      //                     .cifResponseModel
+                      //                     ?.lpretLeadDetails['lleadmidname'] ??
+                      //                 '',
+                      //             state
+                      //                     .cifResponseModel
+                      //                     ?.lpretLeadDetails['lleadlastname'] ??
+                      //                 '',
+                      //           ].where((val) => val.isNotEmpty).join(' '),
+                      //         },
+
+                      //         {
+                      //           "icon": Icons.date_range,
+                      //           "label": "DOB",
+                      //           "value": formattedDate,
+                      //         },
+                      //         {
+                      //           "icon": Icons.call,
+                      //           "label": "Mobile",
+                      //           "value":
+                      //               state
+                      //                   .cifResponseModel
+                      //                   ?.lpretLeadDetails['lleadmobno'],
+                      //         },
+                      //         {
+                      //           "icon": Icons.chrome_reader_mode_rounded,
+                      //           "label": "PAN",
+                      //           "value":
+                      //               state
+                      //                   .cifResponseModel
+                      //                   ?.lpretLeadDetails['lleadpanno'],
+                      //         },
+                      //         {
+                      //           "icon": Icons.elevator_rounded,
+                      //           "label": "AAdhaar",
+                      //           "value":
+                      //               state
+                      //                   .cifResponseModel
+                      //                   ?.lpretLeadDetails['lleadadharno'],
+                      //         },
+                      //         {
+                      //           "icon": Icons.home,
+                      //           "label": "Address",
+                      //           "value": [
+                      //             state
+                      //                     .cifResponseModel
+                      //                     ?.lpretLeadDetails['lleadaddress'] ??
+                      //                 '',
+                      //             state
+                      //                     .cifResponseModel
+                      //                     ?.lpretLeadDetails['lleadaddresslane1'] ??
+                      //                 '',
+                      //             state
+                      //                     .cifResponseModel
+                      //                     ?.lpretLeadDetails['lleadaddresslane2'] ??
+                      //                 '',
+                      //           ].where((val) => val.isNotEmpty).join(' '),
+                      //         },
+                      //         {
+                      //           "icon": Icons.format_list_numbered_rtl_rounded,
+                      //           "label": "Pinocode",
+                      //           "value":
+                      //               state
+                      //                   .cifResponseModel
+                      //                   ?.lpretLeadDetails['lleadpinno'],
+                      //         },
+                      //       ];
+                      //       return Column(
+                      //         children: [
+                      //           SizedBox(
+                      //             height: 30,
+                      //           ),
+                      //           Text("CiF Response", style: TextStyle(fontWeight: FontWeight.bold),),
+                      //           ResponseWidget(heightSize: 0.32, dataList: dataList, buttonshow: false, onpressed: () {})
+                      //         ]
+                              
+                      //       );
+                      //     }
+                      //     return SizedBox(height: 50) ;
+                      //   }
+                      // )
+

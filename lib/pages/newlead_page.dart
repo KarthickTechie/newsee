@@ -31,12 +31,14 @@ class NewLeadPage extends StatelessWidget {
               (context) =>
                   PersonalDetailsBloc()
                     ..add(PersonalDetailsInitEvent(cifResponseModel: null)),
+          lazy: false,
         ),
         BlocProvider(
           create:
               (context) =>
                   AddressDetailsBloc()
                     ..add(AddressDetailsInitEvent(cifResponseModel: null)),
+          lazy: false,
         ),
         BlocProvider(create: (context) => DedupeBloc(), lazy: false),
         BlocProvider(create: (context) => CifBloc()),

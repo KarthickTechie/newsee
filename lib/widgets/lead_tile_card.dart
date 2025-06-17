@@ -5,6 +5,7 @@
 */
 
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../Utils/utils.dart';
 
 class LeadTileCard extends StatelessWidget {
@@ -84,7 +85,23 @@ class LeadTileCard extends StatelessWidget {
               const SizedBox(height: 12),
               Row(
                 children: [
-                  Expanded(child: iconWithLabel(Icons.phone_outlined, phone)),
+                  Expanded(
+                      child: GestureDetector(
+                        onTap: () async {
+                          final phoneNumber = "919940362579";
+                           final Uri uri = Uri.parse('tel:$phoneNumber');
+                          if (!await canLaunchUrl(uri)) {
+                            throw 'Could not launch $uri';
+                          } else {
+                            await launchUrl(uri);
+                          }
+                          Navigator.pop(context);
+                        },
+                        child: iconWithLabel(
+                          Icons.phone_outlined, phone
+                        ),
+                      ),
+                    ),
                   Expanded(
                     child: iconWithLabel(
                       Icons.calendar_month_outlined,

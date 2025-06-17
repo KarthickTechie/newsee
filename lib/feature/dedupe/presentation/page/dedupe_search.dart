@@ -12,18 +12,19 @@ import 'package:reactive_forms/reactive_forms.dart';
 class DedupeSearch extends StatelessWidget {
   final FormGroup dedupeForm;
   final TabController tabController;
-  DedupeSearch({super.key, required this.dedupeForm, required this.tabController});
+  final String customerConstitution;
+  DedupeSearch({super.key, required this.dedupeForm, required this.tabController, required this.customerConstitution});
 
   disposeResponse(context, state) {
     print("Welcome here for you $state");
     Navigator.of(context).pop();
-    if (state['dedupeResponse'] != null) {
+    if (state.dedupeResponse?.remarksFlag) {
       dedupeForm.reset();
       Navigator.of(context).pop();
       if (tabController.index < tabController.length - 1) {
         tabController.animateTo(tabController.index + 1);
       }
-    } else if (state['dedupeResponse']?.remarksFlag) {
+    } else if (state.aadharvalidateResponse != null){
       dedupeForm.reset();
       Navigator.of(context).pop();
       if (tabController.index < tabController.length - 1) {
@@ -121,30 +122,6 @@ class DedupeSearch extends StatelessWidget {
               context,
             ).showSnackBar(SnackBar(content: Text(state.errorMsg!))),
           },
-
-
-        // if (state.status == DedupeFetchStatus.success) {
-        //   dataList = [
-        //     {"icon": Icons.currency_rupee, "label": "CBS", "value": "true"},
-        //     {"icon": Icons.assignment_add, "label": "Remarks", "value": state.dedupeResponse?.remarks as String},
-        //   ],
-        //   showDialog(
-        //     context: context,
-        //     builder: (BuildContext context) {
-        //       return Dialog(
-        //         shape: RoundedRectangleBorder(
-        //           side: BorderSide(color: Colors.grey.shade300),
-        //           borderRadius: BorderRadius.circular(12),
-        //         ),
-        //         child: ResponseWidget(heightSize: 0.32, dataList: dataList, buttonshow: true, onpressed: () => disposeResponse(context, state))
-        //       );
-        //     },
-        //   )
-        // } else if (state.status == DedupeFetchStatus.failure) {
-        //   ScaffoldMessenger.of(context).showSnackBar(
-        //     SnackBar(content: Text(state.errorMsg!)),
-        //   )
-        // }
       },
       builder: (context, state) { 
         return ReactiveForm(
@@ -264,7 +241,7 @@ class DedupeSearch extends StatelessWidget {
                               mobileno: dedupeForm.control('mobilenumber').value
                             );
                             
-                            context.read<DedupeBloc>().add(FetchDedupeEvent(request: request));
+                            context.read<DedupeBloc>().add(FetchDedupeEvent(request: request, constitution: customerConstitution));
                           } else {
                             print("Click function passed go here, ${dedupeForm.valid}");
                             dedupeForm.markAllAsTouched();

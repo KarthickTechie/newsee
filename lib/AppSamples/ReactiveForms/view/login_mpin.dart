@@ -15,13 +15,18 @@ import 'package:flutter/material.dart';
 mpin(BuildContext context) {
   // show the custom modal bottom sheet
   showModalBottomSheet<void>(
+      isScrollControlled: true,
     
     context: context,
     builder: (BuildContext context) {
+      final size = MediaQuery.of(context).size;
+      final screenWidth = size.width;
+      final screenHeight = size.height;
       return GestureDetector(
         onTap: () {FocusScope.of(context).unfocus();},
         child: Container(
-          height: 400,
+          height:screenHeight * 0.7,
+          // height: screenHeight * 5.0,
           decoration: BoxDecoration(),
           padding: EdgeInsets.all(16),
           child: Column(
@@ -39,8 +44,8 @@ mpin(BuildContext context) {
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: List.generate(5, (i) {
                   return Container(
-                    width: 60,
-                    height: 60,
+                    width: screenWidth *0.15,
+                    height: screenHeight * 0.10,
                     margin: EdgeInsets.symmetric(horizontal: 4),
                     decoration: BoxDecoration(
                       border: Border.all(width: 1.0, color: Colors.black),

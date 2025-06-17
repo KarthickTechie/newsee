@@ -1,11 +1,15 @@
+import 'package:dio/dio.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:newsee/Model/address_data.dart';
 import 'package:newsee/Model/personal_data.dart';
+import 'package:newsee/core/api/AsyncResponseHandler.dart';
+import 'package:newsee/feature/leadsubmit/data/repository/lead_submit_repo_impl.dart';
 import 'package:newsee/feature/leadsubmit/domain/modal/dedupe.dart';
 import 'package:newsee/feature/leadsubmit/domain/modal/lead_submit_request.dart';
 import 'package:newsee/feature/leadsubmit/domain/modal/loan_product.dart';
 import 'package:newsee/feature/leadsubmit/domain/modal/loan_type.dart';
+import 'package:newsee/feature/leadsubmit/domain/repository/lead_submit_repo.dart';
 
 part './lead_submit_event.dart';
 part './lead_submit_state.dart';
@@ -17,6 +21,7 @@ part './lead_submit_state.dart';
 final class LeadSubmitBloc extends Bloc<LeadSubmitEvent, LeadSubmitState> {
   LeadSubmitBloc() : super(LeadSubmitState.init()) {
     on<LeadSubmitPageInitEvent>(onLeadSubmitPageInit);
+    on<LeadSubmitPushEvent>(onLeadPush);
   }
 
   Future<void> onLeadSubmitPageInit(
@@ -26,6 +31,7 @@ final class LeadSubmitBloc extends Bloc<LeadSubmitEvent, LeadSubmitState> {
     PersonalData? personalData = event.personalData;
     LeadSubmitRequest leadSubmitRequest = LeadSubmitRequest(
       userid: '',
+      vertical: '7',
       orgScode: '',
       orgName: '',
       orgLevel: '',
@@ -45,5 +51,38 @@ final class LeadSubmitBloc extends Bloc<LeadSubmitEvent, LeadSubmitState> {
       addressDetails: AddressData(),
     );
     emit(state.copyWith(leadSubmitRequest: leadSubmitRequest));
+  }
+
+  Future<void> onLeadPush(LeadSubmitPushEvent event, Emitter emit) async {
+    try {
+      Map<String, dynamic> leadSubmitRequest = {
+        "userid": "AGRI1124",
+        "vertical": "7",
+        "orgScode": "14356",
+        "orgName": "BRAHMAMANGALAM",
+        "orgLevel": "23",
+        "token":
+            "U2FsdGVkX1/Wa6+JeCIOVLl8LTr8WUocMz8kIGXVbEI9Q32v7zRLrnnvAIeJIVV3",
+        "leadDetails": event.loanType.toMap(),
+        "chooseProduct": event.loanProduct.toMap(),
+        "dedupeSearch": event.dedupe.toMap(),
+        "individualNonIndividualDetails": event.personalData?.toMap(),
+        "addressDetails": [event.addressData?.toMap()],
+      };
+
+      AsyncResponseHandler responseHandler = await LeadSubmitRepoImpl()
+          .submitLead(request: leadSubmitRequest);
+      if (responseHandler.isRight()) {
+        print('Lead Submit Success..');
+        emit(state.copyWith(leadSubmitStatus: SubmitStatus.success));
+      } else {
+        print('Lead Submit Failure...');
+        emit(state.copyWith(leadSubmitStatus: SubmitStatus.success));
+      }
+    } on DioException catch (e) {
+      print('leadsubmit exception => $e');
+    } finally {
+      emit(state.copyWith(leadSubmitStatus: SubmitStatus.success));
+    }
   }
 }

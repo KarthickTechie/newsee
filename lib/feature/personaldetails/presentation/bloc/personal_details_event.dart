@@ -29,3 +29,8 @@ class PersonalDetailsSaveEvent extends PersonalDetailsEvent {
   final PersonalData? personalData;
   PersonalDetailsSaveEvent({required this.personalData});
 }
+
+class AadhaarValidateEvent extends PersonalDetailsEvent {
+  final AadharvalidateRequest request;
+  AadhaarValidateEvent({required this.request});
+}

@@ -8,11 +8,11 @@ import 'package:flutter/foundation.dart';
               will be delegated to auth_respose_model.g.dart 
               which is a generated file by running 
               dart run build_runner run command
- */
+ */ 
 import 'package:json_annotation/json_annotation.dart';
 part 'cif_response_model.g.dart';
 
-@JsonSerializable()
+@JsonSerializable() 
 class CifResponseModel {
   final String staffFlag;
   final String cifFlag;

@@ -6,7 +6,7 @@
 
 import 'package:flutter/material.dart';
 import 'pending_leads.dart';
-import 'completed_leads.dart';
+import '../feature/leadInbox/presentation/page/completed_leads.dart';
 
 class LeadTabBar extends StatelessWidget {
   @override

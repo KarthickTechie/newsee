@@ -9,6 +9,7 @@ import 'package:newsee/feature/leadsubmit/domain/modal/loan_type.dart';
 
 class LeadSubmitRequest {
   final String userid;
+  final String vertical;
   final String orgScode; // OrganizationMaster -> OrgID
   final String orgName; // OrganizationMaster -> OrgName
   final String orgLevel; // OrganizationMaster -> OrgLevel
@@ -20,6 +21,7 @@ class LeadSubmitRequest {
   final AddressData addressDetails;
   LeadSubmitRequest({
     required this.userid,
+    required this.vertical,
     required this.orgScode,
     required this.orgName,
     required this.orgLevel,
@@ -27,12 +29,13 @@ class LeadSubmitRequest {
     required this.leadDetails,
     required this.chooseProduct,
     required this.dedupeSearch,
-    required this.individualNonIndividualDetails,
+    this.individualNonIndividualDetails,
     required this.addressDetails,
   });
 
   LeadSubmitRequest copyWith({
     String? userid,
+    String? vertical,
     String? orgScode,
     String? orgName,
     String? orgLevel,
@@ -45,6 +48,7 @@ class LeadSubmitRequest {
   }) {
     return LeadSubmitRequest(
       userid: userid ?? this.userid,
+      vertical: vertical ?? this.vertical,
       orgScode: orgScode ?? this.orgScode,
       orgName: orgName ?? this.orgName,
       orgLevel: orgLevel ?? this.orgLevel,
@@ -61,6 +65,7 @@ class LeadSubmitRequest {
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
       'userid': userid,
+      'vertical': vertical,
       'orgScode': orgScode,
       'orgName': orgName,
       'orgLevel': orgLevel,
@@ -76,6 +81,7 @@ class LeadSubmitRequest {
   factory LeadSubmitRequest.fromMap(Map<String, dynamic> map) {
     return LeadSubmitRequest(
       userid: map['userid'] as String,
+      vertical: map['vertical'] as String,
       orgScode: map['orgScode'] as String,
       orgName: map['orgName'] as String,
       orgLevel: map['orgLevel'] as String,
@@ -85,9 +91,12 @@ class LeadSubmitRequest {
         map['chooseProduct'] as Map<String, dynamic>,
       ),
       dedupeSearch: Dedupe.fromMap(map['dedupeSearch'] as Map<String, dynamic>),
-      individualNonIndividualDetails: PersonalData.fromMap(
-        map['individualNonIndividualDetails'] as Map<String, dynamic>,
-      ),
+      individualNonIndividualDetails:
+          map['individualNonIndividualDetails'] != null
+              ? PersonalData.fromMap(
+                map['individualNonIndividualDetails'] as Map<String, dynamic>,
+              )
+              : null,
       addressDetails: AddressData.fromMap(
         map['addressDetails'] as Map<String, dynamic>,
       ),
@@ -101,7 +110,7 @@ class LeadSubmitRequest {
 
   @override
   String toString() {
-    return 'LeadSubmitRequest(userid: $userid, orgScode: $orgScode, orgName: $orgName, orgLevel: $orgLevel, token: $token, leadDetails: $leadDetails, chooseProduct: $chooseProduct, dedupeSearch: $dedupeSearch, individualNonIndividualDetails: $individualNonIndividualDetails, addressDetails: $addressDetails)';
+    return 'LeadSubmitRequest(userid: $userid, vertical: $vertical, orgScode: $orgScode, orgName: $orgName, orgLevel: $orgLevel, token: $token, leadDetails: $leadDetails, chooseProduct: $chooseProduct, dedupeSearch: $dedupeSearch, individualNonIndividualDetails: $individualNonIndividualDetails, addressDetails: $addressDetails)';
   }
 
   @override
@@ -109,6 +118,7 @@ class LeadSubmitRequest {
     if (identical(this, other)) return true;
 
     return other.userid == userid &&
+        other.vertical == vertical &&
         other.orgScode == orgScode &&
         other.orgName == orgName &&
         other.orgLevel == orgLevel &&
@@ -124,6 +134,7 @@ class LeadSubmitRequest {
   @override
   int get hashCode {
     return userid.hashCode ^
+        vertical.hashCode ^
         orgScode.hashCode ^
         orgName.hashCode ^
         orgLevel.hashCode ^

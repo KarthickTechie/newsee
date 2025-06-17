@@ -53,6 +53,7 @@ class GuarantorPage extends StatelessWidget {
                     'SHEIKH',
                     'SIR',
                   ],
+                  selItem: () => {},
                 ),
                 IntegerTextField(
                   controlName: 'firstname',
@@ -60,20 +61,20 @@ class GuarantorPage extends StatelessWidget {
                   mantatory: true,
                 ),
                 IntegerTextField(
-                  controlName: 'lastname', 
+                  controlName: 'lastname',
                   label: 'Last Name',
-                  mantatory: true
+                  mantatory: true,
                 ),
                 IntegerTextField(
                   controlName: 'mobilenumber',
                   label: 'Mobile Number',
                   mantatory: true,
-                  maxlength: 10
+                  maxlength: 10,
                 ),
                 IntegerTextField(
-                  controlName: 'networth', 
+                  controlName: 'networth',
                   label: 'Networth of the Applicant(₹)',
-                  mantatory: true
+                  mantatory: true,
                 ),
                 SizedBox(height: 20),
                 Center(

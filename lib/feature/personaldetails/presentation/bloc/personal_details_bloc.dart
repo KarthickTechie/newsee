@@ -2,7 +2,10 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:newsee/Model/personal_data.dart';
 import 'package:newsee/core/db/db_config.dart';
+import 'package:newsee/feature/aadharvalidation/data/repository/aadhar_validate_impl.dart';
+import 'package:newsee/feature/aadharvalidation/domain/modal/aadharvalidate_request.dart';
 import 'package:newsee/feature/aadharvalidation/domain/modal/aadharvalidate_response.dart';
+import 'package:newsee/feature/aadharvalidation/domain/repository/aadharvalidate_repo.dart';
 import 'package:newsee/feature/cif/domain/model/user/cif_response_model.dart';
 import 'package:newsee/feature/masters/domain/modal/lov.dart';
 import 'package:newsee/feature/masters/domain/repository/lov_crud_repo.dart';
@@ -22,6 +25,7 @@ final class PersonalDetailsBloc
   PersonalDetailsBloc() : super(PersonalDetailsState.init()) {
     on<PersonalDetailsInitEvent>(initPersonalDetails);
     on<PersonalDetailsSaveEvent>(savePersonalDetails);
+    on<AadhaarValidateEvent>(validateAadaar);
   }
 
   /*
@@ -57,5 +61,29 @@ final class PersonalDetailsBloc
         status: SaveStatus.success,
       ),
     );
+  }
+
+  Future<void> validateAadaar(AadhaarValidateEvent event, Emitter emit) async {
+    emit(state.copyWith(status: SaveStatus.loading));
+    final AadharvalidateRequest aadharvalidateRequest = event.request;
+    AadharvalidateRepo aadharvalidateRepo = AadharValidateImpl();
+    var responseHandler = await aadharvalidateRepo.validateAadhar(
+      request: aadharvalidateRequest,
+    );
+    if (responseHandler.isRight()) {
+      emit(
+        state.copyWith(
+          status: SaveStatus.init,
+          aadhaarData: responseHandler.right,
+        ),
+      );
+    } else {
+      emit(
+        state.copyWith(
+          status: SaveStatus.failure,
+          // e: responseHandler.left.message,
+        ),
+      );
+    }
   }
 }

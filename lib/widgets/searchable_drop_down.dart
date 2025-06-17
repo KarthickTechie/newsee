@@ -22,7 +22,7 @@ class SearchableDropdown<T> extends StatelessWidget {
   final String label;
   final List<T> items;
   final bool? mantatory;
-
+  final T? Function() selItem;
   /* 
   @modifiedby   : karthick.d  05/06/2025
   @desc         : this is a changelister function that handle dropdown option change
@@ -32,6 +32,7 @@ class SearchableDropdown<T> extends StatelessWidget {
     required this.controlName,
     required this.label,
     required this.items,
+    required this.selItem,
     this.mantatory,
     this.onChangeListener,
   });
@@ -51,6 +52,7 @@ class SearchableDropdown<T> extends StatelessWidget {
   }
 
   _onChangeListener(T? val) => onChangeListener!(val);
+
   @override
   Widget build(BuildContext context) {
     return ReactiveFormField<String, T>(
@@ -64,6 +66,7 @@ class SearchableDropdown<T> extends StatelessWidget {
           padding: const EdgeInsets.all(12),
           child: DropdownSearch<T>(
             items: items,
+            selectedItem: selItem(),
             itemAsString: (item) => itemvalueMapper(item),
             dropdownDecoratorProps: DropDownDecoratorProps(
               dropdownSearchDecoration: InputDecoration(

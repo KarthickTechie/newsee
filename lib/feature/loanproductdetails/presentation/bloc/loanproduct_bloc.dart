@@ -30,6 +30,7 @@ class LoanproductBloc extends Bloc<LoanproductEvent, LoanproductState> {
     on<LoanproductInit>(onLoanProductInit);
     on<LoanProductDropdownChange>(onLoanProductDropdownChange);
     on<ResetShowBottomSheet>(onResetShowBottomSheet);
+    on<SaveLoanProduct>(onSaveLoanProduct);
   }
 
   // set the initial data for Type Of loan Dropdown
@@ -145,6 +146,35 @@ class LoanproductBloc extends Bloc<LoanproductEvent, LoanproductState> {
         state.copyWith(
           productmasterList: productMasterList,
           showBottomSheet: true,
+        ),
+      );
+    }
+  }
+
+  Future<void> onSaveLoanProduct(SaveLoanProduct event, Emitter emit) async {
+    // emit(state.copyWith(status: SaveStatus.loading));
+    if (state.selectedProduct != null) {
+      String typeOfLoan = event.choosenProduct['typeofloan'] as String;
+      String mainCategory = event.choosenProduct['maincategory'] as String;
+      String subCategory = event.choosenProduct['subcategory'] as String;
+
+      ProductSchema productSchema = state.productSchemeList.firstWhere(
+        (p) => p.optionValue == typeOfLoan,
+      );
+      Product mainProduct = state.mainCategoryList.firstWhere(
+        (p) => p.lsfFacId == mainCategory,
+      );
+      Product subProduct = state.subCategoryList.firstWhere(
+        (p) => p.lsfFacId == subCategory,
+      );
+
+      emit(
+        state.copyWith(
+          selectedProductScheme: productSchema,
+          selectedMainCategory: mainProduct,
+          selectedSubCategoryList: subProduct,
+          selectedProduct: state.selectedProduct,
+          status: SaveStatus.success,
         ),
       );
     }

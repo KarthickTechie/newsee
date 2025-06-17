@@ -2,9 +2,9 @@
 import 'dart:convert';
 
 class Dedupe {
-  final bool existingCustomer;
-  final String cifNumber;
-  final String constitution;
+  final bool? existingCustomer;
+  final String? cifNumber;
+  final String? constitution;
   Dedupe({
     required this.existingCustomer,
     required this.cifNumber,

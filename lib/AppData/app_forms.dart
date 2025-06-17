@@ -34,4 +34,8 @@ class AppForms {
   static FormGroup CIF_DETAILS_FORM = FormGroup({
     'cifid': FormControl<String>(validators: [Validators.required]),
   });
+
+  static FormGroup CUSTOMER_TYPE_FORM = FormGroup({
+    'isNewCustomer': FormControl<bool>(validators: [Validators.required]),
+  });
 }

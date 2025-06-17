@@ -1,5 +1,10 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 // CIF Request Data Class
+
+  /*
+  @author     : gayathri.b 05/06/2025
+ @description: Represents the request payload for the lead search API.
+   */
 import 'dart:convert';
 
 import 'package:newsee/core/api/api_config.dart';
@@ -14,7 +19,7 @@ class CIFRequest {
     this.custId,
     this.uniqueId,
     required this.cifId,
-    this.type,
+    this.type, 
     this.token,
   });
   

@@ -93,14 +93,26 @@ First, it attempts to fetch the data from the local database.If no matching data
       columnValues = [event.stateCode, '0'];
     }
 
+    emit(state.copyWith(status: SaveStatus.loading));
     List<GeographyMaster> cityDistrictMaster = await GeographymasterCrudRepo(
       db,
     ).getByColumnNames(columnNames: columnNames, columnValues: columnValues);
-
     if (event.cityCode == null && cityDistrictMaster.isNotEmpty) {
-      emit(state.copyWith(cityMaster: cityDistrictMaster));
+      await Future.delayed(Duration(seconds: 3));
+      emit(
+        state.copyWith(
+          cityMaster: cityDistrictMaster,
+          status: SaveStatus.mastersucess,
+        ),
+      );
     } else if (event.cityCode != null && cityDistrictMaster.isNotEmpty) {
-      emit(state.copyWith(districtMaster: cityDistrictMaster));
+      await Future.delayed(Duration(seconds: 3));
+      emit(
+        state.copyWith(
+          districtMaster: cityDistrictMaster,
+          status: SaveStatus.mastersucess,
+        ),
+      );
     } else {
       emit(state.copyWith(status: SaveStatus.loading));
       final CityDistrictRequest citydistrictrequest;
@@ -130,7 +142,7 @@ First, it attempts to fetch the data from the local database.If no matching data
             statecityMasterCrudRepo.save(it.current);
           }
           if (event.cityCode != null) {
-            Future.delayed(Duration(seconds: 3));
+            await Future.delayed(Duration(seconds: 3));
             emit(
               state.copyWith(
                 districtMaster: cityList,
@@ -138,10 +150,28 @@ First, it attempts to fetch the data from the local database.If no matching data
               ),
             );
           } else {
-            Future.delayed(Duration(seconds: 3));
+            await Future.delayed(Duration(seconds: 3));
             emit(
               state.copyWith(
                 cityMaster: cityList,
+                status: SaveStatus.mastersucess,
+              ),
+            );
+          }
+        } else {
+          if (event.cityCode != null) {
+            await Future.delayed(Duration(seconds: 3));
+            emit(
+              state.copyWith(
+                districtMaster: <GeographyMaster>[],
+                status: SaveStatus.failure,
+              ),
+            );
+          } else {
+            await Future.delayed(Duration(seconds: 3));
+            emit(
+              state.copyWith(
+                cityMaster: <GeographyMaster>[],
                 status: SaveStatus.mastersucess,
               ),
             );

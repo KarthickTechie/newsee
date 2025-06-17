@@ -18,6 +18,8 @@
 
 part of 'loanproduct_bloc.dart';
 
+enum SaveStatus { init, loading, success, failure }
+
 class LoanproductState extends Equatable {
   final String? leadId;
   final List<ProductSchema> productSchemeList;
@@ -29,7 +31,7 @@ class LoanproductState extends Equatable {
   final List<ProductMaster> productmasterList;
   final ProductMaster? selectedProduct;
   final bool? showBottomSheet;
-
+  final SaveStatus? status;
   @override
   List<Object?> get props => [
     leadId,
@@ -41,6 +43,7 @@ class LoanproductState extends Equatable {
     selectedSubCategoryList,
     productmasterList,
     showBottomSheet,
+    status,
   ];
 
   const LoanproductState({
@@ -54,6 +57,7 @@ class LoanproductState extends Equatable {
     required this.productmasterList,
     this.selectedProduct,
     this.showBottomSheet,
+    this.status,
   });
 
   LoanproductState copyWith({
@@ -67,6 +71,7 @@ class LoanproductState extends Equatable {
     List<ProductMaster>? productmasterList,
     ProductMaster? selectedProduct,
     bool? showBottomSheet,
+    SaveStatus? status,
   }) {
     return LoanproductState(
       leadId: leadId ?? this.leadId,
@@ -81,6 +86,7 @@ class LoanproductState extends Equatable {
       productmasterList: productmasterList ?? this.productmasterList,
       selectedProduct: selectedProduct,
       showBottomSheet: showBottomSheet ?? this.showBottomSheet,
+      status: status ?? this.status,
     );
   }
 
@@ -96,6 +102,7 @@ class LoanproductState extends Equatable {
       'productmasterList': productmasterList.map((x) => x.toMap()).toList(),
       'selectedProduct': selectedProduct?.toMap(),
       'showBottomSheet': showBottomSheet,
+      'status': status,
     };
   }
 
@@ -106,6 +113,7 @@ class LoanproductState extends Equatable {
     productmasterList: [],
     selectedProduct: null,
     showBottomSheet: false,
+    status: SaveStatus.init,
   );
 
   factory LoanproductState.fromMap(Map<String, dynamic> map) {
@@ -159,6 +167,7 @@ class LoanproductState extends Equatable {
           map['showBottomSheet'] != null
               ? map['showBottomSheet'] as bool
               : null,
+      status: map['status'] != null ? map['status'] as SaveStatus : null,
     );
   }
 
