@@ -8,6 +8,7 @@ import 'package:newsee/feature/masters/domain/modal/product.dart';
 import 'package:newsee/feature/masters/domain/modal/product_master.dart';
 import 'package:newsee/feature/masters/domain/modal/productschema.dart';
 import 'package:newsee/widgets/bottom_sheet.dart';
+import 'package:newsee/widgets/dialogbox_widget.dart';
 import 'package:newsee/widgets/drop_down.dart';
 import 'package:newsee/widgets/productcard.dart';
 import 'package:newsee/widgets/searchable_drop_down.dart';
@@ -55,7 +56,6 @@ import 'package:reactive_forms/reactive_forms.dart';
 
 class Loan extends StatelessWidget {
   final String title;
-  final ValueNotifier<bool> isFormDirty = ValueNotifier<bool>(false);
   Loan({super.key, required this.title});
 
   final form = FormGroup({
@@ -63,8 +63,12 @@ class Loan extends StatelessWidget {
     'maincategory': FormControl<String>(validators: [Validators.required]),
     'subcategory': FormControl<String>(validators: [Validators.required]),
   });
+  final ValueNotifier<bool> isFormDirty = ValueNotifier<bool>(false);
+
+
   @override
   Widget build(BuildContext context) {
+
     final _context = context;
     return PopScope(
       canPop: false,
@@ -72,9 +76,14 @@ class Loan extends StatelessWidget {
         if (isFormDirty.value) {
           final shouldLeave = await showExitConfirmationDialog(context);
           if (shouldLeave ?? false) {
-                await SystemNavigator.pop();
+                          Navigator.pop(context);
+
                 // context.go('/'); // Navigate back using GoRouter
               }
+        }else{
+          
+          Navigator.pop(context);
+
         }
       },
       child: Scaffold(
@@ -84,7 +93,7 @@ class Loan extends StatelessWidget {
         ),
       body: BlocConsumer<LoanproductBloc, LoanproductState>(
           listener: (context,state){
-                      BuildContext ctxt = context;
+             BuildContext ctxt = context;
             print('LoanProductBlocListener:: log =>  ${state.showBottomSheet}');
             if (state.showBottomSheet == true) {
               openBottomSheet(
@@ -125,6 +134,8 @@ class Loan extends StatelessWidget {
       
           },
           builder: (context, state) {
+            isFormDirty.value = form.dirty;
+            print('isFormDirty.value => ${isFormDirty.value}');
             return ReactiveForm(
               formGroup: form,
               child: SafeArea(
@@ -136,11 +147,10 @@ class Loan extends StatelessWidget {
                         label: 'Type Of Loan',
                         items: state.productSchemeList,
                         onChangeListener: (ProductSchema val) {
-                           isFormDirty.value = true;
                           form.controls['typeofloan']?.updateValue(
                             val.optionValue,
                           );
-      
+                           form.markAsDirty();
                           context.read<LoanproductBloc>().add(
                             LoanProductDropdownChange(field: val),
                           );
@@ -161,11 +171,10 @@ class Loan extends StatelessWidget {
                         label: 'Main Category',
                         items: state.mainCategoryList,
                         onChangeListener: (Product val) {
-                          isFormDirty.value = true;
                           form.controls['maincategory']?.updateValue(
                             val.lsfFacId,
                           );
-      
+                          form.markAsDirty();
                           context.read<LoanproductBloc>().add(
                             LoanProductDropdownChange(field: val),
                           );
@@ -186,9 +195,8 @@ class Loan extends StatelessWidget {
                         label: 'Sub Category',
                         items: state.subCategoryList,
                         onChangeListener: (Product val) {
-                          isFormDirty.value = true;
                           form.controls['subcategory']?.updateValue(val.lsfFacId);
-      
+                            form.markAsDirty();
                           context.read<LoanproductBloc>().add(
                             LoanProductDropdownChange(field: val),
                           );
@@ -261,29 +269,4 @@ class Loan extends StatelessWidget {
   }
 }
 
-/* 
-@author   : Sandhiya A  17/06/2025
-@desc     : When user trying to navigate incase of form partially filled,show alert message to the user.
 
- */
-Future<bool?> showExitConfirmationDialog(BuildContext context) {
-    return showDialog<bool>(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: Text('Unsaved Changes'),
-          content: Text('Form not saved,Do you want to go back?'),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(false),
-              child: Text('Cancel'),
-            ),
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(true),
-              child: Text('Leave'),
-            ),
-          ],
-        );
-      },
-    );
-  }
