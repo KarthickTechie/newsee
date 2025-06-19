@@ -114,6 +114,7 @@ class LeadSubmitPage extends StatelessWidget {
           );
           PersonalData? personalData = personalState?.personalData;
           AddressData? addressData = addressState?.addressData;
+          print('addressData-------------->$addressData');
           return ListView(
             padding: const EdgeInsets.all(16),
 

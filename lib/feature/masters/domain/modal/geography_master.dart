@@ -71,15 +71,15 @@ class GeographyMaster {
     return 'GeographyMaster(stateParentId: $stateParentId, cityParentId: $cityParentId, code: $code, value: $value)';
   }
 
-  @override
-  bool operator ==(covariant GeographyMaster other) {
-    if (identical(this, other)) return true;
+  // @override
+  // bool operator ==(covariant GeographyMaster other) {
+  //   if (identical(this, other)) return true;
 
-    return other.stateParentId == stateParentId &&
-        other.cityParentId == cityParentId &&
-        other.code == code &&
-        other.value == value;
-  }
+  //   return other.stateParentId == stateParentId &&
+  //       other.cityParentId == cityParentId &&
+  //       other.code == code &&
+  //       other.value == value;
+  // }
 
   @override
   int get hashCode {
