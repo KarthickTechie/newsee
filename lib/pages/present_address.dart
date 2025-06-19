@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
+import 'package:newsee/AppData/app_forms.dart';
 import 'package:newsee/Model/address_data.dart';
 import 'package:newsee/feature/addressdetails/presentation/bloc/address_details_bloc.dart';
 import 'package:newsee/feature/loader/presentation/bloc/global_loading_bloc.dart';
@@ -13,22 +15,10 @@ import 'package:reactive_forms/reactive_forms.dart';
 
 class PresentAddress extends StatelessWidget {
   final String title;
+  final BuildContext parentContext;
+  PresentAddress({required this.title, required this.parentContext, super.key});
 
-  PresentAddress({required this.title, super.key});
-
-  final form = FormGroup({
-    'sameAsPermanent': FormControl<bool>(validators: []),
-    'addressType': FormControl<String>(validators: [Validators.required]),
-    'address1': FormControl<String>(validators: [Validators.required]),
-    'address2': FormControl<String>(validators: [Validators.required]),
-    'address3': FormControl<String>(validators: [Validators.required]),
-    'state': FormControl<String>(validators: [Validators.required]),
-    'cityDistrict': FormControl<String>(validators: [Validators.required]),
-    'area': FormControl<String>(validators: [Validators.required]),
-    'pincode': FormControl<String>(
-      validators: [Validators.required, Validators.minLength(6)],
-    ),
-  });
+  final form = AppForms.PRESENT_ADDRESS_FORM;
 
   void showSnack(BuildContext context, {required String message}) {
     ScaffoldMessenger.of(
@@ -37,10 +27,21 @@ class PresentAddress extends StatelessWidget {
   }
 
   void goToNextTab(BuildContext context) {
-    showSnack(context, message: 'Present Address Details Saved Successfully');
-    final tabController = DefaultTabController.of(context);
+    showSnack(context, message: 'Present Address Details Saved Successfully');;
+    final tabController = DefaultTabController.of(parentContext);
     if (tabController.index < tabController.length - 1) {
       tabController.animateTo(tabController.index + 1);
+    }
+  }
+
+  void mapPermanentAddress(val) {
+    try {
+      form.control('address1').updateValue(val.address1!);
+      form.control('address2').updateValue(val.address2!);
+      form.control('address3').updateValue(val.address3!);
+      form.control('pincode').updateValue(val.pincode!);
+    } catch(error) {
+      print('address.dart - mapCifResponse => $error');
     }
   }
 
@@ -66,10 +67,10 @@ class PresentAddress extends StatelessWidget {
       // ),
       body: BlocConsumer<AddressDetailsBloc, AddressDetailsState>(
         listener: (context, state) {
-          print(
-            'PresentAddress detail::BlocConsumer:listen => ${state.lovList} ${state.addressData} ${state.status?.name}',
-          );
-          if (state.status == SaveStatus.success) {
+          // print(
+          //   'PresentAddress detail::BlocConsumer:listen => ${state.lovList} ${state.addressData} ${state.status?.name}',
+          // );
+          if (state.status == SaveStatus.success && state.presentAddrData != null && state.addressData != null) {
             goToNextTab(context);
           }
           if (state.status == SaveStatus.mastersucess ||
@@ -78,8 +79,17 @@ class PresentAddress extends StatelessWidget {
           }
         },
         builder: (context, state) {
-          if (state.cityMaster != null && state.cityMaster!.isEmpty) {
+          if (state.status == null) {
+            form.reset();
+          }
+          if (state.presentCityMaster != null && state.presentCityMaster!.isEmpty) {
             form.controls['city']?.updateValue(null);
+          }
+          if (state.status == SaveStatus.copy && state.presentAddrData != null) {
+            mapPermanentAddress(state.addressData);
+          } else if(state.status == SaveStatus.presenttreset) {
+            print("form try to reset here");
+            form.reset();
           }
           return Stack(
             alignment: Alignment.topLeft,
@@ -100,6 +110,10 @@ class PresentAddress extends StatelessWidget {
                                 padding: const EdgeInsets.only(bottom: 20),
                                 child: ReactiveCheckbox(
                                   formControlName: 'sameAsPermanent',
+                                  onChanged: (control) {
+                                    print("check box change value is => ${control.value}");
+                                    context.read<AddressDetailsBloc>().add(SameAsPermanentInPresentEvent(sameAspresent: control.value));
+                                  },
                                 ),
                               ),  
                               Padding(
@@ -121,12 +135,17 @@ class PresentAddress extends StatelessWidget {
                               (Lov val) => form.controls['addressType']
                                   ?.updateValue(val.optvalue),
                           selItem: () {
-                            if (state.addressData != null) {
+                            if (state.status == SaveStatus.presenttreset) {
+                              form.controls['addressType']
+                                  ?.updateValue(null);
+                              return null;
+                            }
+                            else if (state.presentAddrData != null) {
                               Lov? lov = state.lovList?.firstWhere(
                                 (lov) =>
                                     lov.Header == 'AddressType' &&
                                     lov.optvalue ==
-                                        state.addressData?.addressType,
+                                        state.presentAddrData?.addressType,
                               );
                               form.controls['addressType']?.updateValue(
                                 lov?.optvalue,
@@ -163,15 +182,36 @@ class PresentAddress extends StatelessWidget {
                               ShowLoading(message: "Fetching city..."),
                             );
                             context.read<AddressDetailsBloc>().add(
-                              OnStateCityChangeEvent(stateCode: val.code),
+                              OnPresentStateCityChangeEvent(stateCode: val.code),
                             );
                           },
-                          selItem: () => null,
+                          selItem: () {
+                            if (state.status == SaveStatus.copy && state.presentAddrData != null) {
+                              var statename = state.presentAddrData?.state;
+                              print("statename is $statename");
+                              GeographyMaster? statedata = state.stateCityMaster?.firstWhere(
+                                (lov) =>
+                                    lov.code == statename
+                              );
+                              print("personalAddress-stateData => $statedata");
+                              form.controls['state']?.updateValue(
+                                statedata?.value,
+                              );
+                              return statedata;
+                            } else if (state.status == SaveStatus.presenttreset){
+                              form.controls['state']?.updateValue(
+                                null
+                              );
+                              return null;
+                            } else  {
+                              return null;
+                            }
+                          },
                         ),
                         SearchableDropdown(
                           controlName: 'cityDistrict',
                           label: 'City',
-                          items: state.cityMaster!,
+                          items: state.presentCityMaster!,
                           onChangeListener: (GeographyMaster val) {
                             form.controls['cityDistrict']?.updateValue(
                               val.code,
@@ -180,23 +220,62 @@ class PresentAddress extends StatelessWidget {
                               ShowLoading(message: "Fetching district..."),
                             );
                             context.read<AddressDetailsBloc>().add(
-                              OnStateCityChangeEvent(
+                              OnPresentStateCityChangeEvent(
                                 stateCode:
                                     form.controls['state']?.value as String,
                                 cityCode: val.code,
                               ),
                             );
                           },
-                          selItem: () => null,
+                          selItem: () {
+                            if (state.status == SaveStatus.copy && state.presentAddrData != null) {
+                              String? cityname = state.presentAddrData?.cityDistrict;
+                              print("cityname is $cityname");
+                              GeographyMaster? citydata = state.presentCityMaster?.firstWhere(
+                                (lov) =>
+                                    lov.code == cityname
+                              );
+                              print("personalAddress-citydata => $citydata");
+                              form.controls['cityDistrict']?.updateValue(
+                                citydata?.value as String
+                              );
+                              return citydata;
+                            } else if (state.status == SaveStatus.presenttreset){
+                              form.controls['cityDistrict']?.updateValue(
+                                null
+                              );
+                              return null;
+                            } else  {
+                              return null;
+                            }
+                          },
                         ),
                         SearchableDropdown(
                           controlName: 'area',
                           label: 'District',
-                          items: state.districtMaster!,
+                          items: state.presentDistrictMaster!,
                           onChangeListener: (GeographyMaster val) {
                             form.controls['area']?.updateValue(val.code);
                           },
-                          selItem: () => null,
+                          selItem: () {
+                            if (state.status == SaveStatus.copy && state.presentAddrData != null) {
+                              GeographyMaster? statedata = state.presentDistrictMaster?.firstWhere(
+                                (lov) =>
+                                    lov.code == state.presentAddrData?.area
+                              );
+                              form.controls['area']?.updateValue(
+                                statedata?.code,
+                              );
+                              return statedata;
+                            } else if (state.status == SaveStatus.presenttreset){
+                              form.controls['area']?.updateValue(
+                                null
+                              );
+                              return null;
+                            } else {
+                              return null;
+                            }
+                          },
                         ),
                         IntegerTextField(
                           controlName: 'pincode',
@@ -226,12 +305,12 @@ class PresentAddress extends StatelessWidget {
                                 "PresentAddress Details value ${form.value}",
                               );
                               if (form.valid) {
-                                AddressData addressData = AddressData.fromMap(
+                                AddressData presentAddressData = AddressData.fromMap(
                                   form.value,
                                 );
                                 context.read<AddressDetailsBloc>().add(
-                                  AddressDetailsSaveEvent(
-                                    addressData: addressData,
+                                  PresentAddressDetailsSaveEvent(
+                                    presentaddressData: presentAddressData,
                                   ),
                                 );
                               } else {

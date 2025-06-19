@@ -39,13 +39,13 @@ class SearchableDropdown<T> extends StatelessWidget {
 
   String itemvalueMapper(T item) {
     if (item is ProductSchema) {
-      return item.optionDesc;
+      return item.optionDesc.toString();
     } else if (item is Product) {
-      return item.lsfFacDesc;
+      return item.lsfFacDesc.toString();
     } else if (item is Lov) {
-      return item.optDesc;
+      return item.optDesc.toString();
     } else if (item is GeographyMaster) {
-      return item.value;
+      return item.value.toString();
     } else {
       return '';
     }

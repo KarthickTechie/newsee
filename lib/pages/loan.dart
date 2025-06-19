@@ -90,12 +90,17 @@ class Loan extends StatelessWidget {
                       child: InkWell(
                         // card widget for showing products
                         onTap: () {
-                          ProductMaster selectedProduct = product;
-                          ctxt.read<LoanproductBloc>().add(
-                            ResetShowBottomSheet(
-                              selectedProduct: selectedProduct,
-                            ),
-                          );
+                          try {
+                            ProductMaster selectedProduct = product;
+                            ctxt.read<LoanproductBloc>().add(
+                              ResetShowBottomSheet(
+                                selectedProduct: selectedProduct,
+                              ),
+                            );
+                          } catch(error) {
+                            print("bottom sheet product select catch error $error");
+                          }
+                          
                         },
                         child: ProductCard(
                           productId: product.prdCode,

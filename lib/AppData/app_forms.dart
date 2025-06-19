@@ -47,4 +47,31 @@ class AppForms {
     'constitution': FormControl<String>(validators: [Validators.required]),
     'isNewCustomer': FormControl<bool>(validators: [Validators.required]),
   });
+
+  static FormGroup PERMANENT_ADDRESS_FORM = FormGroup({
+    'addressType': FormControl<String>(validators: [Validators.required]),
+    'address1': FormControl<String>(validators: [Validators.required]),
+    'address2': FormControl<String>(validators: [Validators.required]),
+    'address3': FormControl<String>(validators: [Validators.required]),
+    'state': FormControl<String>(validators: [Validators.required]),
+    'cityDistrict': FormControl<String>(validators: [Validators.required]),
+    'area': FormControl<String>(validators: [Validators.required]),
+    'pincode': FormControl<String>(
+      validators: [Validators.required, Validators.minLength(6)],
+    ),
+  });
+
+  static FormGroup PRESENT_ADDRESS_FORM = FormGroup({
+    'sameAsPermanent': FormControl<bool>(validators: []),
+    'addressType': FormControl<String>(validators: [Validators.required]),
+    'address1': FormControl<String>(validators: [Validators.required]),
+    'address2': FormControl<String>(validators: [Validators.required]),
+    'address3': FormControl<String>(validators: [Validators.required]),
+    'state': FormControl<String>(validators: [Validators.required]),
+    'cityDistrict': FormControl<String>(validators: [Validators.required]),
+    'area': FormControl<String>(validators: [Validators.required]),
+    'pincode': FormControl<String>(
+      validators: [Validators.required, Validators.minLength(6)],
+    ),
+  });
 }

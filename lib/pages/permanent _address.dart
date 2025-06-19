@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:newsee/AppData/app_forms.dart';
 import 'package:newsee/Model/address_data.dart';
+import 'package:newsee/Utils/utils.dart';
+import 'package:newsee/feature/aadharvalidation/domain/modal/aadharvalidate_response.dart';
 import 'package:newsee/feature/addressdetails/presentation/bloc/address_details_bloc.dart';
+import 'package:newsee/feature/cif/domain/model/user/cif_response.dart';
+import 'package:newsee/feature/dedupe/presentation/bloc/dedupe_bloc.dart';
 import 'package:newsee/feature/loader/presentation/bloc/global_loading_bloc.dart';
 import 'package:newsee/feature/loader/presentation/bloc/global_loading_event.dart';
 import 'package:newsee/feature/masters/domain/modal/geography_master.dart';
@@ -16,18 +21,7 @@ class PermanentAddress extends StatelessWidget {
 
   PermanentAddress({required this.title, super.key});
   
-  final form = FormGroup({
-    'addressType': FormControl<String>(validators: [Validators.required]),
-    'address1': FormControl<String>(validators: [Validators.required]),
-    'address2': FormControl<String>(validators: [Validators.required]),
-    'address3': FormControl<String>(validators: [Validators.required]),
-    'state': FormControl<String>(validators: [Validators.required]),
-    'cityDistrict': FormControl<String>(validators: [Validators.required]),
-    'area': FormControl<String>(validators: [Validators.required]),
-    'pincode': FormControl<String>(
-      validators: [Validators.required, Validators.minLength(6)],
-    ),
-  });
+  final form = AppForms.PERMANENT_ADDRESS_FORM;
 
   void showSnack(BuildContext context, {required String message}) {
     ScaffoldMessenger.of(
@@ -40,6 +34,45 @@ class PermanentAddress extends StatelessWidget {
     final tabController = DefaultTabController.of(context);
     if (tabController.index < tabController.length - 1) {
       tabController.animateTo(tabController.index + 1);
+    }
+  }
+
+  void mapCifResponse(CifResponse val, FormGroup form) {
+    try {
+      form.control('address1').updateValue(val.lleadaddress!);
+      form.control('address2').updateValue(val.lleadaddresslane1!);
+      form.control('address3').updateValue(val.lleadaddresslane2!);
+      form.control('pincode').updateValue(val.lleadpinno!);
+    } catch(error) {
+      print('address.dart - mapCifResponse => $error');
+    }
+  }
+
+  void mapAadhaarResponse(AadharvalidateResponse val, FormGroup form) {
+    try {
+      String fullAddress = '${val.house} ${val.street} ${val.locality} ${val.vtcName} ${val.postOfficeName}';
+      print("fullAddress $fullAddress");
+      print("fullAddresslength ${fullAddress.length}");
+      String? lineOne = addressSplit(fullAddress);
+      print("lineOne $lineOne");
+      print("lineOne.length ${lineOne!.length}");
+      form.control('address1').updateValue(lineOne);
+      String? lineTwo = addressSplit(fullAddress.substring(lineOne.length));
+      print("lineTwo $lineTwo");
+      print("lineTwo.length ${lineTwo!.length}");
+      form.control('address2').updateValue(lineTwo);
+      int twolinelength = lineOne.length + lineTwo.length + 1;
+      print("twolinelength $twolinelength");
+      if (fullAddress.length > twolinelength) {
+        String? lineThree = addressSplit(
+          fullAddress.substring(lineOne.length + lineTwo.length),
+        );
+        print("lineThree $lineThree");
+        form.control('address3').updateValue(lineThree);
+      }
+      form.control('pincode').updateValue(val.pincode);
+    } catch(error) {
+      print('address.dart - mapCifResponse => $error');
     }
   }
 
@@ -56,7 +89,7 @@ class PermanentAddress extends StatelessWidget {
           print(
             'permanentAddress::BlocConsumer:listen => ${state.lovList} ${state.addressData} ${state.status?.name}',
           );
-          if (state.status == SaveStatus.success) {
+          if (state.status == SaveStatus.permanentsave && state.addressData != null) {
             goToNextTab(context);
           }
           if (state.status == SaveStatus.mastersucess ||
@@ -65,8 +98,22 @@ class PermanentAddress extends StatelessWidget {
           }
         },
         builder: (context, state) {
+          DedupeState? dedupeState;
+          if (state.status == null) {
+            form.reset();
+          }
           if (state.cityMaster != null && state.cityMaster!.isEmpty) {
             form.controls['city']?.updateValue(null);
+          }
+          if (state.status == SaveStatus.init) {
+            dedupeState = context.watch<DedupeBloc>().state;
+            if (dedupeState.cifResponse != null) {
+              CifResponse cifResponse =  dedupeState.cifResponse!;
+              mapCifResponse(cifResponse, form);
+            } else if (dedupeState.aadharvalidateResponse != null) {
+              AadharvalidateResponse aadhaarResponse = dedupeState.aadharvalidateResponse!;
+              mapAadhaarResponse(aadhaarResponse, form);
+            }
           }
           return Stack(
             alignment: Alignment.topLeft,

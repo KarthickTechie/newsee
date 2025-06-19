@@ -74,6 +74,7 @@ class LoanproductBloc extends Bloc<LoanproductEvent, LoanproductState> {
     ResetShowBottomSheet event,
     Emitter emit,
   ) async {
+    print("successfully came to onresetshowbottonsheet, ${event.selectedProduct}");
     emit(
       state.copyWith(
         selectedProduct: event.selectedProduct,

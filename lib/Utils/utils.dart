@@ -39,6 +39,35 @@ String getCorrectDateFormat(dynamic value) {
   }
 }
 
+// Split Aadhaar Address String more than 40 digit and return string data
+String? addressSplit(String str) {
+  try {
+    if (str == "") {
+      return str;
+    } else {
+      if (str[0] == " ") {
+        str = str.trim();
+      }
+      // let first = str.substring(0, 40).lastIndexOf(',')
+      String? line1;
+      if (str.length < 40) {
+        line1 = str;
+      } else {
+        final first = str.substring(0, 40).lastIndexOf(' ');
+        if (first < 0) {
+          line1 = str.substring(0);
+        } else {
+          line1 = str.substring(0, first + 1);
+        }
+      }
+      return line1;
+    }
+  } catch (error) {
+    print("error catching $error");
+    return null;
+  }
+}
+
 void showSnack(BuildContext context, {required String message}) {
   ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
 }

@@ -12,6 +12,7 @@ import 'package:newsee/pages/address.dart';
 import 'package:newsee/pages/lead_submit_page.dart';
 import 'package:newsee/pages/loan.dart';
 import 'package:newsee/pages/personal.dart';
+import 'package:newsee/widgets/address_tab_bar.dart';
 import 'package:newsee/widgets/side_navigation.dart';
 
 class NewLeadPage extends StatelessWidget {
@@ -38,7 +39,7 @@ class NewLeadPage extends StatelessWidget {
               (context) =>
                   AddressDetailsBloc()
                     ..add(AddressDetailsInitEvent(cifResponseModel: null)),
-          lazy: false,
+                  lazy: false,
         ),
         BlocProvider(create: (context) => DedupeBloc()),
         BlocProvider(create: (context) => LeadSubmitBloc()),
@@ -77,7 +78,7 @@ class NewLeadPage extends StatelessWidget {
               Loan(title: 'loan'),
               DedupeView(title: 'dedupe'),
               Personal(title: 'personal'),
-              Address(title: 'address'),
+              AddressTabBar(title: 'address'),
               LeadSubmitPage(title: 'Lead Details'),
             ],
           ),

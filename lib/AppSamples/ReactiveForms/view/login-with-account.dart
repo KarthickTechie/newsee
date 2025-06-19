@@ -8,9 +8,13 @@ import 'package:newsee/AppSamples/ReactiveForms/view/loginwithblocprovider.dart'
 import 'package:newsee/Model/login_request.dart';
 import 'package:newsee/Utils/masterversioncheck.dart';
 import 'package:newsee/core/api/AsyncResponseHandler.dart';
+import 'package:newsee/core/db/db_config.dart';
+import 'package:newsee/feature/auth/domain/model/local_auth_model.dart';
+import 'package:newsee/feature/auth/domain/repository/local_auth_master_repo.dart';
 import 'package:newsee/feature/auth/presentation/bloc/auth_bloc.dart';
 import 'package:newsee/feature/masters/domain/modal/master_version.dart';
 import 'package:reactive_forms/reactive_forms.dart';
+import 'package:sqflite/sqlite_api.dart';
 
 /*
 
@@ -29,6 +33,7 @@ void loginActionSheet(BuildContext context) {
 
   final double screenwidth = MediaQuery.of(context).size.width;
   final double screenheight = MediaQuery.of(context).size.height;
+  
 
   showCupertinoModalPopup(
     context: context,
@@ -55,6 +60,14 @@ void loginActionSheet(BuildContext context) {
   );
 }
 
+setBioMetricStatus() async {
+  Database db = await DBConfig().database;
+  LocalAuthMasterRepo localauthRepo = LocalAuthMasterRepo(db);
+  LocalAuthModel localAuthModel = LocalAuthModel(
+    status: 'true'
+  );
+  localauthRepo.save(localAuthModel);
+}
 class LoginpageWithAC extends StatelessWidget {
   const LoginpageWithAC({super.key});
 
@@ -64,6 +77,7 @@ class LoginpageWithAC extends StatelessWidget {
 
     login(AuthState state) {
       if (loginFormgroup.valid) {
+        setBioMetricStatus();
         context.read<AuthBloc>().add(
           LoginWithAccount(
             loginRequest: LoginRequest(

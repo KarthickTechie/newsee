@@ -16,10 +16,8 @@ import 'package:newsee/feature/addressdetails/domain/repository/cityrepository.d
 import 'package:newsee/feature/cif/domain/model/user/cif_response_model.dart';
 import 'package:newsee/feature/masters/domain/modal/geography_master.dart';
 import 'package:newsee/feature/masters/domain/modal/lov.dart';
-import 'package:newsee/feature/masters/domain/modal/statecitymaster.dart';
 import 'package:newsee/feature/masters/domain/repository/geographymaster_crud_repo.dart';
 import 'package:newsee/feature/masters/domain/repository/lov_crud_repo.dart';
-import 'package:newsee/feature/masters/domain/repository/statecity_master_crud_repo.dart';
 import 'package:sqflite/sqlite_api.dart';
 
 part './address_details_event.dart';
@@ -31,7 +29,9 @@ final class AddressDetailsBloc
     on<AddressDetailsInitEvent>(initAddressDetails);
     on<AddressDetailsSaveEvent>(saveAddressDetails);
     on<OnStateCityChangeEvent>(getCityListBasedOnState);
-    // on<OnStateCityChangeEvent>(getDisctrictListBasedOnCity);
+    on<OnPresentStateCityChangeEvent>(getPresentCityListBasedOnState);
+    on<PresentAddressDetailsSaveEvent>(savePresentAddressDetails);
+    on<SameAsPermanentInPresentEvent>(sameAsPermanentFetch);
   }
 
   Future<void> initAddressDetails(
@@ -62,10 +62,23 @@ final class AddressDetailsBloc
     AddressDetailsSaveEvent event,
     Emitter emit,
   ) async {
-    print('Address Data => ${event.addressData}');
+    print('Permanent Address Data Saving Bloc => ${event.addressData}');
     emit(
       state.copyWith(
         addressData: event.addressData,
+        status: SaveStatus.permanentsave,
+      ),
+    );
+  }
+
+  Future<void> savePresentAddressDetails(
+    PresentAddressDetailsSaveEvent event,
+    Emitter emit,
+  ) async {
+    print('Present Address Data Saving Bloc => ${event.presentaddressData}');
+    emit(
+      state.copyWith(
+        presentAddrData: event.presentaddressData,
         status: SaveStatus.success,
       ),
     );
@@ -180,6 +193,144 @@ First, it attempts to fetch the data from the local database.If no matching data
       } else {
         emit(state.copyWith(status: SaveStatus.failure));
       }
+    }
+  }
+
+
+  /* 
+@author   : Rajesh. S  12/06/2025
+@Desc     :Handles fetching the city list and district list based on the state and optionally the city code.
+First, it attempts to fetch the data from the local database.If no matching data is found locally,
+ it fetches data from the server. The fetched data is then stored in the local database.
+ */
+  Future<void> getPresentCityListBasedOnState(
+    OnPresentStateCityChangeEvent event,
+    Emitter emit,
+  ) async {
+    Database db = await DBConfig().database;
+    List<String> columnNames = [
+      TableKeysGeographyMaster.stateId,
+      TableKeysGeographyMaster.cityId,
+    ];
+    List<String> columnValues;
+    if (event.cityCode != null) {
+      columnValues = [event.stateCode, event.cityCode ?? '0'];
+    } else {
+      columnValues = [event.stateCode, '0'];
+    }
+
+    emit(state.copyWith(status: SaveStatus.loading));
+    List<GeographyMaster> cityDistrictMaster = await GeographymasterCrudRepo(
+      db,
+    ).getByColumnNames(columnNames: columnNames, columnValues: columnValues);
+    if (event.cityCode == null && cityDistrictMaster.isNotEmpty) {
+      await Future.delayed(Duration(seconds: 3));
+      emit(
+        state.copyWith(
+          presentCityMaster: cityDistrictMaster,
+          status: SaveStatus.mastersucess,
+        ),
+      );
+    } else if (event.cityCode != null && cityDistrictMaster.isNotEmpty) {
+      await Future.delayed(Duration(seconds: 3));
+      emit(
+        state.copyWith(
+          presentDistrictMaster: cityDistrictMaster,
+          status: SaveStatus.mastersucess,
+        ),
+      );
+    } else {
+      emit(state.copyWith(status: SaveStatus.loading));
+      final CityDistrictRequest citydistrictrequest;
+      Cityrepository cityrepository = CitylistRepoImpl();
+      AsyncResponseHandler<Failure, dynamic> responseHandler;
+      if (event.cityCode != null) {
+        citydistrictrequest = CityDistrictRequest(
+          stateCode: event.stateCode,
+          cityCode: event.cityCode,
+        );
+        responseHandler = await cityrepository.fetchCityList(
+          citydistrictrequest,
+        );
+      } else {
+        citydistrictrequest = CityDistrictRequest(stateCode: event.stateCode);
+        responseHandler = await cityrepository.fetchCityList(
+          citydistrictrequest,
+        );
+      }
+      if (responseHandler.isRight()) {
+        List<GeographyMaster> cityList = responseHandler.right;
+        if (cityList.isNotEmpty) {
+          Iterator<GeographyMaster> it = cityList.iterator;
+          GeographymasterCrudRepo statecityMasterCrudRepo =
+              GeographymasterCrudRepo(db);
+          while (it.moveNext()) {
+            statecityMasterCrudRepo.save(it.current);
+          }
+          if (event.cityCode != null) {
+            await Future.delayed(Duration(seconds: 3));
+            emit(
+              state.copyWith(
+                presentDistrictMaster: cityList,
+                status: SaveStatus.mastersucess,
+              ),
+            );
+          } else {
+            await Future.delayed(Duration(seconds: 3));
+            emit(
+              state.copyWith(
+                presentCityMaster: cityList,
+                status: SaveStatus.mastersucess,
+              ),
+            );
+          }
+        } else {
+          if (event.cityCode != null) {
+            await Future.delayed(Duration(seconds: 3));
+            emit(
+              state.copyWith(
+                presentDistrictMaster: <GeographyMaster>[],
+                status: SaveStatus.failure,
+              ),
+            );
+          } else {
+            await Future.delayed(Duration(seconds: 3));
+            emit(
+              state.copyWith(
+                presentCityMaster: <GeographyMaster>[],
+                status: SaveStatus.mastersucess,
+              ),
+            );
+          }
+        }
+      } else {
+        emit(state.copyWith(status: SaveStatus.failure));
+      }
+    }
+  }
+
+  Future<void> sameAsPermanentFetch(
+    SameAsPermanentInPresentEvent event,
+    Emitter emit
+  ) async {
+    if (event.sameAspresent == true) {
+      emit(
+        state.copyWith(
+          status: SaveStatus.copy,
+          presentAddrData: state.addressData,
+          presentCityMaster: state.cityMaster,
+          presentDistrictMaster: state.districtMaster
+        ),
+      );
+    } else {
+      emit(
+        state.copyWith(
+          status: SaveStatus.presenttreset,
+          presentAddrData: null,
+          presentCityMaster: [],
+          presentDistrictMaster: []
+        ),
+      );
     }
   }
 

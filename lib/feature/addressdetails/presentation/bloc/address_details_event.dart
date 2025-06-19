@@ -24,6 +24,22 @@ class OnStateCityChangeEvent extends AddressDetailsEvent {
   OnStateCityChangeEvent({required this.stateCode, this.cityCode});
 }
 
+class OnPresentStateCityChangeEvent extends AddressDetailsEvent {
+  final String stateCode;
+  final String? cityCode;
+  OnPresentStateCityChangeEvent({required this.stateCode, this.cityCode});
+}
+
+class PresentAddressDetailsSaveEvent extends AddressDetailsEvent {
+  final AddressData? presentaddressData;
+  PresentAddressDetailsSaveEvent({required this.presentaddressData});
+}
+
+class SameAsPermanentInPresentEvent extends AddressDetailsEvent {
+  final bool? sameAspresent;
+  SameAsPermanentInPresentEvent({this.sameAspresent});
+}
+
 // class OnCityChangeEvent<T> extends AddressDetailsEvent {
 //   final T stateCode;
 //   final T cityCode;
