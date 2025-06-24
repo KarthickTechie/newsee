@@ -8,7 +8,7 @@
 
 part of 'dedupe_bloc.dart';
 
-enum DedupeFetchStatus { init, loading, success, failure }
+enum DedupeFetchStatus { init, loading, change, success, failure }
 
 class DedupeState extends Equatable {
   final DedupeFetchStatus? status;

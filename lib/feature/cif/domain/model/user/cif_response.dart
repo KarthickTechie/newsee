@@ -166,7 +166,8 @@ class CifResponse {
 
   Map<String, dynamic> toJson() => _$CifResponseToJson(this);
 
-  factory CifResponse.fromJson(Map<String, dynamic> source) => _$CifResponseFromJson(source);
+  factory CifResponse.fromJson(Map<String, dynamic> source) =>
+      _$CifResponseFromJson(source);
 
   @override
   String toString() {
@@ -176,57 +177,56 @@ class CifResponse {
   @override
   bool operator ==(covariant CifResponse other) {
     if (identical(this, other)) return true;
-  
-    return 
-      other.lleadtitle == lleadtitle &&
-      other.lleadfrstname == lleadfrstname &&
-      other.lleadmidname == lleadmidname &&
-      other.lleadlastname == lleadlastname &&
-      other.lleademailid == lleademailid &&
-      other.lleaddob == lleaddob &&
-      other.lleadmobno == lleadmobno &&
-      other.lleadpanno == lleadpanno &&
-      other.lleadadharno == lleadadharno &&
-      other.lleadaddress == lleadaddress &&
-      other.lleadaddresslane1 == lleadaddresslane1 &&
-      other.lleadaddresslane2 == lleadaddresslane2 &&
-      other.lleadstate == lleadstate &&
-      other.lleadcity == lleadcity &&
-      other.lleadpinno == lleadpinno &&
-      other.lldCbsid == lldCbsid &&
-      other.lldGender == lldGender &&
-      other.lldFatherName == lldFatherName &&
-      other.lldMotherName == lldMotherName &&
-      other.lldReligion == lldReligion &&
-      other.lldCaste == lldCaste &&
-      other.lldMaritialStatus == lldMaritialStatus &&
-      other.lleadResidentStatus == lleadResidentStatus;
+
+    return other.lleadtitle == lleadtitle &&
+        other.lleadfrstname == lleadfrstname &&
+        other.lleadmidname == lleadmidname &&
+        other.lleadlastname == lleadlastname &&
+        other.lleademailid == lleademailid &&
+        other.lleaddob == lleaddob &&
+        other.lleadmobno == lleadmobno &&
+        other.lleadpanno == lleadpanno &&
+        other.lleadadharno == lleadadharno &&
+        other.lleadaddress == lleadaddress &&
+        other.lleadaddresslane1 == lleadaddresslane1 &&
+        other.lleadaddresslane2 == lleadaddresslane2 &&
+        other.lleadstate == lleadstate &&
+        other.lleadcity == lleadcity &&
+        other.lleadpinno == lleadpinno &&
+        other.lldCbsid == lldCbsid &&
+        other.lldGender == lldGender &&
+        other.lldFatherName == lldFatherName &&
+        other.lldMotherName == lldMotherName &&
+        other.lldReligion == lldReligion &&
+        other.lldCaste == lldCaste &&
+        other.lldMaritialStatus == lldMaritialStatus &&
+        other.lleadResidentStatus == lleadResidentStatus;
   }
 
   @override
   int get hashCode {
     return lleadtitle.hashCode ^
-      lleadfrstname.hashCode ^
-      lleadmidname.hashCode ^
-      lleadlastname.hashCode ^
-      lleademailid.hashCode ^
-      lleaddob.hashCode ^
-      lleadmobno.hashCode ^
-      lleadpanno.hashCode ^
-      lleadadharno.hashCode ^
-      lleadaddress.hashCode ^
-      lleadaddresslane1.hashCode ^
-      lleadaddresslane2.hashCode ^
-      lleadstate.hashCode ^
-      lleadcity.hashCode ^
-      lleadpinno.hashCode ^
-      lldCbsid.hashCode ^
-      lldGender.hashCode ^
-      lldFatherName.hashCode ^
-      lldMotherName.hashCode ^
-      lldReligion.hashCode ^
-      lldCaste.hashCode ^
-      lldMaritialStatus.hashCode ^
-      lleadResidentStatus.hashCode;
+        lleadfrstname.hashCode ^
+        lleadmidname.hashCode ^
+        lleadlastname.hashCode ^
+        lleademailid.hashCode ^
+        lleaddob.hashCode ^
+        lleadmobno.hashCode ^
+        lleadpanno.hashCode ^
+        lleadadharno.hashCode ^
+        lleadaddress.hashCode ^
+        lleadaddresslane1.hashCode ^
+        lleadaddresslane2.hashCode ^
+        lleadstate.hashCode ^
+        lleadcity.hashCode ^
+        lleadpinno.hashCode ^
+        lldCbsid.hashCode ^
+        lldGender.hashCode ^
+        lldFatherName.hashCode ^
+        lldMotherName.hashCode ^
+        lldReligion.hashCode ^
+        lldCaste.hashCode ^
+        lldMaritialStatus.hashCode ^
+        lleadResidentStatus.hashCode;
   }
 }

@@ -6,13 +6,9 @@ class AppConstants {
     r'[\*\%!$\^.,;:{}\(\)\-_+=\[\]]',
   );
 
-  static final RegExp PAN_PATTERN = RegExp(
-    r'^[A-Z]{5}[0-9]{4}[A-Z]$'
-  );
+  static final RegExp PAN_PATTERN = RegExp(r'^[A-Z]{5}[0-9]{4}[A-Z]$');
 
-  static final RegExp AADHAAR_PATTERN = RegExp(
-    '[0-9]{12}',
-  );
+  static final RegExp AADHAAR_PATTERN = RegExp('[0-9]{12}');
 
   static final RegExp PATTER_ONLYALPHABET = RegExp(r'(\w+)');
 }
@@ -28,4 +24,14 @@ class FilePickingOptionList {
   final IconData icon;
   final String title;
   FilePickingOptionList({required this.icon, required this.title});
+}
+
+enum SaveStatus {
+  init,
+  loading,
+  success,
+  failure,
+  update,
+  mastersucess,
+  masterfailure,
 }

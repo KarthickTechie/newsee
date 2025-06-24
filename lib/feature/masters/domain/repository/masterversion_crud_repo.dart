@@ -4,16 +4,16 @@ import 'package:newsee/feature/masters/domain/modal/master_version.dart';
 import 'package:newsee/feature/masters/domain/repository/simple_crud_repo.dart';
 import 'package:sqflite/sqflite.dart';
 
-class MasterversionCrudRepo extends SimpleCrudRepo<MasterVersion>{
+class MasterversionCrudRepo extends SimpleCrudRepo<MasterVersion> {
   final Database _db;
 
   MasterversionCrudRepo(this._db);
-  
+
   @override
   Future<int> delete(MasterVersion o) {
     throw UnimplementedError();
   }
-  
+
   @override
   Future<int> save(MasterVersion o) async {
     return _db.transaction((txn) async {
@@ -24,7 +24,7 @@ class MasterversionCrudRepo extends SimpleCrudRepo<MasterVersion>{
       );
     });
   }
-  
+
   @override
   Future<int> update(MasterVersion o) async {
     return await _db.transaction((txn) async {
@@ -39,10 +39,13 @@ class MasterversionCrudRepo extends SimpleCrudRepo<MasterVersion>{
 
   @override
   Future<List<MasterVersion>> getAll() async {
-    final List<Map<String, dynamic>> data =  await _db.query(
+    final List<Map<String, dynamic>> data = await _db.query(
       TableKeyMasterversion.tableName,
       orderBy: "id DESC",
     );
-    return List.generate(data.length, (index) => MasterVersion.fromMap(data[index]));
+    return List.generate(
+      data.length,
+      (index) => MasterVersion.fromMap(data[index]),
+    );
   }
 }

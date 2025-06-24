@@ -14,10 +14,10 @@ import 'package:newsee/blocs/camera/camera_state.dart';
  */
 class CameraBloc extends Bloc<CameraEvent, CameraState> {
   CameraController? controller;
-  Uint8List?  imageBytes;
+  Uint8List? imageBytes;
   late List<CameraDescription> cameras;
 
-  CameraBloc(): super(CameraIntialize()) {
+  CameraBloc() : super(CameraIntialize()) {
     on<CameraOpen>(camerainit);
     on<CameraLensChange>(camerachange);
     on<FlashModeChange>(cameraflash);
@@ -31,7 +31,11 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
     emit(CameraIntialize());
     try {
       cameras = await availableCameras();
-      controller = CameraController(cameras[0], ResolutionPreset.ultraHigh, enableAudio: false);
+      controller = CameraController(
+        cameras[0],
+        ResolutionPreset.ultraHigh,
+        enableAudio: false,
+      );
       await controller?.initialize();
       emit(CameraRun(controller!));
     } catch (error) {
@@ -44,25 +48,25 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
     final lendir = controller?.description.lensDirection;
     print("lendir $lendir");
     if (lendir == CameraLensDirection.back) {
-      final camerasetup = cameras.firstWhere((camera) => 
-        camera.lensDirection == CameraLensDirection.front, 
-        orElse: () => cameras.first
+      final camerasetup = cameras.firstWhere(
+        (camera) => camera.lensDirection == CameraLensDirection.front,
+        orElse: () => cameras.first,
       );
       controller?.setDescription(camerasetup);
       controller?.initialize();
       emit(CameraRun(controller!));
     } else if (lendir == CameraLensDirection.front) {
-      final camerasetup =  cameras.firstWhere((camera) => 
-        camera.lensDirection == CameraLensDirection.back,
-        orElse: () => cameras.first
+      final camerasetup = cameras.firstWhere(
+        (camera) => camera.lensDirection == CameraLensDirection.back,
+        orElse: () => cameras.first,
       );
       controller?.setDescription(camerasetup);
       controller?.initialize();
       emit(CameraRun(controller!));
     } else {
-      final camerasetup = cameras.firstWhere((camera) => 
-        camera.lensDirection == CameraLensDirection.front,
-        orElse: () => cameras.first
+      final camerasetup = cameras.firstWhere(
+        (camera) => camera.lensDirection == CameraLensDirection.front,
+        orElse: () => cameras.first,
       );
       controller?.setDescription(camerasetup);
       controller?.initialize();
@@ -80,7 +84,6 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
       await controller?.setFlashMode(FlashMode.torch);
       emit(CameraRun(controller!));
     }
-    
   }
 
   // It performs Capturing Image
@@ -91,8 +94,10 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
       if (controller?.value.flashMode == FlashMode.torch) {
         await controller?.setFlashMode(FlashMode.off);
       }
-      final CameraCaptureResponse cameraresponse = 
-        CameraCaptureResponse(xfile: imagestate, imageData: imageBytes!);
+      final CameraCaptureResponse cameraresponse = CameraCaptureResponse(
+        xfile: imagestate,
+        imageData: imageBytes!,
+      );
       emit(CameraCaptureData(cameraresponse));
     } else {
       print("Camera Capture Not Working");

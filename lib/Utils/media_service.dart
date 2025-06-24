@@ -6,16 +6,15 @@ import 'package:image_picker/image_picker.dart';
 import 'package:newsee/Model/loader.dart';
 import 'package:image_cropper/image_cropper.dart';
 
-
 class MediaService {
-/* 
+  /* 
 @author         :   ganeshkumar.b    14/05/2025
 @description    :   getLocation function use GeoLocator Plugin to capture current coordinates
 @props          :   BuildContext
 @return data     :   Current Cooridnate like latitude and longitude value returned
  */
 
-  Future<Position> getLocation(BuildContext context) async{
+  Future<Position> getLocation(BuildContext context) async {
     try {
       LocationPermission permissionstatus;
       Position gelocationdata;
@@ -41,12 +40,14 @@ class MediaService {
       }
 
       if (permissionstatus == LocationPermission.deniedForever) {
-        throw Exception('Location permissions are permanently denied, we cannot request permissions.');
-      } 
+        throw Exception(
+          'Location permissions are permanently denied, we cannot request permissions.',
+        );
+      }
 
       gelocationdata = await Geolocator.getCurrentPosition();
       print("gelocationdata: $gelocationdata");
-      
+
       return gelocationdata;
     } catch (error) {
       rethrow;
@@ -57,7 +58,6 @@ class MediaService {
     }
   }
 
-
   /* 
   @author         :   ganeshkumar.b    13/05/2025
   @description    :   Picking image from device and crop the image file and return the bytes data
@@ -65,20 +65,26 @@ class MediaService {
   @return data     :   bytes(Unit8List) data return;
   */
 
-  Future<Uint8List?>pickimagefromgallery(context) async {
+  Future<Uint8List?> pickimagefromgallery(context) async {
     try {
       final imagepicker = ImagePicker();
-      final pickedFile = await imagepicker.pickImage(source: ImageSource.gallery);
+      final pickedFile = await imagepicker.pickImage(
+        source: ImageSource.gallery,
+      );
       if (pickedFile != null && context.mounted) {
         final cropperdata = await cropper(context, pickedFile.path);
         print("croppedFileData: $cropperdata");
         final Uint8List croppedFileData = cropperdata!;
         return croppedFileData;
       }
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Picking From Gallery is failed")));
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("Picking From Gallery is failed")));
       return null;
     } catch (error) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(error.toString())));
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(error.toString())));
       return null;
     }
   }
@@ -91,7 +97,7 @@ class MediaService {
   Future<FilePickerResult?> filePicker() async {
     FilePickerResult? pdfBytes = await FilePicker.platform.pickFiles(
       type: FileType.custom,
-      allowedExtensions: ['pdf']
+      allowedExtensions: ['pdf'],
     );
     if (pdfBytes != null) {
       return pdfBytes;
@@ -115,30 +121,27 @@ class MediaService {
       final intheight = (screenheight * 0.5).round();
       print("cropper function called is here");
       final cropdata = await ImageCropper().cropImage(
-          sourcePath: filepath,
-          uiSettings: [
-            AndroidUiSettings(
-              toolbarTitle: 'Cropper',
-              toolbarColor: Colors.deepOrange,
-              toolbarWidgetColor: const Color.fromRGBO(255, 255, 255, 1),
-              initAspectRatio: CropAspectRatioPreset.square,
-              lockAspectRatio: false,
-              aspectRatioPresets: [
-                CropAspectRatioPreset.original,
-                CropAspectRatioPreset.square,
-                CropAspectRatioPreset.ratio4x3,
-                CropAspectRatioPresetCustom()
-              ],
-            ),
-            WebUiSettings(
-              context: context,
-              presentStyle: WebPresentStyle.dialog,
-              size: CropperSize(
-                width: intwidth,
-                height: intheight,
-              ),
-            ),
-          ]
+        sourcePath: filepath,
+        uiSettings: [
+          AndroidUiSettings(
+            toolbarTitle: 'Cropper',
+            toolbarColor: Colors.deepOrange,
+            toolbarWidgetColor: const Color.fromRGBO(255, 255, 255, 1),
+            initAspectRatio: CropAspectRatioPreset.square,
+            lockAspectRatio: false,
+            aspectRatioPresets: [
+              CropAspectRatioPreset.original,
+              CropAspectRatioPreset.square,
+              CropAspectRatioPreset.ratio4x3,
+              CropAspectRatioPresetCustom(),
+            ],
+          ),
+          WebUiSettings(
+            context: context,
+            presentStyle: WebPresentStyle.dialog,
+            size: CropperSize(width: intwidth, height: intheight),
+          ),
+        ],
       );
       croppedImage = await cropdata?.readAsBytes();
       print("cropdata-imageBytes $croppedImage");
@@ -151,10 +154,9 @@ class MediaService {
 }
 
 class CropAspectRatioPresetCustom implements CropAspectRatioPresetData {
-    @override
-    (int, int)? get data => (2, 3);
+  @override
+  (int, int)? get data => (2, 3);
 
-    @override
-    String get name => '2x3 (customized)';
-  }
-
+  @override
+  String get name => '2x3 (customized)';
+}

@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -18,14 +17,21 @@ class GlobalBackHandler extends StatelessWidget {
     // Show exit confirmation
     final shouldExit = await showDialog<bool>(
       context: context,
-      builder: (context) => AlertDialog(
-        title: Text('Exit App?'),
-        content: Text('Do you want to close the app?'),
-        actions: [
-          TextButton(onPressed: () => Navigator.of(context).pop(false), child: Text('No')),
-          TextButton(onPressed: () => Navigator.of(context).pop(true), child: Text('Yes')),
-        ],
-      ),
+      builder:
+          (context) => AlertDialog(
+            title: Text('Exit App?'),
+            content: Text('Do you want to close the app?'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(false),
+                child: Text('No'),
+              ),
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(true),
+                child: Text('Yes'),
+              ),
+            ],
+          ),
     );
 
     return shouldExit ?? false;
@@ -33,10 +39,6 @@ class GlobalBackHandler extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () => _onWillPop(context),
-      child: child,
-    );
+    return WillPopScope(onWillPop: () => _onWillPop(context), child: child);
   }
 }
-

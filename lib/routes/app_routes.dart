@@ -17,10 +17,14 @@ import 'package:newsee/blocs/camera/camera_bloc.dart';
 import 'package:newsee/blocs/camera/camera_event.dart';
 import 'package:newsee/blocs/login/login_bloc.dart';
 import 'package:newsee/core/api/api_client.dart';
+import 'package:newsee/feature/CropDetails/presentation/page/cropdetailspage.dart';
 import 'package:newsee/feature/auth/data/datasource/auth_remote_datasource.dart';
 import 'package:newsee/feature/auth/data/repository/auth_repository_impl.dart';
 import 'package:newsee/feature/auth/domain/repository/auth_repository.dart';
 import 'package:newsee/feature/auth/presentation/bloc/auth_bloc.dart';
+import 'package:newsee/feature/documentupload/presentation/bloc/document_bloc.dart';
+import 'package:newsee/feature/documentupload/presentation/pages/document_page.dart';
+import 'package:newsee/feature/landholding/presentation/page/land_holding_page.dart';
 import 'package:newsee/feature/masters/data/repository/master_repo_impl.dart';
 import 'package:newsee/feature/masters/domain/repository/master_repo.dart';
 import 'package:newsee/feature/masters/presentation/bloc/masters_bloc.dart';
@@ -31,6 +35,8 @@ import 'package:newsee/pages/newlead_page.dart';
 import 'package:newsee/pages/not_found_error.page.dart';
 import 'package:newsee/pages/profile_page.dart';
 import 'package:newsee/widgets/progress_bar.dart';
+
+import '../feature/documentupload/presentation/bloc/document_event.dart';
 
 final AuthRemoteDatasource _authRemoteDatasource = AuthRemoteDatasource(
   dio: ApiClient().getDio(),
@@ -148,6 +154,120 @@ final routes = GoRouter(
                   (_) => GetIt.instance.get<CameraBloc>()..add(CameraOpen()),
               child: CameraView(),
             ),
+          ),
+    ),
+    GoRoute(
+      path: AppRouteConstants.LAND_HOLDING_PAGE['path']!,
+      name: AppRouteConstants.LAND_HOLDING_PAGE['name'],
+      builder:
+          (context, state) => PopScope(
+            canPop: false,
+            onPopInvokedWithResult: (didpop, data) async {
+              final shouldPop = await showDialog<bool>(
+                context: context,
+                builder:
+                    (context) => AlertDialog(
+                      title: Text('Confirm'),
+                      content: Text('Do you want to Exit ?'),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.of(context).pop(false),
+                          child: Text('Cancel'),
+                        ),
+                        TextButton(
+                          onPressed: () => Navigator.of(context).pop(true),
+                          child: Text('Yes'),
+                        ),
+                      ],
+                    ),
+              );
+              if (shouldPop ?? false) {
+                Navigator.of(context).pop(false);
+                // context.go('/'); // Navigate back using GoRouter
+              }
+            },
+            child: LandHoldingPage(title: 'Land Holding Details'),
+          ),
+    ),
+    GoRoute(
+      path: AppRouteConstants.DOCUMENT_PAGE['path']!,
+      name: AppRouteConstants.DOCUMENT_PAGE['name'],
+      // builder: (context, state) => DocumentPage(),
+      // builder: (context, state) {
+      //   return BlocProvider(
+      //     create:
+      //         (_) =>
+      //             GetIt.instance.get<DocumentBloc>()..add(FetchDocTypesEvent()),
+      //     child: DocumentPage(),
+      //   );
+      builder:
+          (context, state) => PopScope(
+            canPop: false,
+            onPopInvokedWithResult: (didpop, data) async {
+              final shouldPop = await showDialog<bool>(
+                context: context,
+                builder:
+                    (context) => AlertDialog(
+                      title: Text('Confirm'),
+                      content: Text('Do you want to Exit ?'),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.of(context).pop(false),
+                          child: Text('Cancel'),
+                        ),
+                        TextButton(
+                          onPressed: () => Navigator.of(context).pop(true),
+                          child: Text('Yes'),
+                        ),
+                      ],
+                    ),
+              );
+              if (shouldPop ?? false) {
+                Navigator.of(context).pop(false);
+                // context.go('/'); // Navigate back using GoRouter
+              }
+            },
+            // child: DocumentPage(),
+            child: BlocProvider(
+              create:
+                  (_) =>
+                      GetIt.instance.get<DocumentBloc>()
+                        ..add(FetchDocTypesEvent()),
+              child: const DocumentPage(),
+            ),
+          ),
+    ),
+    GoRoute(
+      path: AppRouteConstants.CROP_DETAILS_PAGE['path']!,
+      name: AppRouteConstants.CROP_DETAILS_PAGE['name'],
+      builder:
+          (context, state) => PopScope(
+            canPop: false,
+            onPopInvokedWithResult: (didpop, data) async {
+              final shouldPop = await showDialog<bool>(
+                context: context,
+                builder:
+                    (context) => AlertDialog(
+                      title: Text('Confirm'),
+                      content: Text('Do you want to Exit ?'),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.of(context).pop(false),
+                          child: Text('Cancel'),
+                        ),
+                        TextButton(
+                          onPressed: () => Navigator.of(context).pop(true),
+                          child: Text('Yes'),
+                        ),
+                      ],
+                    ),
+              );
+              if (shouldPop ?? false) {
+                Navigator.of(context).pop(false);
+                // context.go('/'); // Navigate back using GoRouter
+              }
+            },
+            child: CropDetailsPage(title: 'Crop Details'),
           ),
     ),
   ],

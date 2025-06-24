@@ -1,4 +1,5 @@
 part of 'lead_bloc.dart';
+
 /* 
   @author     : gayathri.b 12/05/2025
   @desc       : Encapsulates the state used in the lead search BLoC.
@@ -12,7 +13,7 @@ enum LeadStatus { initial, loading, success, failure }
 
 class LeadState extends Equatable {
   final LeadStatus status;
-  final List<LeadResponseModel>? leadResponseModel;
+  final List<GroupLeadInbox>? leadResponseModel;
   final String? errorMessage;
 
   const LeadState({
@@ -25,7 +26,7 @@ class LeadState extends Equatable {
 
   LeadState copyWith({
     LeadStatus? status,
-    List<LeadResponseModel>? leadResponseModel,
+    List<GroupLeadInbox>? leadResponseModel,
     String? errorMessage,
   }) {
     return LeadState(
@@ -36,9 +37,5 @@ class LeadState extends Equatable {
   }
 
   @override
-  List<Object?> get props => [
-        status,
-        leadResponseModel,
-        errorMessage,
-      ];
+  List<Object?> get props => [status, leadResponseModel, errorMessage];
 }

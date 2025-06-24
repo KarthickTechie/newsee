@@ -6,15 +6,12 @@ class ProfilePictureDetails extends Equatable {
   final Uint8List imageData;
   final String leadID;
 
-  ProfilePictureDetails({ required this.leadID, required this.imageData});
+  ProfilePictureDetails({required this.leadID, required this.imageData});
 
-  ProfilePictureDetails copyWith({
-    Uint8List? imageData,
-    String? leadID,
-  }) {
+  ProfilePictureDetails copyWith({Uint8List? imageData, String? leadID}) {
     return ProfilePictureDetails(
-     imageData: imageData ?? this.imageData,
-     leadID: leadID ?? this.leadID
+      imageData: imageData ?? this.imageData,
+      leadID: leadID ?? this.leadID,
     );
   }
 

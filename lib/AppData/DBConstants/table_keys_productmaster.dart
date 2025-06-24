@@ -33,7 +33,6 @@ class TableKeysProductMaster {
   static const String moratoriam = "prdMoratoriumMax";
   static const String version = 'version';
 
-  
   static const String createTableQuery = '''
                     CREATE TABLE IF NOT EXISTS $tableName(
             $idColumn INTEGER PRIMARY KEY AUTOINCREMENT,

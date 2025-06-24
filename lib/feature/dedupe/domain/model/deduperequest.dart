@@ -4,7 +4,6 @@ import 'package:newsee/core/api/api_config.dart';
 
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 class DedupeRequest {
-
   // final payload = {
   //   "panCard": "GIBPD5981W",
   //   "aadharCard": "123456789012",
@@ -73,7 +72,8 @@ class DedupeRequest {
   factory DedupeRequest.fromMap(Map<String, dynamic> map) {
     return DedupeRequest(
       panCard: map['panCard'] != null ? map['panCard'] as String : null,
-      aadharCard: map['aadharCard'] != null ? map['aadharCard'] as String : null,
+      aadharCard:
+          map['aadharCard'] != null ? map['aadharCard'] as String : null,
       uaadhar: map['uaadhar'] != null ? map['uaadhar'] as String : null,
       gst: map['gst'] != null ? map['gst'] as String : null,
       mobileno: map['mobileno'] != null ? map['mobileno'] as String : null,
@@ -85,7 +85,8 @@ class DedupeRequest {
 
   String toJson() => json.encode(toMap());
 
-  factory DedupeRequest.fromJson(String source) => DedupeRequest.fromMap(json.decode(source) as Map<String, dynamic>);
+  factory DedupeRequest.fromJson(String source) =>
+      DedupeRequest.fromMap(json.decode(source) as Map<String, dynamic>);
 
   @override
   String toString() {
@@ -95,27 +96,26 @@ class DedupeRequest {
   @override
   bool operator ==(covariant DedupeRequest other) {
     if (identical(this, other)) return true;
-  
-    return 
-      other.panCard == panCard &&
-      other.aadharCard == aadharCard &&
-      other.uaadhar == uaadhar &&
-      other.gst == gst &&
-      other.mobileno == mobileno &&
-      other.vertical == vertical &&
-      other.userid == userid &&
-      other.token == token;
+
+    return other.panCard == panCard &&
+        other.aadharCard == aadharCard &&
+        other.uaadhar == uaadhar &&
+        other.gst == gst &&
+        other.mobileno == mobileno &&
+        other.vertical == vertical &&
+        other.userid == userid &&
+        other.token == token;
   }
 
   @override
   int get hashCode {
     return panCard.hashCode ^
-      aadharCard.hashCode ^
-      uaadhar.hashCode ^
-      gst.hashCode ^
-      mobileno.hashCode ^
-      vertical.hashCode ^
-      userid.hashCode ^
-      token.hashCode;
+        aadharCard.hashCode ^
+        uaadhar.hashCode ^
+        gst.hashCode ^
+        mobileno.hashCode ^
+        vertical.hashCode ^
+        userid.hashCode ^
+        token.hashCode;
   }
 }

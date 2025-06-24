@@ -11,8 +11,14 @@ import 'package:reactive_forms/reactive_forms.dart';
 class AlphaTextField extends StatelessWidget {
   final String controlName;
   final String label;
+  final bool mantatory;
 
-  const AlphaTextField(this.controlName, this.label);
+  const AlphaTextField({
+    super.key,
+    required this.controlName,
+    required this.label,
+    required this.mantatory,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +26,6 @@ class AlphaTextField extends StatelessWidget {
       padding: const EdgeInsets.all(12.0),
       child: ReactiveTextField<String>(
         formControlName: controlName,
-        keyboardType: TextInputType.number,
         inputFormatters: [FilteringTextInputFormatter.deny(RegExp('[0-9]'))],
         decoration: InputDecoration(
           label: RichText(

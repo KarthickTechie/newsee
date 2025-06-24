@@ -19,11 +19,14 @@ class CifRepositoryImpl implements CifRepository {
     try {
       print('CIF Search request payload => $req');
       final payload = req.toJson();
-      var response = await CifRemoteDatasource(dio: ApiClient().getDio()).searchCif(payload);
+      var response = await CifRemoteDatasource(
+        dio: ApiClient().getDio(),
+      ).searchCif(payload);
 
       if (response.data[ApiConfig.API_RESPONSE_SUCCESS_KEY]) {
         var cifResponse = CifResponse.fromJson(
-          response.data[ApiConfig.API_RESPONSE_RESPONSE_KEY]['lpretLeadDetails'],
+          response.data[ApiConfig
+              .API_RESPONSE_RESPONSE_KEY]['lpretLeadDetails'],
         );
         print('ChifResponseModel => ${cifResponse.toString()}');
         return AsyncResponseHandler.right(cifResponse);
@@ -34,8 +37,8 @@ class CifRepositoryImpl implements CifRepository {
       }
     } on DioException catch (e) {
       HttpConnectionFailure failure =
-        DioHttpExceptionParser(exception: e).parse();
-        return AsyncResponseHandler.left(failure);
+          DioHttpExceptionParser(exception: e).parse();
+      return AsyncResponseHandler.left(failure);
     } catch (error) {
       print("cifResponseHandler-> $error");
       return AsyncResponseHandler.left(

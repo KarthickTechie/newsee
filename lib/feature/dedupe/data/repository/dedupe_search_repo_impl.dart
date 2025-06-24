@@ -11,15 +11,20 @@ import 'package:newsee/feature/dedupe/domain/model/deduperesponse.dart';
 import 'package:newsee/feature/dedupe/domain/repositoy/deduperepository.dart';
 
 class DedupeSearchRepositoryimpl implements DedupeRepository {
-
   @override
-  Future<AsyncResponseHandler<Failure, DedupeResponse>> dedupeSearchforCustomer(DedupeRequest request) async {
+  Future<AsyncResponseHandler<Failure, DedupeResponse>> dedupeSearchforCustomer(
+    DedupeRequest request,
+  ) async {
     try {
       final payload = request.toJson();
-      var response = await DedupeDataSource(dio: ApiClient().getDio()).dedupeSearchcustomer(payload);
+      var response = await DedupeDataSource(
+        dio: ApiClient().getDio(),
+      ).dedupeSearchcustomer(payload);
 
       if (response.data[ApiConfig.API_RESPONSE_SUCCESS_KEY]) {
-        print("response.data['responseData'] ${response.data[ApiConfig.API_RESPONSE_RESPONSE_KEY]}");
+        print(
+          "response.data['responseData'] ${response.data[ApiConfig.API_RESPONSE_RESPONSE_KEY]}",
+        );
         var dedupResponse = DedupeResponse.fromJson(
           response.data[ApiConfig.API_RESPONSE_RESPONSE_KEY],
         );
@@ -30,12 +35,14 @@ class DedupeSearchRepositoryimpl implements DedupeRepository {
         // api response success : false , process error message
         var errorMessage = response.data['ErrorMessage'];
         print('on Error request.data["ErrorMessage"] => $errorMessage');
-        return AsyncResponseHandler.left(HttpConnectionFailure(message: errorMessage));
+        return AsyncResponseHandler.left(
+          HttpConnectionFailure(message: errorMessage),
+        );
       }
     } on DioException catch (e) {
       HttpConnectionFailure failure =
-        DioHttpExceptionParser(exception: e).parse();
-        return AsyncResponseHandler.left(failure);
+          DioHttpExceptionParser(exception: e).parse();
+      return AsyncResponseHandler.left(failure);
     }
   }
 }

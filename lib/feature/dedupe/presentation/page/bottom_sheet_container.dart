@@ -7,8 +7,7 @@ class BottomSheetContainer extends StatelessWidget {
   final bool isNewCustomer;
   final FormGroup form;
   final TabController tabController;
-  final String constitution;
-  BottomSheetContainer({required this.isNewCustomer, required this.form, required this.tabController, required this.constitution});
+  BottomSheetContainer({required this.isNewCustomer, required this.form, required this.tabController});
   
   @override
   Widget build(BuildContext context) {
@@ -64,13 +63,11 @@ class BottomSheetContainer extends StatelessWidget {
                     DedupeSearch(
                       dedupeForm: form,
                       tabController: tabController,
-                      customerConstitution: constitution
                     )
                     : 
                     CIFSearch(
                       cifForm: form,
                       tabController: tabController,
-                      customerConstitution: constitution
                     ),
                 ),
               ),

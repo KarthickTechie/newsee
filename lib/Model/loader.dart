@@ -13,7 +13,7 @@ class LoaderView extends StatelessWidget {
           rightDotColor: const Color(0xFFEA3799),
           size: 200,
         ),
-      )
+      ),
     );
   }
 }

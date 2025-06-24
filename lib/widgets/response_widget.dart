@@ -34,9 +34,9 @@ class ResponseWidget extends StatelessWidget {
                   ...dataList
                       .map(
                         (list) => BuildInRow(
-                          icon:  list['icon'] as IconData,
-                          label:  list['label'] as String,
-                          value:  list['value'] as String,
+                          icon: list['icon'] as IconData,
+                          label: list['label'] as String,
+                          value: list['value'] as String,
                         ),
                       )
                       .toList(),
@@ -45,30 +45,32 @@ class ResponseWidget extends StatelessWidget {
             ),
           ),
           SizedBox(height: 20),
-          buttonshow ? Center(
-            child: ElevatedButton.icon(
-              onPressed: onpressed,
-              icon: Icon(Icons.send, color: Colors.white),
-              label: RichText(
-                text: TextSpan(
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
+          buttonshow
+              ? Center(
+                child: ElevatedButton.icon(
+                  onPressed: onpressed,
+                  icon: Icon(Icons.send, color: Colors.white),
+                  label: RichText(
+                    text: TextSpan(
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
+                      children: [TextSpan(text: 'OK')],
+                    ),
                   ),
-                  children: [TextSpan(text: 'OK')],
+                  style: ButtonStyle(
+                    minimumSize: MaterialStateProperty.all(
+                      Size(double.infinity, 50),
+                    ),
+                    backgroundColor: MaterialStateProperty.all(
+                      const Color.fromARGB(255, 75, 33, 83),
+                    ),
+                  ),
                 ),
-              ),
-              style: ButtonStyle(
-                minimumSize: MaterialStateProperty.all(
-                  Size(double.infinity, 50),
-                ),
-                backgroundColor: MaterialStateProperty.all(
-                  const Color.fromARGB(255, 75, 33, 83),
-                ),
-              ),
-            ),
-          ) : SizedBox(height: 50,)
+              )
+              : SizedBox(height: 50),
         ],
       ),
     );

@@ -32,9 +32,9 @@ class PDFViewerFromBytesState extends State<PDFViewerFromBytes> {
         print("pdfpath is print for web $pdfpath");
         final document = PdfDocument.openData(pdfpath!);
         setState(() {
-            _pdfController = PdfControllerPinch(document: document);
-            _isLoading = false; // PDF loaded, update loading state
-          });
+          _pdfController = PdfControllerPinch(document: document);
+          _isLoading = false; // PDF loaded, update loading state
+        });
       } else {
         final pdfpath = widget.filedata?.files.single.path;
         if (pdfpath != null) {
@@ -46,7 +46,7 @@ class PDFViewerFromBytesState extends State<PDFViewerFromBytes> {
           });
         }
       }
-      
+
       print("_pdfController: $_pdfController");
     } catch (e) {
       print("Error loading PDF: $e");
@@ -66,12 +66,12 @@ class PDFViewerFromBytesState extends State<PDFViewerFromBytes> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('PDF Viewer')),
-      body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : _pdfController == null
+      body:
+          _isLoading
+              ? const Center(child: CircularProgressIndicator())
+              : _pdfController == null
               ? const Center(child: Text('Failed to load PDF'))
-              : 
-              PdfViewPinch(controller: _pdfController!)
-      );
+              : PdfViewPinch(controller: _pdfController!),
+    );
   }
 }

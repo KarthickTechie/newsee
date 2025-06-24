@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:newsee/Model/address_data.dart';
 import 'package:newsee/Model/personal_data.dart';
 import 'package:newsee/core/api/AsyncResponseHandler.dart';
+import 'package:newsee/core/api/failure.dart';
 import 'package:newsee/feature/leadsubmit/data/repository/lead_submit_repo_impl.dart';
 import 'package:newsee/feature/leadsubmit/domain/modal/dedupe.dart';
 import 'package:newsee/feature/leadsubmit/domain/modal/lead_submit_request.dart';
@@ -70,14 +71,22 @@ final class LeadSubmitBloc extends Bloc<LeadSubmitEvent, LeadSubmitState> {
         "addressDetails": [event.addressData?.toMap()],
       };
 
-      AsyncResponseHandler responseHandler = await LeadSubmitRepoImpl()
-          .submitLead(request: leadSubmitRequest);
+      AsyncResponseHandler<Failure, Map<String, dynamic>> responseHandler =
+          await LeadSubmitRepoImpl().submitLead(request: leadSubmitRequest);
       if (responseHandler.isRight()) {
+        final response = responseHandler.right;
+        String leadId = response['saveLeadDetails']['lleadid'] as String;
+
         print('Lead Submit Success..');
-        emit(state.copyWith(leadSubmitStatus: SubmitStatus.success));
+        emit(
+          state.copyWith(
+            leadSubmitStatus: SubmitStatus.success,
+            leadId: leadId,
+          ),
+        );
       } else {
         print('Lead Submit Failure...');
-        emit(state.copyWith(leadSubmitStatus: SubmitStatus.success));
+        emit(state.copyWith(leadSubmitStatus: SubmitStatus.failure));
       }
     } on DioException catch (e) {
       print('leadsubmit exception => $e');

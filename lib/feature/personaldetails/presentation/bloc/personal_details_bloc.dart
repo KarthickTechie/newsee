@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:newsee/AppData/app_constants.dart';
 import 'package:newsee/Model/personal_data.dart';
 import 'package:newsee/core/db/db_config.dart';
 import 'package:newsee/feature/aadharvalidation/data/repository/aadhar_validate_impl.dart';
@@ -55,11 +56,18 @@ final class PersonalDetailsBloc
     Emitter emit,
   ) async {
     print('PersonalData => ${event.personalData}');
+    var loanamaount = event.personalData!.loanAmountRequested!.replaceAll(
+      RegExp(r'[^\d]'),
+      '',
+    );
     emit(
       state.copyWith(
         personalData: event.personalData,
         status: SaveStatus.success,
       ),
+    );
+    state.copyWith(
+      personalData: PersonalData(loanAmountRequested: loanamaount),
     );
   }
 

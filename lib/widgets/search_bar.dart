@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 
 class SearchBarWidget extends StatelessWidget {
   final ValueChanged<String> onChanged;
+  final TextEditingController controller;
 
-  const SearchBarWidget({required this.onChanged});
+  const SearchBarWidget({required this.onChanged,required this.controller});
 
   @override
   Widget build(BuildContext context) {
@@ -32,12 +33,29 @@ class SearchBarWidget extends StatelessWidget {
                   ),
             ),
             Expanded(
-              child: TextField(
+              child: ValueListenableBuilder(
+                valueListenable: controller,
+                builder: (context, TextEditingValue value, _) {
+                return TextField(
+                  controller: controller,
+                  autofocus: false,
                 decoration: InputDecoration(
                   hintText: 'Search Here',
                   border: InputBorder.none,
+                  contentPadding: EdgeInsets.symmetric(vertical: 12),
+                  suffixIcon: controller.text.isNotEmpty?
+                  IconButton(
+                    icon: Icon(Icons.clear, color: Colors.black),
+                    onPressed: () {
+                      controller.clear();
+                      onChanged('');
+                      FocusScope.of(context).unfocus();
+                    },)
+                    : null,
                 ),
                 onChanged: onChanged,
+              );
+                },
               ),
             ),
           ],

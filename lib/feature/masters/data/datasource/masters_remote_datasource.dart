@@ -16,7 +16,6 @@ class MastersRemoteDatasource {
   @return     : Future<Response> Response - > HttpResponse
    */
   downloadMaster(MasterRequest payload) async {
-   
     Response response = await dio.post(
       ApiConfig.MASTERS_API_ENDPOINT,
       data: {

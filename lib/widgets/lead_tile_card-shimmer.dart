@@ -37,7 +37,6 @@ class LeadTileCardShimmer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    
     return InkWell(
       onTap: () {},
       child: Card(
@@ -52,19 +51,31 @@ class LeadTileCardShimmer extends StatelessWidget {
                 children: [
                   CircleAvatar(
                     backgroundColor: color.withOpacity(0.1),
-                    child: ShimmerRunner(container: "sdfsdfsdfsdfsdf", isIcon: true),
+                    child: ShimmerRunner(
+                      container: "sdfsdfsdfsdfsdf",
+                      isIcon: true,
+                    ),
                   ),
                   const SizedBox(width: 12),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        ShimmerRunner(container: "sdfsdfsdfsdfsdf", isIcon: false),
-                        ShimmerRunner(container: "sdfsdfsdfsdfsdf", isIcon: false),
+                        ShimmerRunner(
+                          container: "sdfsdfsdfsdfsdf",
+                          isIcon: false,
+                        ),
+                        ShimmerRunner(
+                          container: "sdfsdfsdfsdfsdf",
+                          isIcon: false,
+                        ),
                       ],
                     ),
                   ),
-                  const ShimmerRunner(container: "sdfsdfsdfsdfsdf", isIcon: true)
+                  const ShimmerRunner(
+                    container: "sdfsdfsdfsdfsdf",
+                    isIcon: true,
+                  ),
                 ],
               ),
               const SizedBox(height: 12),
@@ -77,24 +88,24 @@ class LeadTileCardShimmer extends StatelessWidget {
               const SizedBox(height: 12),
               Row(
                 children: [
-                Expanded(
-                      child: TextButton(
-                        onPressed: () async {
-                          final phoneNumber = "919940362579";
-                          final Uri _url = Uri.parse('https://wa.me/sms:$phoneNumber');
+                  Expanded(
+                    child: TextButton(
+                      onPressed: () async {
+                        final phoneNumber = "919940362579";
+                        final Uri _url = Uri.parse(
+                          'https://wa.me/sms:$phoneNumber',
+                        );
 
-                          if (!await canLaunchUrl(_url)) {
-                            throw 'Could not launch $_url';
-                          } else {
-                            await launchUrl(_url);
-                          }
-                          Navigator.pop(context);
-                        },
-                        child: iconWithLabel(
-                          Icons.phone_outlined, phone
-                        ),
-                      ),
+                        if (!await canLaunchUrl(_url)) {
+                          throw 'Could not launch $_url';
+                        } else {
+                          await launchUrl(_url);
+                        }
+                        Navigator.pop(context);
+                      },
+                      child: iconWithLabel(Icons.phone_outlined, phone),
                     ),
+                  ),
                   Expanded(
                     child: iconWithLabel(
                       Icons.calendar_month_outlined,
@@ -125,9 +136,11 @@ class LeadTileCardShimmer extends StatelessWidget {
   Widget iconWithLabel(IconData iconData, String label) {
     return Row(
       children: [
-        ShimmerRunner(container:'sdfsdfsdfsdfsdf', isIcon: true),
+        ShimmerRunner(container: 'sdfsdfsdfsdfsdf', isIcon: true),
         const SizedBox(width: 6),
-        Flexible(child: ShimmerRunner(container: "sdfsdfsdfsdfsdf", isIcon: false)),
+        Flexible(
+          child: ShimmerRunner(container: "sdfsdfsdfsdfsdf", isIcon: false),
+        ),
       ],
     );
   }

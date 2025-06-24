@@ -3,8 +3,6 @@ import 'package:newsee/blocs/camera/camera_repository.dart';
 
 class CameraState {}
 
-
-
 class CameraIntialize extends CameraState {}
 
 class CameraRun extends CameraState {
@@ -28,4 +26,3 @@ class CameraConfirmData extends CameraState {
   final XFile xfiledata;
   CameraConfirmData(this.xfiledata);
 }
-

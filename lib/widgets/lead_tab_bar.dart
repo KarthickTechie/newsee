@@ -5,10 +5,15 @@
 */
 
 import 'package:flutter/material.dart';
+import 'package:newsee/feature/leadInbox/presentation/page/completed_leads.dart';
 import 'pending_leads.dart';
 import '../feature/leadInbox/presentation/page/completed_leads.dart';
 
 class LeadTabBar extends StatelessWidget {
+  final String searchQuery;
+
+  const LeadTabBar({super.key, required this.searchQuery});
+
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -21,11 +26,11 @@ class LeadTabBar extends StatelessWidget {
               labelColor: Colors.white,
               unselectedLabelColor: Colors.white70,
               indicatorColor: Colors.white,
-              tabs: [Tab(text: "Pending"), Tab(text: "Completed")],
+              tabs: [Tab(text: "Leads"), Tab(text:"Applications" )],
             ),
           ),
           Expanded(
-            child: TabBarView(children: [PendingLeads(), CompletedLeads()]),
+            child: TabBarView(children: [ CompletedLeads(searchQuery: searchQuery),PendingLeads(),]),
           ),
         ],
       ),

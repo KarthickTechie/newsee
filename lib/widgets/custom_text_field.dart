@@ -13,7 +13,6 @@ class CustomTextField extends StatelessWidget {
   final bool mantatory;
   bool? autoCapitalize;
   int? maxlength;
-  
 
   CustomTextField({
     super.key,
@@ -21,7 +20,7 @@ class CustomTextField extends StatelessWidget {
     required this.label,
     required this.mantatory,
     this.autoCapitalize,
-    this.maxlength
+    this.maxlength,
   });
 
   @override
@@ -31,7 +30,10 @@ class CustomTextField extends StatelessWidget {
       child: ReactiveTextField<String>(
         formControlName: controlName,
         maxLength: maxlength,
-        textCapitalization:  autoCapitalize == true ? TextCapitalization.characters : TextCapitalization.none,
+        textCapitalization:
+            autoCapitalize == true
+                ? TextCapitalization.characters
+                : TextCapitalization.none,
         validationMessages: {
           ValidationMessage.required: (error) => '$label is required',
           ValidationMessage.email: (error) => 'Enter valid $label',
@@ -42,7 +44,10 @@ class CustomTextField extends StatelessWidget {
               text: label,
               style: const TextStyle(color: Colors.black, fontSize: 16),
               children: [
-                TextSpan(text:  mantatory ? ' *' : '', style: TextStyle(color: Colors.red)),
+                TextSpan(
+                  text: mantatory ? ' *' : '',
+                  style: TextStyle(color: Colors.red),
+                ),
               ],
             ),
           ),

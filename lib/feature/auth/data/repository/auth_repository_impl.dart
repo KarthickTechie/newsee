@@ -57,7 +57,9 @@ class AuthRepositoryImpl implements AuthRepository {
 
         print('AuthResponseModel.fromJson() => ${authResponse.toString()}');
         print("Auth Response from login: => $response");
-        print("masterResponse response from login, => ${Globalconfig.masterVersionMapper}");
+        print(
+          "masterResponse response from login, => ${Globalconfig.masterVersionMapper}",
+        );
 
         return AsyncResponseHandler.right(authResponse);
       } else {

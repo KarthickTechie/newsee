@@ -10,8 +10,7 @@ class DedupeEvent {}
 
 class FetchDedupeEvent extends DedupeEvent {
   DedupeRequest request;
-  final String constitution;
-  FetchDedupeEvent({required this.request, required this.constitution});    
+  FetchDedupeEvent({required this.request});    
 }
 
 class ValiateAadharEvent extends DedupeEvent {
@@ -21,6 +20,10 @@ class ValiateAadharEvent extends DedupeEvent {
 
 class SearchCifEvent extends DedupeEvent {
   final CIFRequest request;
-  final String constitution;
-  SearchCifEvent({required this.request, required this.constitution});
+  SearchCifEvent({required this.request});
+}
+
+class OpenSheetEvent extends DedupeEvent {
+  final Map<String, dynamic>  request;
+  OpenSheetEvent({required this.request});
 }

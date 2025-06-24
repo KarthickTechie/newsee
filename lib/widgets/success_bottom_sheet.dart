@@ -1,5 +1,5 @@
-
 import 'package:flutter/material.dart';
+import 'package:newsee/AppData/app_api_constants.dart';
 
 /*
  @created on : june 3,2025
@@ -22,8 +22,11 @@ void showSuccessBottomSheet(
     isDismissible: false,
     backgroundColor: Colors.transparent,
     builder:
-        (context) =>
-            _AnimatedSuccessContent(headerTxt: headerTxt, lead: lead, message: message),
+        (context) => _AnimatedSuccessContent(
+          headerTxt: headerTxt,
+          lead: lead,
+          message: message,
+        ),
     shape: RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
     ),
@@ -92,7 +95,9 @@ class _AnimatedSuccessContentState extends State<_AnimatedSuccessContent>
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(Icons.check_circle, color: Colors.green, size: 60),
+              widget.headerTxt == ApiConstants.api_response_success
+                  ? Icon(Icons.check_circle, color: Colors.green, size: 60)
+                  : Icon(Icons.close_rounded, color: Colors.red, size: 60),
               SizedBox(height: 16),
               Text(
                 widget.headerTxt,
@@ -114,7 +119,7 @@ class _AnimatedSuccessContentState extends State<_AnimatedSuccessContent>
               ElevatedButton(
                 onPressed: () => Navigator.pop(context),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor:  Color.fromARGB(255, 3, 9, 110),
+                  backgroundColor: Color.fromARGB(255, 3, 9, 110),
                   foregroundColor: Colors.white,
                 ),
                 child: Text("OK"),

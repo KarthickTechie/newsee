@@ -6,7 +6,6 @@
               {CifResponseModel cifResponseModel} - return CifResponseModel
  */
 
-
 part of 'cif_bloc.dart';
 
 // we need following state status which is defines http init , loading
@@ -14,18 +13,13 @@ part of 'cif_bloc.dart';
 
 enum CifStatus { initial, loading, success, failure }
 
-
 class CifState extends Equatable {
   final CifStatus? status;
   final CifResponseModel? cifResponseModel;
   final String? errorMessage;
-  
+
   // private constructor for instance initialisation
-  const CifState({
-    this.status,
-    this.cifResponseModel,
-    this.errorMessage
-  });
+  const CifState({this.status, this.cifResponseModel, this.errorMessage});
 
   factory CifState.init() => const CifState(status: CifStatus.initial);
   // setting state of instance variable On CifEvents
@@ -43,9 +37,5 @@ class CifState extends Equatable {
   }
 
   @override
-  List<Object?> get props => [
-    status,
-    cifResponseModel,
-    errorMessage,
-  ];
+  List<Object?> get props => [status, cifResponseModel, errorMessage];
 }

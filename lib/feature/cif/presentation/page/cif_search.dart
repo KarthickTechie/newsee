@@ -15,12 +15,10 @@ import 'package:intl/intl.dart';
 class CIFSearch extends StatelessWidget {
   final FormGroup cifForm;
   final TabController tabController;
-  final String customerConstitution;
   CIFSearch({
     super.key,
     required this.cifForm,
     required this.tabController,
-    required this.customerConstitution,
   });
 
   //Dispose Popover
@@ -161,7 +159,6 @@ class CIFSearch extends StatelessWidget {
                             context.read<DedupeBloc>().add(
                               SearchCifEvent(
                                 request: req,
-                                constitution: customerConstitution,
                               ),
                             );
                           } else {

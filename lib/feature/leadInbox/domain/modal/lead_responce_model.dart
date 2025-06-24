@@ -47,13 +47,19 @@ class LeadResponseModel {
   factory LeadResponseModel.fromMap(Map<String, dynamic> map) {
     return LeadResponseModel(
       leadlists: List<Map<String, dynamic>>.from(
-        (map['leadlists'] as List? ?? []).map((e) => Map<String, dynamic>.from(e)),
+        (map['leadlists'] as List? ?? []).map(
+          (e) => Map<String, dynamic>.from(e),
+        ),
       ),
       typeofloan: List<Map<String, dynamic>>.from(
-        (map['typeofloan'] as List? ?? []).map((e) => Map<String, dynamic>.from(e)),
+        (map['typeofloan'] as List? ?? []).map(
+          (e) => Map<String, dynamic>.from(e),
+        ),
       ),
       sourcingChannelLov: List<Map<String, dynamic>>.from(
-        (map['sourcingChannelLov'] as List? ?? []).map((e) => Map<String, dynamic>.from(e)),
+        (map['sourcingChannelLov'] as List? ?? []).map(
+          (e) => Map<String, dynamic>.from(e),
+        ),
       ),
     );
   }
@@ -70,7 +76,7 @@ class LeadResponseModel {
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
-    return other is LeadResponseModel && 
+    return other is LeadResponseModel &&
         listEquals(other.leadlists, leadlists) &&
         listEquals(other.typeofloan, typeofloan) &&
         listEquals(other.sourcingChannelLov, sourcingChannelLov);

@@ -13,6 +13,7 @@ import '../widgets/lead_tab_bar.dart';
 import '../widgets/search_bar.dart';
 
 class HomePage extends StatefulWidget {
+
   @override
   State<HomePage> createState() => HomePageState();
 }
@@ -21,6 +22,7 @@ class HomePageState extends State<HomePage> {
   int selectedIndex = 0;
   String searchQuery = "";
   bool loading = false;
+  final TextEditingController searchController = TextEditingController();
 
   Future<void> onItemTapped(int index) async {
     setState(() => loading = true);
@@ -33,7 +35,7 @@ class HomePageState extends State<HomePage> {
 
   Widget getPage() {
     if (selectedIndex == 0) {
-      return LeadTabBar();
+      return LeadTabBar(searchQuery: searchQuery);
     } else if (selectedIndex == 1) {
       return Center(
         child: Text("Application Inbox", style: TextStyle(fontSize: 24)),
@@ -54,6 +56,7 @@ class HomePageState extends State<HomePage> {
       body: Column(
         children: [
           SearchBarWidget(
+            controller: searchController,
             onChanged: (value) {
               setState(() => searchQuery = value);
             },

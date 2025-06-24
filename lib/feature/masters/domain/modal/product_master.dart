@@ -101,27 +101,26 @@ class ProductMaster {
   @override
   bool operator ==(covariant ProductMaster other) {
     if (identical(this, other)) return true;
-  
-    return 
-      other.prdCode == prdCode &&
-      other.prdDesc == prdDesc &&
-      other.prdamtFromRange == prdamtFromRange &&
-      other.prdamtToRange == prdamtToRange &&
-      other.prdMainCat == prdMainCat &&
-      other.prdSubCat == prdSubCat &&
-      other.prdTenorFrom == prdTenorFrom &&
-      other.prdTenorTo == prdTenorTo;
+
+    return other.prdCode == prdCode &&
+        other.prdDesc == prdDesc &&
+        other.prdamtFromRange == prdamtFromRange &&
+        other.prdamtToRange == prdamtToRange &&
+        other.prdMainCat == prdMainCat &&
+        other.prdSubCat == prdSubCat &&
+        other.prdTenorFrom == prdTenorFrom &&
+        other.prdTenorTo == prdTenorTo;
   }
 
   @override
   int get hashCode {
     return prdCode.hashCode ^
-      prdDesc.hashCode ^
-      prdamtFromRange.hashCode ^
-      prdamtToRange.hashCode ^
-      prdMainCat.hashCode ^
-      prdSubCat.hashCode ^
-      prdTenorFrom.hashCode ^
-      prdTenorTo.hashCode;
+        prdDesc.hashCode ^
+        prdamtFromRange.hashCode ^
+        prdamtToRange.hashCode ^
+        prdMainCat.hashCode ^
+        prdSubCat.hashCode ^
+        prdTenorFrom.hashCode ^
+        prdTenorTo.hashCode;
   }
 }

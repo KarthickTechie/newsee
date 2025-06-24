@@ -51,27 +51,27 @@ class IncomeDetailsPage extends StatelessWidget {
                 IntegerTextField(
                   controlName: 'grossmonthly',
                   label: 'Gross Monthly Deductions(₹) (Per Month)',
-                  mantatory: true
+                  mantatory: true,
                 ),
                 IntegerTextField(
                   controlName: 'netincome',
                   label: 'Net Income(₹) (Per Year)',
-                  mantatory: true
+                  mantatory: true,
                 ),
                 IntegerTextField(
                   controlName: 'networth',
                   label: 'Networth of the Applicant(₹)',
-                  mantatory: true
+                  mantatory: true,
                 ),
                 CustomTextField(
-                  controlName: 'company', 
+                  controlName: 'company',
                   label: 'Company',
-                  mantatory: true
+                  mantatory: true,
                 ),
                 IntegerTextField(
                   controlName: 'totalyears',
                   label: 'Total Years of Employment',
-                  mantatory: true
+                  mantatory: true,
                 ),
                 Center(
                   child: ElevatedButton(

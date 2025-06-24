@@ -6,7 +6,6 @@ import 'package:newsee/blocs/camera/camera_bloc.dart';
 import 'package:newsee/blocs/camera/camera_event.dart';
 
 class Camera extends StatelessWidget {
-
   @override
   Widget build(BuildContext context) {
     return BlocProvider(

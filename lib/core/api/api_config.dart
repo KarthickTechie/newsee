@@ -1,6 +1,6 @@
 class ApiConfig {
-  //static const String BASE_URL = "http://192.168.0.19:19084/lendperfect/";
-  static const String BASE_URL = "http://192.168.7.79:9088/lendperfect/";
+  static const String BASE_URL = "http://192.168.0.19:19084/lendperfect/";
+  //static const String BASE_URL = "http://192.168.7.79:9088/lendperfect/";
   static const String AUTH_TOKEN =
       'U2FsdGVkX1/Wa6+JeCIOVLl8LTr8WUocMz8kIGXVbEI9Q32v7zRLrnnvAIeJIVV3';
   static const String DEVICE_ID =
@@ -21,7 +21,7 @@ class ApiConfig {
   static const String API_RESPONSE_RESPONSE_KEY = 'responseData';
 
   static const String LEAD_INBOX_API_ENDPOINT =
-      'MobileService/getLeadInboxDetails';
+      'MobileService/getLeadGroupDetails';
 
   static const String LEAD_SUBMIT_API_ENDPOINT =
       'MobileService/saveLeadDetails';

@@ -48,7 +48,7 @@ void loginActionSheet(BuildContext context) {
             ),
             padding: EdgeInsets.all(10),
             width: screenwidth * 1.0,
-            height: screenheight * 0.85,
+            height: screenheight * 0.75,
             child: LoginBlocProvide(),
           ),
         ),

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class CustomerResponsePage extends StatelessWidget {
   @override
-  Widget build (BuildContext context) {
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text("Customer Response")),
       body: Container(
@@ -20,9 +20,16 @@ class CustomerResponsePage extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text("Product Details", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Color.fromARGB(255, 3, 9, 110))),
+                    Text(
+                      "Product Details",
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Color.fromARGB(255, 3, 9, 110),
+                      ),
+                    ),
                     Divider(thickness: 1, height: 24),
-                
+
                     Row(
                       children: [
                         _buildKeyValue("Product ID", "1556659"),
@@ -34,9 +41,7 @@ class CustomerResponsePage extends StatelessWidget {
                 ),
               ),
             ),
-            SizedBox(
-              height: 30,
-            ),
+            SizedBox(height: 30),
             Card(
               shape: RoundedRectangleBorder(
                 side: BorderSide(color: Colors.grey.shade300),
@@ -48,9 +53,16 @@ class CustomerResponsePage extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text("Customer Details", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Color.fromARGB(255, 3, 9, 110))),
+                    Text(
+                      "Customer Details",
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Color.fromARGB(255, 3, 9, 110),
+                      ),
+                    ),
                     Divider(thickness: 1, height: 24),
-                
+
                     Row(
                       children: [
                         _buildKeyValue("CIF ID", "1734239823"),
@@ -59,7 +71,7 @@ class CustomerResponsePage extends StatelessWidget {
                       ],
                     ),
                     SizedBox(height: 16),
-                
+
                     Row(
                       children: [
                         _buildKeyValue("mobile", "9834509345"),
@@ -81,52 +93,55 @@ class CustomerResponsePage extends StatelessWidget {
               ),
             ),
             SizedBox(height: 25),
-           Center(
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Color.fromARGB(255, 3, 9, 110),
-                      foregroundColor: Colors.white,
-                      padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        ),
-                        ),
-                    onPressed: () {},
-                    child: Text('Proceed with Details'),
+            Center(
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Color.fromARGB(255, 3, 9, 110),
+                  foregroundColor: Colors.white,
+                  padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
                   ),
                 ),
+                onPressed: () {},
+                child: Text('Proceed with Details'),
+              ),
+            ),
           ],
         ),
       ),
     );
   }
-} 
+}
 
 Widget KeyValue(String key, String value) {
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
       Text(key),
-      Text(value, style: TextStyle(color: Color.fromARGB(255, 3, 9, 110)))
+      Text(value, style: TextStyle(color: Color.fromARGB(255, 3, 9, 110))),
     ],
   );
 }
 
 Widget _buildKeyValue(String key, String value) {
-    return SizedBox(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            "$key: ",
-            style: TextStyle(fontWeight: FontWeight.w500, color: Colors.grey[800]),
+  return SizedBox(
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          "$key: ",
+          style: TextStyle(
+            fontWeight: FontWeight.w500,
+            color: Colors.grey[800],
           ),
-          Text(
-            value,
-            style: TextStyle(color: Colors.black87),
-            overflow: TextOverflow.ellipsis,
-          ),
-        ],
-      ),
-    );
-  }
+        ),
+        Text(
+          value,
+          style: TextStyle(color: Colors.black87),
+          overflow: TextOverflow.ellipsis,
+        ),
+      ],
+    ),
+  );
+}

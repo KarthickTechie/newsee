@@ -27,7 +27,7 @@ class BuildInRow extends StatelessWidget {
           SizedBox(
             width: MediaQuery.of(context).size.width * 0.3,
             child: Text(value, style: const TextStyle(fontSize: 13)),
-          )
+          ),
           // Icon(icon, color: Colors.teal),
           // const SizedBox(width: 12),
           // Text(

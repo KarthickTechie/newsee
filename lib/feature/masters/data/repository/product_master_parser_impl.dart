@@ -8,7 +8,7 @@ class ProductMasterParserImpl extends MastersResponseParser<ProductMaster> {
     final setupmaster = response.data['Setupmaster'];
     if (setupmaster != null && setupmaster['ProductMaster'] != null) {
       List productMasterData = setupmaster['ProductMaster'];
-      
+
       List<ProductMaster> productMasterList =
           productMasterData.map((e) => ProductMaster.fromMap(e)).toList();
       print("productMasterList $productMasterList");

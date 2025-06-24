@@ -7,6 +7,7 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:newsee/AppData/DBConstants/table_key_products.dart';
+import 'package:newsee/AppData/app_constants.dart';
 import 'package:newsee/Utils/query_builder.dart';
 import 'package:newsee/core/db/db_config.dart';
 import 'package:newsee/feature/masters/domain/modal/lov.dart';
@@ -104,9 +105,22 @@ class LoanproductBloc extends Bloc<LoanproductEvent, LoanproductState> {
       db,
     ).getByColumnName(columnName: 'lsfFacType', columnValue: optCode);
     print('mainCategoryList => $mainCategoryList');
-    emit(
-      state.copyWith(mainCategoryList: mainCategoryList, selectedProduct: null),
-    );
+    if (state.status == SaveStatus.success) {
+      emit(
+        state.copyWith(
+          mainCategoryList: mainCategoryList,
+          selectedProduct: null,
+          status: SaveStatus.update,
+        ),
+      );
+    } else {
+      emit(
+        state.copyWith(
+          mainCategoryList: mainCategoryList,
+          selectedProduct: null,
+        ),
+      );
+    }
   }
 
   Future<void> onChangeProduct(
@@ -167,16 +181,27 @@ class LoanproductBloc extends Bloc<LoanproductEvent, LoanproductState> {
       Product subProduct = state.subCategoryList.firstWhere(
         (p) => p.lsfFacId == subCategory,
       );
-
-      emit(
-        state.copyWith(
-          selectedProductScheme: productSchema,
-          selectedMainCategory: mainProduct,
-          selectedSubCategoryList: subProduct,
-          selectedProduct: state.selectedProduct,
-          status: SaveStatus.success,
-        ),
-      );
+      if (state.status == SaveStatus.init) {
+        emit(
+          state.copyWith(
+            selectedProductScheme: productSchema,
+            selectedMainCategory: mainProduct,
+            selectedSubCategoryList: subProduct,
+            selectedProduct: state.selectedProduct,
+            status: SaveStatus.success,
+          ),
+        );
+      } else if (state.status == SaveStatus.update) {
+        emit(
+          state.copyWith(
+            selectedProductScheme: productSchema,
+            selectedMainCategory: mainProduct,
+            selectedSubCategoryList: subProduct,
+            selectedProduct: state.selectedProduct,
+            status: SaveStatus.success,
+          ),
+        );
+      }
     }
   }
 }

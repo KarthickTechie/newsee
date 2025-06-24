@@ -18,8 +18,6 @@
 
 part of 'loanproduct_bloc.dart';
 
-enum SaveStatus { init, loading, success, failure }
-
 class LoanproductState extends Equatable {
   final String? leadId;
   final List<ProductSchema> productSchemeList;

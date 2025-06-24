@@ -12,6 +12,12 @@ void dependencyInjection() {
   getIt.registerSingleton(MediaService());
   getIt.registerSingleton(BioMetricLogin());
   getIt.registerFactory<CameraBloc>(() => CameraBloc());
-  getIt.registerFactory<LoginBloc>(() => LoginBloc(loginRequest: LoginRequest(username: '', password: '')));
-  getIt.registerSingleton<SaveProfilePictureBloc>(SaveProfilePictureBloc(ProfilPictureState(status: null, profilepicturedetails: null)));
+  getIt.registerFactory<LoginBloc>(
+    () => LoginBloc(loginRequest: LoginRequest(username: '', password: '')),
+  );
+  getIt.registerSingleton<SaveProfilePictureBloc>(
+    SaveProfilePictureBloc(
+      ProfilPictureState(status: null, profilepicturedetails: null),
+    ),
+  );
 }

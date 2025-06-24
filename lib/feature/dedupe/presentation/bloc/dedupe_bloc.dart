@@ -21,6 +21,7 @@ class DedupeBloc extends Bloc<DedupeEvent, DedupeState> {
     on<FetchDedupeEvent>(dedupeFetch);
     on<ValiateAadharEvent>(onValidateAadhar);
     on<SearchCifEvent>(onSearchCif);
+    on<OpenSheetEvent>(openbottomsheet);
   }
 
   Future<void> dedupeFetch(FetchDedupeEvent event, Emitter emit) async {
@@ -34,9 +35,7 @@ class DedupeBloc extends Bloc<DedupeEvent, DedupeState> {
       emit(
         state.copyWith(
           status: DedupeFetchStatus.success,
-          constitution: event.constitution,
           dedupeResponse: responseHandler.right,
-          isNewCustomer: true
         ),
       );
     } else {
@@ -61,7 +60,6 @@ class DedupeBloc extends Bloc<DedupeEvent, DedupeState> {
         state.copyWith(
           status: DedupeFetchStatus.success,
           aadharvalidateResponse: responseHandler.right,
-          isNewCustomer: true
         ),
       );
     } else {
@@ -82,9 +80,7 @@ class DedupeBloc extends Bloc<DedupeEvent, DedupeState> {
       emit(
         state.copyWith(
           status: DedupeFetchStatus.success,
-          constitution: event.constitution,
           cifResponse: response.right,
-          isNewCustomer: false
         )
       );
     } else {
@@ -96,5 +92,16 @@ class DedupeBloc extends Bloc<DedupeEvent, DedupeState> {
         ),
       );
     }
+  }
+
+  Future openbottomsheet(OpenSheetEvent event, Emitter emit) async {
+    print("open botton sheet call here");
+    emit(
+      state.copyWith(
+        status: DedupeFetchStatus.change,
+        constitution: event.request['constitution'],
+        isNewCustomer: event.request['isNewCustomer']
+      )
+    );
   }
 }

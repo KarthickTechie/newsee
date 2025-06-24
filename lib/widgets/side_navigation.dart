@@ -26,10 +26,13 @@ class Sidenavigationbar extends StatelessWidget {
           ListTile(
             leading: Icon(Icons.dashboard_rounded, color: Colors.teal),
             title: Text("Dashboard"),
-            onTap: () => {
-              GetIt.instance<SaveProfilePictureBloc>().add(ResetProfileDataEvent()),
-              context.goNamed('home')
-            }
+            onTap:
+                () => {
+                  GetIt.instance<SaveProfilePictureBloc>().add(
+                    ResetProfileDataEvent(),
+                  ),
+                  context.goNamed('home'),
+                },
           ),
           ListTile(
             leading: Icon(Icons.mail_rounded, color: Colors.teal),

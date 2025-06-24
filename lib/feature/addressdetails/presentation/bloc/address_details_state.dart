@@ -1,8 +1,6 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 part of './address_details_bloc.dart';
 
-enum SaveStatus { init, loading, success, failure, mastersucess }
-
 class AddressDetailsState extends Equatable {
   final List<Lov>? lovList;
   final List<GeographyMaster>? stateCityMaster;

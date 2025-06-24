@@ -2,13 +2,13 @@ part of 'saveprofilepicture_bloc.dart';
 
 enum LeadStatus { init, loading, success, failure, reset }
 
-final class ProfilPictureState extends Equatable{
-
+final class ProfilPictureState extends Equatable {
   final LeadStatus? status;
   final ProfilePictureDetails? profilepicturedetails;
 
   ProfilPictureState({
-    required this.status, required this.profilepicturedetails 
+    required this.status,
+    required this.profilepicturedetails,
   });
 
   @override

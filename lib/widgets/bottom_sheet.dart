@@ -7,18 +7,22 @@ void openBottomSheet(
   double maxChildSize,
   Widget Function(BuildContext context, ScrollController ctrl) renderWidget,
 ) {
-  showModalBottomSheet(
-    context: context,
-    isScrollControlled: true,
-    builder:
-        (context) => DraggableScrollableSheet(
-          expand: false,
-          initialChildSize: initialChildSize,
-          minChildSize: minChildSize,
-          maxChildSize: maxChildSize,
-          builder:
-              (context, scrollController) =>
-                  renderWidget(context, scrollController),
-        ),
-  );
+  try {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder:
+          (context) => DraggableScrollableSheet(
+            expand: false,
+            initialChildSize: initialChildSize,
+            minChildSize: minChildSize,
+            maxChildSize: maxChildSize,
+            builder:
+                (context, scrollController) =>
+                    renderWidget(context, scrollController),
+          ),
+    );
+  } catch (e) {
+    print("Error opening bottom sheet: $e");
+  }
 }

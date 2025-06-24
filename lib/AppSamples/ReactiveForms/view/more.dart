@@ -29,8 +29,11 @@ void moreActionSheet(BuildContext context, String action) {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Padding(
-                padding:  EdgeInsets.only(
-                  top: screenHeight * 0.02, bottom: screenHeight * 0.02, right: screenWidth *0.02),
+                padding: EdgeInsets.only(
+                  top: screenHeight * 0.02,
+                  bottom: screenHeight * 0.02,
+                  right: screenWidth * 0.02,
+                ),
                 child: Text(
                   'More',
                   style: TextStyle(
@@ -41,72 +44,68 @@ void moreActionSheet(BuildContext context, String action) {
                 ),
               ),
 
-            
               SingleChildScrollView(
-                     child: Wrap(
-              spacing: screenWidth * 0.03,
-              runSpacing: screenHeight * 0.02,
-              children: [
-                LoanOption(
-                  context,
-                  screenWidth,
-                  screenHeight,
-                  'Retail Loan',
-                  'assets/Retail_loan.svg',
-                  onTap: () {},
+                child: Wrap(
+                  spacing: screenWidth * 0.03,
+                  runSpacing: screenHeight * 0.02,
+                  children: [
+                    LoanOption(
+                      context,
+                      screenWidth,
+                      screenHeight,
+                      'Retail Loan',
+                      'assets/Retail_loan.svg',
+                      onTap: () {},
+                    ),
+                    LoanOption(
+                      context,
+                      screenWidth,
+                      screenHeight,
+                      'Agri Loan',
+                      'assets/Agri_Loan.svg',
+                      onTap: () {},
+                    ),
+                    LoanOption(
+                      context,
+                      screenWidth,
+                      screenHeight,
+                      'MSME Loan',
+                      'assets/MSME.svg',
+                      onTap: () {},
+                    ),
+                    LoanOption(
+                      context,
+                      screenWidth,
+                      screenHeight,
+                      'Home Loan',
+                      'assets/Home_Loan.svg',
+                      onTap: () {},
+                    ),
+                    LoanOption(
+                      context,
+                      screenWidth,
+                      screenHeight,
+                      'Vehicle Loan',
+                      'assets/Vehicle_Loan.svg',
+                      onTap: () {},
+                    ),
+                    LoanOption(
+                      context,
+                      screenWidth,
+                      screenHeight,
+                      'Gold Loan',
+                      'assets/Gold_Loan.svg',
+                      onTap: () {},
+                    ),
+                  ],
                 ),
-                LoanOption(
-                  context,
-                  screenWidth,
-                  screenHeight,
-                  'Agri Loan',
-                  'assets/Agri_Loan.svg',
-                  onTap: () {},
-                ),
-                LoanOption(
-                  context,
-                  screenWidth,
-                  screenHeight,
-                  'MSME Loan',
-                  'assets/MSME.svg',
-                  onTap: () {},
-                ),
-                LoanOption(
-                  context,
-                  screenWidth,
-                  screenHeight,
-                  'Home Loan',
-                  'assets/Home_Loan.svg',
-                  onTap: () {},
-                ),
-                LoanOption(
-                  context,
-                  screenWidth,
-                  screenHeight,
-                  'Vehicle Loan',
-                  'assets/Vehicle_Loan.svg',
-                  onTap: () {},
-                ),
-                LoanOption(
-                  context,
-                  screenWidth,
-                  screenHeight,
-                  'Gold Loan',
-                  'assets/Gold_Loan.svg',
-                  onTap: () {},
-                ),
-              ],
-            ),
-          ),
-
+              ),
 
               SizedBox(height: 20),
 
               //Section for other Services
               GestureDetector(
-                  onTap: () {
-
-                        },
+                onTap: () {},
                 child: Container(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -128,7 +127,7 @@ void moreActionSheet(BuildContext context, String action) {
                           textAlign: TextAlign.left,
                         ),
                       ),
-                
+
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -149,12 +148,12 @@ void moreActionSheet(BuildContext context, String action) {
                               ),
                             ],
                           ),
-                
+
                           Padding(
                             padding: const EdgeInsets.only(right: 20),
                             child: Icon(
                               Icons.arrow_forward_ios_outlined,
-                
+
                               color: const Color.fromARGB(198, 7, 61, 105),
                               size: 20,
                               weight: 80,
@@ -183,12 +182,12 @@ void moreActionSheet(BuildContext context, String action) {
                               ),
                             ],
                           ),
-                
+
                           Padding(
                             padding: const EdgeInsets.only(right: 20),
                             child: Icon(
                               Icons.arrow_forward_ios_outlined,
-                
+
                               color: const Color.fromARGB(198, 7, 61, 105),
                               size: 20,
                               weight: 80,
@@ -232,13 +231,18 @@ void moreActionSheet(BuildContext context, String action) {
   );
 }
 
-Widget LoanOption(BuildContext context, double screenWidth, double screenHeight,
-    String title, String assetPath,
-    {required VoidCallback onTap}) {
+Widget LoanOption(
+  BuildContext context,
+  double screenWidth,
+  double screenHeight,
+  String title,
+  String assetPath, {
+  required VoidCallback onTap,
+}) {
   return GestureDetector(
     onTap: onTap,
     child: Container(
-      width: screenWidth * 0.26, 
+      width: screenWidth * 0.26,
       decoration: BoxDecoration(
         border: Border.all(
           color: Color.fromARGB(130, 158, 158, 158),
