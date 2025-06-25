@@ -11,6 +11,7 @@ import 'package:newsee/feature/loader/presentation/bloc/global_loading_event.dar
 import 'package:newsee/feature/masters/domain/modal/geography_master.dart';
 import 'package:newsee/feature/masters/domain/modal/lov.dart';
 import 'package:newsee/feature/masters/domain/modal/statecitymaster.dart';
+import 'package:newsee/k_willpopscope.dart';
 import 'package:newsee/widgets/custom_loading.dart';
 import 'package:newsee/widgets/custom_text_field.dart';
 import 'package:newsee/widgets/integer_text_field.dart';
@@ -100,259 +101,263 @@ class Address extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final globalLoadingBloc = context.read<GlobalLoadingBloc>();
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Address Details"),
-        automaticallyImplyLeading: false,
-      ),
-      body: BlocConsumer<AddressDetailsBloc, AddressDetailsState>(
-        listener: (context, state) {
-          print(
-            'addressdetail::BlocConsumer:listen => ${state.lovList} ${state.addressData} ${state.status?.name}',
-          );
-          if (state.status == SaveStatus.success) {
-            goToNextTab(context);
-          }
-          if (state.status == SaveStatus.mastersucess ||
-              state.status == SaveStatus.masterfailure) {
-            globalLoadingBloc.add(HideLoading());
-          }
-        },
-        builder: (context, state) {
-          print('adressState----------------->${state.addressData}');
-          DedupeState? dedupeState;
-          AddressDetailsState addressDetailsState =
-              context.watch<AddressDetailsBloc>().state;
-          if (state.status == SaveStatus.init) {
-            dedupeState = context.watch<DedupeBloc>().state;
-            if (dedupeState.cifResponse != null) {
-              print('address cifresponse-------->$dedupeState["cifResponse"]');
-              mapCifResponse(dedupeState.cifResponse);
-            } else if (dedupeState.aadharvalidateResponse != null) {
-              print(dedupeState.aadharvalidateResponse);
-              mapAadharResponse(dedupeState.aadharvalidateResponse);
-            }
-          }
-          return Stack(
-            alignment: Alignment.topLeft,
-            children: [
-              ReactiveForm(
-                formGroup: form,
-                child: SafeArea(
-                  child: SingleChildScrollView(
-                    child: Column(
-                      children: [
-                        SearchableDropdown(
-                          controlName: 'addressType',
-                          label: 'Address Type',
-                          items:
-                              state.lovList!
-                                  .where((v) => v.Header == 'AddressType')
-                                  .toList(),
-                          onChangeListener:
-                              (Lov val) => form.controls['addressType']
-                                  ?.updateValue(val.optvalue),
-                          selItem: () {
-                            if (state.addressData != null) {
-                              Lov? lov = state.lovList?.firstWhere(
-                                (lov) =>
-                                    lov.Header == 'AddressType' &&
-                                    lov.optvalue ==
-                                        state.addressData?.addressType,
-                              );
-                              form.controls['addressType']?.updateValue(
-                                lov?.optvalue,
-                              );
-                              return lov;
-                            } else {
-                              return null;
-                            }
-                          },
-                        ),
-                        CustomTextField(
-                          controlName: 'address1',
-                          label: 'Address 1',
-                          mantatory: true,
-                        ),
-                        CustomTextField(
-                          controlName: 'address2',
-                          label: 'Address 2',
-                          mantatory: true,
-                        ),
-                        CustomTextField(
-                          controlName: 'address3',
-                          label: 'Address 3',
-                          mantatory: true,
-                        ),
-                        SearchableDropdown(
-                          controlName: 'state',
-                          label: 'State',
-                          items: state.stateCityMaster!,
-                          onChangeListener: (GeographyMaster val) {
-                            form.controls['state']?.updateValue(val.code);
-                            globalLoadingBloc.add(
-                              ShowLoading(message: "Fetching city..."),
-                            );
-                            context.read<AddressDetailsBloc>().add(
-                              OnStateCityChangeEvent(stateCode: val.code),
-                            );
-                          },
-                          selItem: () {
-                            if (addressDetailsState.addressData != null) {
-                              String? stateCode =
-                                  addressDetailsState.addressData?.state!;
+    return Kwillpopscope(
+      form: form,
 
-                              GeographyMaster? geographyMaster = state
-                                  .stateCityMaster
-                                  ?.firstWhere((val) => val.code == stateCode);
-                              print(geographyMaster);
-                              if (geographyMaster != null) {
-                                form.controls['state']?.updateValue(
-                                  geographyMaster.code,
+      widget: Scaffold(
+        appBar: AppBar(
+          title: Text("Address Details"),
+          automaticallyImplyLeading: false,
+        ),
+        body: BlocConsumer<AddressDetailsBloc, AddressDetailsState>(
+          listener: (context, state) {
+            print(
+              'addressdetail::BlocConsumer:listen => ${state.lovList} ${state.addressData} ${state.status?.name}',
+            );
+            if (state.status == SaveStatus.success) {
+              goToNextTab(context);
+            }
+            if (state.status == SaveStatus.mastersucess ||
+                state.status == SaveStatus.masterfailure) {
+              globalLoadingBloc.add(HideLoading());
+            }
+          },
+          builder: (context, state) {
+            print('adressState----------------->${state.addressData}');
+            DedupeState? dedupeState;
+            AddressDetailsState addressDetailsState =
+                context.watch<AddressDetailsBloc>().state;
+            if (state.status == SaveStatus.init) {
+              dedupeState = context.watch<DedupeBloc>().state;
+              if (dedupeState.cifResponse != null) {
+                print('address cifresponse-------->$dedupeState["cifResponse"]');
+                mapCifResponse(dedupeState.cifResponse);
+              } else if (dedupeState.aadharvalidateResponse != null) {
+                print(dedupeState.aadharvalidateResponse);
+                mapAadharResponse(dedupeState.aadharvalidateResponse);
+              }
+            }
+            return Stack(
+              alignment: Alignment.topLeft,
+              children: [
+                ReactiveForm(
+                  formGroup: form,
+                  child: SafeArea(
+                    child: SingleChildScrollView(
+                      child: Column(
+                        children: [
+                          SearchableDropdown(
+                            controlName: 'addressType',
+                            label: 'Address Type',
+                            items:
+                                state.lovList!
+                                    .where((v) => v.Header == 'AddressType')
+                                    .toList(),
+                            onChangeListener:
+                                (Lov val) => form.controls['addressType']
+                                    ?.updateValue(val.optvalue),
+                            selItem: () {
+                              if (state.addressData != null) {
+                                Lov? lov = state.lovList?.firstWhere(
+                                  (lov) =>
+                                      lov.Header == 'AddressType' &&
+                                      lov.optvalue ==
+                                          state.addressData?.addressType,
                                 );
-                                return geographyMaster;
+                                form.controls['addressType']?.updateValue(
+                                  lov?.optvalue,
+                                );
+                                return lov;
                               } else {
                                 return null;
                               }
-                            }
-                          },
-                        ),
-                        SearchableDropdown(
-                          controlName: 'cityDistrict',
-                          label: 'City',
-                          items: state.cityMaster!,
-                          onChangeListener: (GeographyMaster val) {
-                            form.controls['cityDistrict']?.updateValue(
-                              val.code,
-                            );
-                            globalLoadingBloc.add(
-                              ShowLoading(message: "Fetching district..."),
-                            );
-                            context.read<AddressDetailsBloc>().add(
-                              OnStateCityChangeEvent(
-                                stateCode:
-                                    form.controls['state']?.value as String,
-                                cityCode: val.code,
-                              ),
-                            );
-                          },
-                          selItem: () {
-                            final value = form.control('cityDistrict').value;
-                            if (value == null || value.toString().isEmpty) {
-                              return null;
-                            }
-                            if (addressDetailsState.addressData != null) {
-                              String? cityCode =
-                                  addressDetailsState
-                                      .addressData
-                                      ?.cityDistrict!;
-
-                              GeographyMaster? geographyMaster = state
-                                  .cityMaster
-                                  ?.firstWhere((val) => val.code == cityCode);
-                              print(geographyMaster);
-                              if (geographyMaster != null) {
-                                form.controls['cityDistrict']?.updateValue(
-                                  geographyMaster.code,
-                                );
-                                return geographyMaster;
-                              } else {
-                                return <GeographyMaster>[];
-                              }
-                            } else if (state.cityMaster!.isEmpty) {
-                              form.controls['cityDistrict']?.updateValue("");
-                              return <GeographyMaster>[];
-                            }
-                          },
-                        ),
-                        SearchableDropdown(
-                          controlName: 'area',
-                          label: 'District',
-                          items: state.districtMaster!,
-                          onChangeListener: (GeographyMaster val) {
-                            form.controls['area']?.updateValue(val.code);
-                          },
-                          selItem: () {
-                            final value = form.control('area').value;
-                            if (value == null || value.toString().isEmpty) {
-                              return null;
-                            }
-                            if (addressDetailsState.addressData != null) {
-                              String? districtCode =
-                                  addressDetailsState.addressData?.area!;
-
-                              GeographyMaster? geographyMaster = state
-                                  .districtMaster
-                                  ?.firstWhere(
-                                    (val) => val.code == districtCode,
+                            },
+                          ),
+                          CustomTextField(
+                            controlName: 'address1',
+                            label: 'Address 1',
+                            mantatory: true,
+                          ),
+                          CustomTextField(
+                            controlName: 'address2',
+                            label: 'Address 2',
+                            mantatory: true,
+                          ),
+                          CustomTextField(
+                            controlName: 'address3',
+                            label: 'Address 3',
+                            mantatory: true,
+                          ),
+                          SearchableDropdown(
+                            controlName: 'state',
+                            label: 'State',
+                            items: state.stateCityMaster!,
+                            onChangeListener: (GeographyMaster val) {
+                              form.controls['state']?.updateValue(val.code);
+                              globalLoadingBloc.add(
+                                ShowLoading(message: "Fetching city..."),
+                              );
+                              context.read<AddressDetailsBloc>().add(
+                                OnStateCityChangeEvent(stateCode: val.code),
+                              );
+                            },
+                            selItem: () {
+                              if (addressDetailsState.addressData != null) {
+                                String? stateCode =
+                                    addressDetailsState.addressData?.state!;
+      
+                                GeographyMaster? geographyMaster = state
+                                    .stateCityMaster
+                                    ?.firstWhere((val) => val.code == stateCode);
+                                print(geographyMaster);
+                                if (geographyMaster != null) {
+                                  form.controls['state']?.updateValue(
+                                    geographyMaster.code,
                                   );
-                              print(geographyMaster);
-                              if (geographyMaster != null) {
-                                form.controls['area']?.updateValue(
-                                  geographyMaster.code,
-                                );
-                                return geographyMaster;
-                              } else {
-                                return <GeographyMaster>[];
-                              }
-                            } else if (state.cityMaster!.isEmpty ||
-                                state.districtMaster!.isEmpty) {
-                              form.controls['area']?.updateValue("");
-                              return <GeographyMaster>[];
-                            }
-                          },
-                        ),
-                        IntegerTextField(
-                          controlName: 'pincode',
-                          label: 'Pin Code',
-                          mantatory: true,
-                          maxlength: 6,
-                          minlength: 6,
-                        ),
-                        SizedBox(height: 20),
-                        // ElevatedButton(onPressed: () {}, child: Text("ADD")),
-                        // SizedBox(height: 50),
-                        Center(
-                          child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Color.fromARGB(255, 3, 9, 110),
-                              foregroundColor: Colors.white,
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 24,
-                                vertical: 12,
-                              ),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                            ),
-                            onPressed: () {
-                              print("Address Details value ${form.value}");
-                              if (form.valid) {
-                                AddressData addressData = AddressData.fromMap(
-                                  form.value,
-                                );
-                                context.read<AddressDetailsBloc>().add(
-                                  AddressDetailsSaveEvent(
-                                    addressData: addressData,
-                                  ),
-                                );
-                              } else {
-                                form.markAllAsTouched();
+                                  return geographyMaster;
+                                } else {
+                                  return null;
+                                }
                               }
                             },
-                            child: Text('Next'),
                           ),
-                        ),
-                      ],
+                          SearchableDropdown(
+                            controlName: 'cityDistrict',
+                            label: 'City',
+                            items: state.cityMaster!,
+                            onChangeListener: (GeographyMaster val) {
+                              form.controls['cityDistrict']?.updateValue(
+                                val.code,
+                              );
+                              globalLoadingBloc.add(
+                                ShowLoading(message: "Fetching district..."),
+                              );
+                              context.read<AddressDetailsBloc>().add(
+                                OnStateCityChangeEvent(
+                                  stateCode:
+                                      form.controls['state']?.value as String,
+                                  cityCode: val.code,
+                                ),
+                              );
+                            },
+                            selItem: () {
+                              final value = form.control('cityDistrict').value;
+                              if (value == null || value.toString().isEmpty) {
+                                return null;
+                              }
+                              if (addressDetailsState.addressData != null) {
+                                String? cityCode =
+                                    addressDetailsState
+                                        .addressData
+                                        ?.cityDistrict!;
+      
+                                GeographyMaster? geographyMaster = state
+                                    .cityMaster
+                                    ?.firstWhere((val) => val.code == cityCode);
+                                print(geographyMaster);
+                                if (geographyMaster != null) {
+                                  form.controls['cityDistrict']?.updateValue(
+                                    geographyMaster.code,
+                                  );
+                                  return geographyMaster;
+                                } else {
+                                  return <GeographyMaster>[];
+                                }
+                              } else if (state.cityMaster!.isEmpty) {
+                                form.controls['cityDistrict']?.updateValue("");
+                                return <GeographyMaster>[];
+                              }
+                            },
+                          ),
+                          SearchableDropdown(
+                            controlName: 'area',
+                            label: 'District',
+                            items: state.districtMaster!,
+                            onChangeListener: (GeographyMaster val) {
+                              form.controls['area']?.updateValue(val.code);
+                            },
+                            selItem: () {
+                              final value = form.control('area').value;
+                              if (value == null || value.toString().isEmpty) {
+                                return null;
+                              }
+                              if (addressDetailsState.addressData != null) {
+                                String? districtCode =
+                                    addressDetailsState.addressData?.area!;
+      
+                                GeographyMaster? geographyMaster = state
+                                    .districtMaster
+                                    ?.firstWhere(
+                                      (val) => val.code == districtCode,
+                                    );
+                                print(geographyMaster);
+                                if (geographyMaster != null) {
+                                  form.controls['area']?.updateValue(
+                                    geographyMaster.code,
+                                  );
+                                  return geographyMaster;
+                                } else {
+                                  return <GeographyMaster>[];
+                                }
+                              } else if (state.cityMaster!.isEmpty ||
+                                  state.districtMaster!.isEmpty) {
+                                form.controls['area']?.updateValue("");
+                                return <GeographyMaster>[];
+                              }
+                            },
+                          ),
+                          IntegerTextField(
+                            controlName: 'pincode',
+                            label: 'Pin Code',
+                            mantatory: true,
+                            maxlength: 6,
+                            minlength: 6,
+                          ),
+                          SizedBox(height: 20),
+                          // ElevatedButton(onPressed: () {}, child: Text("ADD")),
+                          // SizedBox(height: 50),
+                          Center(
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Color.fromARGB(255, 3, 9, 110),
+                                foregroundColor: Colors.white,
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: 24,
+                                  vertical: 12,
+                                ),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                              ),
+                              onPressed: () {
+                                print("Address Details value ${form.value}");
+                                if (form.valid) {
+                                  AddressData addressData = AddressData.fromMap(
+                                    form.value,
+                                  );
+                                  context.read<AddressDetailsBloc>().add(
+                                    AddressDetailsSaveEvent(
+                                      addressData: addressData,
+                                    ),
+                                  );
+                                } else {
+                                  form.markAllAsTouched();
+                                }
+                              },
+                              child: Text('Next'),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
-              ),
-              // if (state.status == SaveStatus.loading)
-              //   const Center(child: CustomLoading()),
-            ],
-          );
-        },
+                // if (state.status == SaveStatus.loading)
+                //   const Center(child: CustomLoading()),
+              ],
+            );
+          },
+        ),
       ),
     );
   }
