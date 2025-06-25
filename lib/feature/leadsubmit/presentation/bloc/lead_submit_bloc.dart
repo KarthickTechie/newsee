@@ -1,16 +1,21 @@
 import 'package:dio/dio.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:newsee/AppData/app_api_constants.dart';
+import 'package:newsee/AppData/app_constants.dart';
 import 'package:newsee/Model/address_data.dart';
 import 'package:newsee/Model/personal_data.dart';
 import 'package:newsee/core/api/AsyncResponseHandler.dart';
 import 'package:newsee/core/api/failure.dart';
 import 'package:newsee/feature/leadsubmit/data/repository/lead_submit_repo_impl.dart';
+import 'package:newsee/feature/leadsubmit/data/repository/proposal_repo_impl.dart';
 import 'package:newsee/feature/leadsubmit/domain/modal/dedupe.dart';
 import 'package:newsee/feature/leadsubmit/domain/modal/lead_submit_request.dart';
 import 'package:newsee/feature/leadsubmit/domain/modal/loan_product.dart';
 import 'package:newsee/feature/leadsubmit/domain/modal/loan_type.dart';
+import 'package:newsee/feature/leadsubmit/domain/modal/proposal_creation_request.dart';
 import 'package:newsee/feature/leadsubmit/domain/repository/lead_submit_repo.dart';
+import 'package:newsee/feature/leadsubmit/domain/repository/proposal_submit_repo.dart';
 
 part './lead_submit_event.dart';
 part './lead_submit_state.dart';
@@ -23,6 +28,7 @@ final class LeadSubmitBloc extends Bloc<LeadSubmitEvent, LeadSubmitState> {
   LeadSubmitBloc() : super(LeadSubmitState.init()) {
     on<LeadSubmitPageInitEvent>(onLeadSubmitPageInit);
     on<LeadSubmitPushEvent>(onLeadPush);
+    on<CreateProposalEvent>(onCreateProposalRequest);
   }
 
   Future<void> onLeadSubmitPageInit(
@@ -92,6 +98,41 @@ final class LeadSubmitBloc extends Bloc<LeadSubmitEvent, LeadSubmitState> {
       print('leadsubmit exception => $e');
     } finally {
       emit(state.copyWith(leadSubmitStatus: SubmitStatus.success));
+    }
+  }
+
+  Future<void> onCreateProposalRequest(
+    CreateProposalEvent event,
+    Emitter emit,
+  ) async {
+    try {
+      ProposalCreationRequest proposalCreationRequest = ProposalCreationRequest(
+        leadId: event.proposalCreationRequest.leadId ?? state.leadId,
+        userid:
+            event.proposalCreationRequest.userid ?? ApiConstants.api_qa_userid,
+        token: event.proposalCreationRequest.token ?? ApiConstants.api_qa_token,
+      );
+      print('proposalCreationRequest => $proposalCreationRequest');
+
+      final responseHandler = await ProposalRepoImpl().submitProposal(
+        request: proposalCreationRequest,
+      );
+      if (responseHandler.isRight()) {
+        final response = responseHandler.right;
+        String proposalNumber =
+            response[ApiConstants.api_response_proposalNumber];
+        emit(
+          state.copyWith(
+            proposalNo: proposalNumber,
+            proposalSubmitStatus: SaveStatus.success,
+          ),
+        );
+      } else {
+        emit(state.copyWith(proposalSubmitStatus: SaveStatus.failure));
+      }
+    } on Exception catch (e) {
+      print('Proposal Creation Request Error => $e');
+      emit(state.copyWith(proposalSubmitStatus: SaveStatus.failure));
     }
   }
 }

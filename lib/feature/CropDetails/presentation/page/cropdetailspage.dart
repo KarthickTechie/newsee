@@ -41,9 +41,7 @@ class CropDetailsPage extends StatelessWidget {
   }
 
   void handleReset(BuildContext context, CropyieldpageState state) {
-    context.read<CropyieldpageBloc>().add(
-      CropDetailsResetEvent(),
-    );
+    context.read<CropyieldpageBloc>().add(CropDetailsResetEvent());
   }
 
   void showBottomSheet(BuildContext context, CropyieldpageState state) {
@@ -69,7 +67,9 @@ class CropDetailsPage extends StatelessWidget {
                         final item = entries[index];
                         return ListTile(
                           title: Text('LandType - ${item.typeofland!}'),
-                          subtitle: Text('Name of the Crop - ${item.nameOfCrop!}'),
+                          subtitle: Text(
+                            'Name of the Crop - ${item.nameOfCrop!}',
+                          ),
                           trailing: const Icon(
                             Icons.arrow_forward_ios,
                             size: 16,
@@ -91,11 +91,9 @@ class CropDetailsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        toolbarHeight: 120,
+        toolbarHeight: MediaQuery.of(context).size.height * 0.15,
         automaticallyImplyLeading: false,
-        flexibleSpace: Container(
-          decoration: BoxDecoration(color: const Color.fromARGB(255, 218, 217, 217)),
-        ),
+        flexibleSpace: Container(decoration: BoxDecoration(color: Colors.teal)),
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -103,7 +101,8 @@ class CropDetailsPage extends StatelessWidget {
             Text(
               title,
               style: TextStyle(
-                fontWeight: FontWeight.bold
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
               ),
             ),
             SizedBox(height: 10),
@@ -120,9 +119,7 @@ class CropDetailsPage extends StatelessWidget {
                 children: [
                   const Text(
                     "Irrigated: ",
-                    style: TextStyle(
-                      fontSize: 14
-                    )
+                    style: TextStyle(fontSize: 14, color: Colors.white),
                   ),
                   SizedBox(
                     width: 60,
@@ -141,9 +138,7 @@ class CropDetailsPage extends StatelessWidget {
                   const SizedBox(width: 12),
                   const Text(
                     "Rainfed: ",
-                    style: TextStyle(
-                      fontSize: 14
-                    )
+                    style: TextStyle(fontSize: 14, color: Colors.white),
                   ),
                   SizedBox(
                     width: 60,
@@ -162,19 +157,17 @@ class CropDetailsPage extends StatelessWidget {
                   const SizedBox(width: 12),
                   ValueListenableBuilder<int>(
                     valueListenable: totalNotifier,
-                    builder: (context, value, _) => Text(
-                      "Total: $value",
-                      style: TextStyle(
-                        fontSize: 14
-                      )
-                    ),
+                    builder:
+                        (context, value, _) => Text(
+                          "Total: $value",
+                          style: TextStyle(fontSize: 14, color: Colors.white),
+                        ),
                   ),
                 ],
               ),
-            )
+            ),
           ],
-        )
-        
+        ),
       ),
       body: BlocProvider(
         create: (_) => CropyieldpageBloc()..add(CropPageInitialEvent()),
@@ -189,7 +182,8 @@ class CropDetailsPage extends StatelessWidget {
             }
           },
           builder: (context, state) {
-            if (state.status == CropPageStatus.set && state.selectedCropData != null) {
+            if (state.status == CropPageStatus.set &&
+                state.selectedCropData != null) {
               form.patchValue(state.selectedCropData!.toMap());
             }
             return ReactiveForm(
@@ -217,22 +211,18 @@ class CropDetailsPage extends StatelessWidget {
                                     label: 'Season',
                                     items:
                                         state.lovlist!
-                                            .where(
-                                              (v) =>
-                                                  v.Header == 'Season',
-                                            )
+                                            .where((v) => v.Header == 'Season')
                                             .toList(),
                                     onChangeListener: (Lov val) {
-                                      form.controls['season']
-                                          ?.updateValue(val.optvalue);
+                                      form.controls['season']?.updateValue(
+                                        val.optvalue,
+                                      );
                                     },
                                     selItem: () {
                                       final value =
                                           form.control('season').value;
                                       return state.lovlist!
-                                          .where(
-                                            (v) => v.Header == 'Season',
-                                          )
+                                          .where((v) => v.Header == 'Season')
                                           .firstWhere(
                                             (lov) => lov.optvalue == value,
                                             orElse:
@@ -256,8 +246,9 @@ class CropDetailsPage extends StatelessWidget {
                                             )
                                             .toList(),
                                     onChangeListener: (Lov val) {
-                                      form.controls['nameOfCrop']
-                                          ?.updateValue(val.optvalue);
+                                      form.controls['nameOfCrop']?.updateValue(
+                                        val.optvalue,
+                                      );
                                     },
                                     selItem: () {
                                       final value =
@@ -289,13 +280,13 @@ class CropDetailsPage extends StatelessWidget {
                                     items:
                                         state.lovlist!
                                             .where(
-                                              (v) =>
-                                                  v.Header == 'TypeOfLand',
+                                              (v) => v.Header == 'TypeOfLand',
                                             )
                                             .toList(),
                                     onChangeListener: (Lov val) {
-                                      form.controls['typeofland']
-                                          ?.updateValue(val.optvalue);
+                                      form.controls['typeofland']?.updateValue(
+                                        val.optvalue,
+                                      );
                                     },
                                     selItem: () {
                                       final value =
@@ -318,16 +309,18 @@ class CropDetailsPage extends StatelessWidget {
                                   ),
                                   IntegerTextField(
                                     controlName: 'scaleoffincance',
-                                    label: 'Scale of Finance (including crop insurance)',
+                                    label:
+                                        'Scale of Finance (including crop insurance)',
                                     mantatory: true,
                                   ),
                                   IntegerTextField(
                                     controlName: 'reqasperscaleoffinace',
-                                    label: 'Requirement as per Scale of Finance',
+                                    label:
+                                        'Requirement as per Scale of Finance',
                                     mantatory: true,
                                   ),
                                   RadioButton(
-                                    label:'Notified Crop',
+                                    label: 'Notified Crop',
                                     controlName: 'notifiedcrop',
                                     optionOne: 'Yes',
                                     optionTwo: 'No',
@@ -354,60 +347,66 @@ class CropDetailsPage extends StatelessWidget {
                       left: 0,
                       right: 0,
                       child: Center(
-                        child: 
-                        state.status == CropPageStatus.set ?
-                        ElevatedButton.icon(
-                          onPressed: () => handleReset(context, state),
-                          icon: const Icon(Icons.save, color: Colors.white),
-                          label: const Text(
-                            'Reset',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                            ),
-                          ),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color.fromARGB(
-                              212,
-                              5,
-                              8,
-                              205,
-                            ),
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 32,
-                              vertical: 14,
-                            ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                          ),
-                        ) :
-                        ElevatedButton.icon(
-                          onPressed: () => handleSubmit(context, state),
-                          icon: const Icon(Icons.save, color: Colors.white),
-                          label: const Text(
-                            'Save',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                            ),
-                          ),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color.fromARGB(
-                              212,
-                              5,
-                              8,
-                              205,
-                            ),
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 32,
-                              vertical: 14,
-                            ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                          ),
-                        ),
+                        child:
+                            state.status == CropPageStatus.set
+                                ? ElevatedButton.icon(
+                                  onPressed: () => handleReset(context, state),
+                                  icon: const Icon(
+                                    Icons.save,
+                                    color: Colors.white,
+                                  ),
+                                  label: const Text(
+                                    'Reset',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: const Color.fromARGB(
+                                      212,
+                                      5,
+                                      8,
+                                      205,
+                                    ),
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 32,
+                                      vertical: 14,
+                                    ),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                  ),
+                                )
+                                : ElevatedButton.icon(
+                                  onPressed: () => handleSubmit(context, state),
+                                  icon: const Icon(
+                                    Icons.save,
+                                    color: Colors.white,
+                                  ),
+                                  label: const Text(
+                                    'Save',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: const Color.fromARGB(
+                                      212,
+                                      5,
+                                      8,
+                                      205,
+                                    ),
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 32,
+                                      vertical: 14,
+                                    ),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                  ),
+                                ),
                       ),
                     ),
                     // FAB with badge on top

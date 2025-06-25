@@ -114,3 +114,14 @@ AddressDetailsState mapGeographyMasterResponseForAddressPage(
     );
   }
 }
+
+void closeBottomSheetIfExists(BuildContext context) {
+  // Check if the current route is a bottom sheet (ModalBottomSheetRoute)
+  if (ModalRoute.of(context)?.isCurrent == true &&
+      ModalRoute.of(context) is ModalBottomSheetRoute) {
+    // Check if the route can be popped
+    if (Navigator.of(context).canPop()) {
+      Navigator.of(context).pop();
+    }
+  }
+}

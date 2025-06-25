@@ -1,3 +1,4 @@
+import 'package:newsee/AppData/app_api_constants.dart';
 import 'package:newsee/core/api/AsyncResponseHandler.dart';
 import 'package:newsee/core/api/api_client.dart';
 import 'package:newsee/core/api/failure.dart';
@@ -16,12 +17,15 @@ class LeadSubmitRepoImpl extends LeadSubmitRepo {
     );
 
     var response = await leadSubmitDatasource.submitLead(request);
-    if (response.data['Success']) {
+    if (response.data[ApiConstants.api_response_success]) {
       print(response.data['responseData']);
-      return AsyncResponseHandler.right(response.data['responseData']);
+      return AsyncResponseHandler.right(
+        response.data[ApiConstants.api_response_data],
+      );
     } else {
+      String errorMessage = response.data['ErrorMessage'];
       return AsyncResponseHandler.left(
-        HttpConnectionFailure(message: 'Lead Submit Failed'),
+        HttpConnectionFailure(message: errorMessage),
       );
     }
   }

@@ -1,3 +1,4 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 part of 'lead_submit_bloc.dart';
 
 /* 
@@ -30,4 +31,9 @@ class LeadSubmitPushEvent extends LeadSubmitEvent {
     required this.personalData,
     required this.addressData,
   });
+}
+
+class CreateProposalEvent extends LeadSubmitEvent {
+  final ProposalCreationRequest proposalCreationRequest;
+  CreateProposalEvent({required this.proposalCreationRequest});
 }

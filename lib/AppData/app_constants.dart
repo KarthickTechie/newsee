@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+// ignore: constant_identifier_names
 
 class AppConstants {
   static final RegExp PATTERN_SPECIALCHAR = RegExp(
@@ -11,6 +12,9 @@ class AppConstants {
   static final RegExp AADHAAR_PATTERN = RegExp('[0-9]{12}');
 
   static final RegExp PATTER_ONLYALPHABET = RegExp(r'(\w+)');
+
+  static const String CREATE_PROPOSAL = 'Create Proposal';
+  static const String GOTO_INBOX = "GoTo Inbox";
 }
 
 class BioMetricResult {

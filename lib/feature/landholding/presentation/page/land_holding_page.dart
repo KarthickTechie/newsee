@@ -46,70 +46,86 @@ class LandHoldingPage extends StatelessWidget {
         borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
       ),
       builder:
-          (_) => SizedBox(
-            height: 500,
-            child: Column(
-              children: [
-                Expanded(
-                  child:
-                      entries.isEmpty
-                          ? const Center(child: Text('No saved entries.'))
-                          : ListView.separated(
-                            padding: const EdgeInsets.all(16),
-                            itemCount: entries.length,
-                            separatorBuilder: (_, __) => const Divider(),
-                            itemBuilder: (ctx, index) {
-                              final item = entries[index];
-                              return OptionsSheet(
-                                icon: Icons.grass,
-                                title: item.applicantName,
-                                subtitle: item.surveyNo,
-                                details: [item.village, item.totalAcreage],
-                                onTap: () {
-                                  Navigator.pop(context);
-                                  context.read<LandHoldingBloc>().add(
-                                    LandDetailsLoadEvent(landData: item),
-                                  );
-                                },
-                              );
-                            },
-                          ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 12,
+          (_) => SafeArea(
+            child: SizedBox(
+              height: 500,
+              child: Column(
+                children: [
+                  Expanded(
+                    child:
+                        entries.isEmpty
+                            ? const Center(child: Text('No saved entries.'))
+                            : ListView.separated(
+                              padding: const EdgeInsets.all(16),
+                              itemCount: entries.length,
+                              separatorBuilder: (_, __) => const Divider(),
+                              itemBuilder: (ctx, index) {
+                                final item = entries[index];
+                                return OptionsSheet(
+                                  icon: Icons.grass,
+                                  title: item.applicantName,
+                                  details: [
+                                    item.surveyNo,
+                                    item.village,
+                                    item.totalAcreage,
+                                  ],
+                                  detailsName: [
+                                    "Survey No",
+                                    "Village",
+                                    "Total Acerage",
+                                  ],
+                                  onTap: () {
+                                    Navigator.pop(context);
+                                    context.read<LandHoldingBloc>().add(
+                                      LandDetailsLoadEvent(landData: item),
+                                    );
+                                  },
+                                );
+                              },
+                            ),
                   ),
-                  child: ElevatedButton.icon(
-                    onPressed: () {},
-                    icon: const Icon(Icons.send, color: Colors.white),
-                    label: RichText(
-                      text: const TextSpan(
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
+                  if (entries.isNotEmpty)
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 12,
+                      ),
+                      child: ElevatedButton.icon(
+                        onPressed: () {},
+                        icon: const Icon(Icons.send, color: Colors.white),
+                        label: RichText(
+                          text: const TextSpan(
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                            ),
+                            children: [
+                              TextSpan(text: 'Push to '),
+                              TextSpan(
+                                text: 'LEND',
+                                style: TextStyle(color: Colors.white),
+                              ),
+                              TextSpan(
+                                text: 'perfect',
+                                style: TextStyle(fontStyle: FontStyle.italic),
+                              ),
+                            ],
+                          ),
                         ),
-                        children: [
-                          TextSpan(text: 'Push to '),
-                          TextSpan(
-                            text: 'LEND',
-                            style: TextStyle(color: Colors.white),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color.fromARGB(
+                            255,
+                            75,
+                            33,
+                            83,
                           ),
-                          TextSpan(
-                            text: 'perfect',
-                            style: TextStyle(fontStyle: FontStyle.italic),
-                          ),
-                        ],
+                          minimumSize: const Size(double.infinity, 50),
+                        ),
                       ),
                     ),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color.fromARGB(255, 75, 33, 83),
-                      minimumSize: const Size(double.infinity, 50),
-                    ),
-                  ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
     );
@@ -194,7 +210,7 @@ class LandHoldingPage extends StatelessWidget {
                                   label: 'District',
                                   items: state.cityMaster!,
                                   onChangeListener: (GeographyMaster val) {
-                                    form.controls['cityDistrict']?.updateValue(
+                                    form.controls['district']?.updateValue(
                                       val.code,
                                     );
                                   },
@@ -219,6 +235,8 @@ class LandHoldingPage extends StatelessWidget {
                                   controlName: 'distanceFromBranch',
                                   label: 'Distance from Branch (in Kms)',
                                   mantatory: true,
+                                  minlength: 1,
+                                  maxlength: 3,
                                 ),
 
                                 IntegerTextField(
@@ -293,6 +311,10 @@ class LandHoldingPage extends StatelessWidget {
                                   selItem: () {
                                     final value =
                                         form.control('natureOfRight').value;
+                                    if (value == null ||
+                                        value.toString().isEmpty) {
+                                      return null;
+                                    }
                                     return state.lovlist!
                                         .where(
                                           (v) => v.Header == 'NatureOfRight',
@@ -337,6 +359,10 @@ class LandHoldingPage extends StatelessWidget {
                                         form
                                             .control('irrigationFacilities')
                                             .value;
+                                    if (value == null ||
+                                        value.toString().isEmpty) {
+                                      return null;
+                                    }
                                     return state.lovlist!
                                         .where(
                                           (v) => v.Header == 'NatureOfIrrFac',
