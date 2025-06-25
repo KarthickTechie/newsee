@@ -9,6 +9,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:newsee/AppData/app_route_constants.dart';
 import 'package:newsee/feature/leadInbox/domain/modal/lead_request.dart';
 import 'package:newsee/feature/leadInbox/presentation/bloc/lead_bloc.dart';
 import 'package:newsee/widgets/bottom_sheet.dart';
@@ -114,7 +115,12 @@ class CompletedLeads extends StatelessWidget {
                             subtitle: "View your Land Details here",
                             status: 'Completed',
                             onTap: () {
-                              context.pushNamed('landholdings');
+                              context.pushNamed(
+                                'landholdings',
+                                queryParameters: {
+                                  'proposalId': "456789012346789",
+                                },
+                              );
                             },
                           ),
                           OptionsSheet(

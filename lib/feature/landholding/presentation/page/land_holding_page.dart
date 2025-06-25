@@ -19,11 +19,12 @@ import 'package:newsee/widgets/radio.dart';
 import 'package:newsee/widgets/integer_text_field.dart';
 
 class LandHoldingPage extends StatelessWidget {
+  final String? proposalId;
   final String title;
 
   final form = AppForms.LAND_HOLDING_FORM;
 
-  LandHoldingPage({super.key, required this.title});
+  LandHoldingPage({super.key, required this.title, this.proposalId});
 
   void handleSubmit(BuildContext context, LandHoldingState state) {
     if (form.valid) {
@@ -116,6 +117,8 @@ class LandHoldingPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print(' Received Proposal ID: $proposalId');
+
     final globalLoadingBloc = context.read<GlobalLoadingBloc>();
 
     return Scaffold(

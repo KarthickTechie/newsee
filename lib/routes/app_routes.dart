@@ -159,35 +159,40 @@ final routes = GoRouter(
     GoRoute(
       path: AppRouteConstants.LAND_HOLDING_PAGE['path']!,
       name: AppRouteConstants.LAND_HOLDING_PAGE['name'],
-      builder:
-          (context, state) => PopScope(
-            canPop: false,
-            onPopInvokedWithResult: (didpop, data) async {
-              final shouldPop = await showDialog<bool>(
-                context: context,
-                builder:
-                    (context) => AlertDialog(
-                      title: Text('Confirm'),
-                      content: Text('Do you want to Exit ?'),
-                      actions: [
-                        TextButton(
-                          onPressed: () => Navigator.of(context).pop(false),
-                          child: Text('Cancel'),
-                        ),
-                        TextButton(
-                          onPressed: () => Navigator.of(context).pop(true),
-                          child: Text('Yes'),
-                        ),
-                      ],
-                    ),
-              );
-              if (shouldPop ?? false) {
-                Navigator.of(context).pop(false);
-                // context.go('/'); // Navigate back using GoRouter
-              }
-            },
-            child: LandHoldingPage(title: 'Land Holding Details'),
+      builder: (context, state) {
+        final proposalId = state.uri.queryParameters['proposalId'];
+        return PopScope(
+          canPop: false,
+          onPopInvokedWithResult: (didpop, data) async {
+            final shouldPop = await showDialog<bool>(
+              context: context,
+              builder:
+                  (context) => AlertDialog(
+                    title: Text('Confirm'),
+                    content: Text('Do you want to Exit ?'),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.of(context).pop(false),
+                        child: Text('Cancel'),
+                      ),
+                      TextButton(
+                        onPressed: () => Navigator.of(context).pop(true),
+                        child: Text('Yes'),
+                      ),
+                    ],
+                  ),
+            );
+            if (shouldPop ?? false) {
+              Navigator.of(context).pop(false);
+              // context.go('/'); // Navigate back using GoRouter
+            }
+          },
+          child: LandHoldingPage(
+            title: 'Land Holding Details',
+            proposalId: proposalId,
           ),
+        );
+      },
     ),
     GoRoute(
       path: AppRouteConstants.DOCUMENT_PAGE['path']!,
