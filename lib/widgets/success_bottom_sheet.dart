@@ -1,5 +1,7 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:newsee/AppData/app_api_constants.dart';
+import 'package:newsee/AppData/app_constants.dart';
 
 /*
  @created on : june 3,2025
@@ -10,12 +12,16 @@ import 'package:newsee/AppData/app_api_constants.dart';
  arg2: header text of bottom sheet 
  arg3: message text of bottom sheet
 */
-void showSuccessBottomSheet(
-  BuildContext context,
-  String headerTxt,
-  String lead,
-  String message,
-) {
+void showSuccessBottomSheet({
+  required BuildContext context,
+  required String headerTxt,
+  required String lead,
+  required String message,
+  required VoidCallback? onPressedLeftButton,
+  required VoidCallback? onPressedRightButton,
+  required String? leftButtonLabel,
+  required String? rightButtonLabel,
+}) {
   showModalBottomSheet(
     context: context,
     isScrollControlled: true,
@@ -26,6 +32,10 @@ void showSuccessBottomSheet(
           headerTxt: headerTxt,
           lead: lead,
           message: message,
+          onPressedLeftButton: onPressedLeftButton,
+          onPressedRightButton: onPressedRightButton,
+          leftButtonLabel: leftButtonLabel,
+          rightButtonLabel: rightButtonLabel,
         ),
     shape: RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
@@ -37,10 +47,19 @@ class _AnimatedSuccessContent extends StatefulWidget {
   final String message;
   final String lead;
   final String headerTxt;
+  final VoidCallback? onPressedLeftButton;
+  final VoidCallback? onPressedRightButton;
+  final String? leftButtonLabel;
+  final String? rightButtonLabel;
+
   const _AnimatedSuccessContent({
     required this.headerTxt,
     required this.lead,
     required this.message,
+    required this.onPressedLeftButton,
+    required this.onPressedRightButton,
+    required this.leftButtonLabel,
+    required this.rightButtonLabel,
   });
 
   @override
@@ -116,13 +135,44 @@ class _AnimatedSuccessContentState extends State<_AnimatedSuccessContent>
                 style: TextStyle(fontSize: 16),
               ),
               SizedBox(height: 24),
-              ElevatedButton(
-                onPressed: () => Navigator.pop(context),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Color.fromARGB(255, 3, 9, 110),
-                  foregroundColor: Colors.white,
-                ),
-                child: Text("OK"),
+              Row(
+                spacing: 10.0,
+                children: [
+                  Flexible(
+                    flex: 4,
+
+                    child: ElevatedButton(
+                      onPressed: widget.onPressedLeftButton,
+                      style: ElevatedButton.styleFrom(
+                        minimumSize: Size(
+                          MediaQuery.of(context).size.width * 0.4,
+                          20,
+                        ),
+                        padding: EdgeInsets.all(8),
+                        backgroundColor: Color.fromARGB(255, 3, 9, 110),
+                        foregroundColor: Colors.white,
+                      ),
+                      child: Text(widget.leftButtonLabel ?? "Cancel"),
+                    ),
+                  ),
+                  Flexible(
+                    flex: 4,
+                    child: ElevatedButton(
+                      onPressed: widget.onPressedRightButton,
+                      style: ElevatedButton.styleFrom(
+                        padding: EdgeInsets.all(8),
+
+                        minimumSize: Size(
+                          MediaQuery.of(context).size.width * 0.4,
+                          20,
+                        ),
+                        backgroundColor: Color.fromARGB(255, 3, 9, 110),
+                        foregroundColor: Colors.white,
+                      ),
+                      child: Text(widget.rightButtonLabel ?? "Ok"),
+                    ),
+                  ),
+                ],
               ),
             ],
           ),

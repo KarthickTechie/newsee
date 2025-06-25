@@ -31,29 +31,49 @@ class CompletedLeads extends StatelessWidget {
               ),
       child: BlocBuilder<LeadBloc, LeadState>(
         builder: (context, state) {
-          if (state.status == LeadStatus.loading) {
-            // return const Center(child: ShimmerLoader(cardHeight: 120,itemCount: 5));
-            return ListView.builder(
-              itemCount: 4,
-              itemBuilder: (context, index) {
-                return LeadTileCardShimmer(
-                  title: 'dfsdfsfdsfsd',
-                  subtitle: 'dfsdfsfdsfsd',
-                  icon: Icons.person,
-                  color: Colors.teal,
-                  type: 'dfsdfsfdsfsd',
-                  product: 'dfsdfsfdsfsd',
-                  phone: 'dfsdfsfdsfsd',
-                  createdon: 'dfsdfsfdsfsd',
-                  location: 'dfsdfsfdsfsd',
-                  loanamount: 'dfsdfsfdsfsd',
-                );
-              },
+          Future<void> onRefresh() async {
+            context.read<LeadBloc>().add(
+              SearchLeadEvent(request: LeadRequest(userid: "AGRI1124")),
             );
           }
+
+          if (state.status == LeadStatus.loading) {
+            // return const Center(child: ShimmerLoader(cardHeight: 120,itemCount: 5));
+            return RefreshIndicator(
+              onRefresh: onRefresh,
+              child: ListView.builder(
+                itemCount: 4,
+                itemBuilder: (context, index) {
+                  return LeadTileCardShimmer(
+                    title: 'dfsdfsfdsfsd',
+                    subtitle: 'dfsdfsfdsfsd',
+                    icon: Icons.person,
+                    color: Colors.teal,
+                    type: 'dfsdfsfdsfsd',
+                    product: 'dfsdfsfdsfsd',
+                    phone: 'dfsdfsfdsfsd',
+                    createdon: 'dfsdfsfdsfsd',
+                    location: 'dfsdfsfdsfsd',
+                    loanamount: 'dfsdfsfdsfsd',
+                  );
+                },
+              ),
+            );
+          }
+
           if (state.status == LeadStatus.failure) {
-            return Center(
-              child: Text(" ${state.errorMessage ?? 'Something went wrong'}"),
+            return RefreshIndicator(
+              onRefresh: onRefresh,
+              child: ListView(
+                children: [
+                  SizedBox(height: 200),
+                  Center(
+                    child: Text(
+                      " ${state.errorMessage ?? 'Something went wrong'}",
+                    ),
+                  ),
+                ],
+              ),
             );
           }
 
@@ -75,73 +95,82 @@ class CompletedLeads extends StatelessWidget {
               }).toList();
 
           if (filteredLeads == null || filteredLeads.isEmpty) {
-            return const Center(child: Text("No leads found."));
+            return RefreshIndicator(
+              onRefresh: onRefresh,
+              child: ListView(
+                children: const [
+                  SizedBox(height: 200),
+                  Center(child: Text("No leads found.")),
+                ],
+              ),
+            );
           }
 
-          print("final completed lead response $state");
-          return ListView.builder(
-            itemCount: filteredLeads.length,
-            itemBuilder: (context, index) {
-              final lead = filteredLeads[index];
-
-              return LeadTileCard(
-                title: lead['lleadfrstname'] ?? 'N/A',
-                subtitle: lead['lleadid'] ?? 'N/A',
-                icon: Icons.person,
-                color: Colors.teal,
-                type:
-                    lead['lleadexistingcustomer'] == "N"
-                        ? 'New Customer'
-                        : 'Existing Customer',
-                product: lead['lfProdId'] ?? 'N/A',
-                phone: lead['lleadmobno'] ?? 'N/A',
-                createdon: lead['lpdCreatedOn'] ?? 'N/A',
-                location: lead['lleadprefbrnch'] ?? 'N/A',
-                loanamount: lead['lldLoanamtRequested']?.toString() ?? '',
-                onTap: () {
-                  openBottomSheet(context, 0.6, 0.4, 0.9, (
-                    context,
-                    scrollController,
-                  ) {
-                    return SingleChildScrollView(
-                      controller: scrollController,
-                      child: Column(
-                        children: [
-                          const SizedBox(height: 12),
-                          OptionsSheet(
-                            icon: Icons.visibility,
-                            title: "Land Details",
-                            subtitle: "View your Land Details here",
-                            status: 'Completed',
-                            onTap: () {
-                              context.pushNamed('landholdings');
-                            },
-                          ),
-                          OptionsSheet(
-                            icon: Icons.visibility,
-                            title: "Crop Details",
-                            subtitle: "View your Crop Details here",
-                            status: 'Pending',
-                            onTap: () {
-                              context.pushNamed('cropdetails');
-                            },
-                          ),
-                          OptionsSheet(
-                            icon: Icons.description,
-                            title: "Document Upload",
-                            subtitle: "Pre-Sanctioned Documents Upload",
-                            status: 'Pending',
-                            onTap: () {
-                              context.pushNamed('document');
-                            },
-                          ),
-                        ],
-                      ),
-                    );
-                  });
-                },
-              );
-            },
+          return RefreshIndicator(
+            onRefresh: onRefresh,
+            child: ListView.builder(
+              itemCount: filteredLeads.length,
+              itemBuilder: (context, index) {
+                final lead = filteredLeads[index];
+                return LeadTileCard(
+                  title: lead['lleadfrstname'] ?? 'N/A',
+                  subtitle: lead['lleadid'] ?? 'N/A',
+                  icon: Icons.person,
+                  color: Colors.teal,
+                  type:
+                      lead['lleadexistingcustomer'] == "N"
+                          ? 'New Customer'
+                          : 'Existing Customer',
+                  product: lead['lfProdId'] ?? 'N/A',
+                  phone: lead['lleadmobno'] ?? 'N/A',
+                  createdon: lead['lpdCreatedOn'] ?? 'N/A',
+                  location: lead['lleadprefbrnch'] ?? 'N/A',
+                  loanamount: lead['lldLoanamtRequested']?.toString() ?? '',
+                  onTap: () {
+                    openBottomSheet(context, 0.6, 0.4, 0.9, (
+                      context,
+                      scrollController,
+                    ) {
+                      return SingleChildScrollView(
+                        controller: scrollController,
+                        child: Column(
+                          children: [
+                            const SizedBox(height: 12),
+                            OptionsSheet(
+                              icon: Icons.visibility,
+                              title: "Land Details",
+                              subtitle: "View your Land Details here",
+                              status: 'Completed',
+                              onTap: () {
+                                context.pushNamed('landholdings');
+                              },
+                            ),
+                            OptionsSheet(
+                              icon: Icons.visibility,
+                              title: "Crop Details",
+                              subtitle: "View your Crop Details here",
+                              status: 'Pending',
+                              onTap: () {
+                                context.pushNamed('cropdetails');
+                              },
+                            ),
+                            OptionsSheet(
+                              icon: Icons.description,
+                              title: "Document Upload",
+                              subtitle: "Pre-Sanctioned Documents Upload",
+                              status: 'Pending',
+                              onTap: () {
+                                context.pushNamed('document');
+                              },
+                            ),
+                          ],
+                        ),
+                      );
+                    });
+                  },
+                );
+              },
+            ),
           );
         },
       ),

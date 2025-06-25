@@ -25,4 +25,6 @@ class ApiConfig {
 
   static const String LEAD_SUBMIT_API_ENDPOINT =
       'MobileService/saveLeadDetails';
+
+  static const String CREATE_PROPOSAL = 'MobileService/getProposalCreation';
 }

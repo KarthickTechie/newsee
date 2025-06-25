@@ -15,17 +15,19 @@ class OptionsSheet extends StatelessWidget {
   final IconData icon;
   final String title;
   final VoidCallback onTap;
-  final String subtitle;
+  final String? subtitle;
   final String? status;
   final List<String>? details;
+  final List<String>? detailsName;
 
   const OptionsSheet({
     required this.icon,
     required this.title,
     required this.onTap,
-    required this.subtitle,
+    this.subtitle,
     this.status,
     this.details,
+    this.detailsName,
   });
 
   @override
@@ -58,25 +60,45 @@ class OptionsSheet extends StatelessWidget {
       subtitle: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (subtitle.isNotEmpty)
+          if (subtitle != null && subtitle!.isNotEmpty)
             Text(
-              subtitle,
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: Colors.black,
-              ),
+              subtitle!,
+              style: const TextStyle(fontSize: 16, color: Colors.black),
             ),
-          if (details != null && details!.isNotEmpty)
-            ...details!.map(
-              (detail) => Padding(
-                padding: const EdgeInsets.only(top: 2),
-                child: Text(
-                  detail,
-                  style: const TextStyle(fontSize: 12, color: Colors.black),
+          if (details != null &&
+              details!.isNotEmpty &&
+              detailsName != null) ...[
+            ...List.generate(details!.length, (index) {
+              final label =
+                  index < detailsName!.length ? detailsName![index] : '';
+              final detail = details![index];
+              return Padding(
+                padding: const EdgeInsets.only(top: 4),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    if (label.isNotEmpty)
+                      Text(
+                        '$label: ',
+                        style: const TextStyle(
+                          fontSize: 12,
+                          color: Colors.black,
+                        ),
+                      ),
+                    Expanded(
+                      child: Text(
+                        detail,
+                        style: const TextStyle(
+                          fontSize: 12,
+                          color: Colors.black,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-              ),
-            ),
+              );
+            }),
+          ],
         ],
       ),
       trailing:

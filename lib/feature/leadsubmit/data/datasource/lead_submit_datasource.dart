@@ -19,4 +19,9 @@ class LeadSubmitDatasource {
     );
     return res;
   }
+
+  Future<Response> createProposal(Map<String, dynamic> payload) async {
+    final res = await dio.post(ApiConfig.CREATE_PROPOSAL, data: payload);
+    return res;
+  }
 }
