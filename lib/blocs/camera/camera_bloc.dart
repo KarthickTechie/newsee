@@ -24,6 +24,7 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
     on<CaptureImage>(cameracapture);
     on<CameraReCapture>(camerarecaptrue);
     on<CameraExit>(confirmimage);
+    on<CroppExit>(confirmcropimage);
   }
 
   // It performs initialize then Camera
@@ -123,6 +124,17 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
       final imagestate = event.filePath;
       emit(CameraConfirmData(imagestate));
     } catch (error) {
+      print('OK $error');
+      emit(CameraFailure(error.toString()));
+    }
+  }
+
+  Future<void> confirmcropimage(CroppExit event, Emitter emit) async {
+    try {
+      final imagestate = event.imagePath;
+      emit(CroppConfirmData(imagestate));
+    } catch (error) {
+      print('OK $error');
       emit(CameraFailure(error.toString()));
     }
   }

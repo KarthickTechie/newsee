@@ -1,10 +1,26 @@
+// import 'dart:io';
+// import 'dart:typed_data';
+// import 'package:file_picker/file_picker.dart';
+// import 'package:flutter/material.dart';
+// import 'package:geolocator/geolocator.dart';
+// import 'package:image_picker/image_picker.dart';
+// import 'package:newsee/Model/loader.dart';
+// import 'package:image_cropper/image_cropper.dart';
+// import 'package:newsee/blocs/camera/camera_bloc.dart';
+// import 'package:newsee/blocs/camera/camera_event.dart';
+// import 'package:path_provider/path_provider.dart';
+
+import 'dart:io';
 import 'dart:typed_data';
+
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:go_router/go_router.dart';
+import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:newsee/Model/loader.dart';
-import 'package:image_cropper/image_cropper.dart';
+import 'package:path_provider/path_provider.dart';
 
 class MediaService {
   /* 
@@ -75,13 +91,24 @@ class MediaService {
         final cropperdata = await cropper(context, pickedFile.path);
         print("croppedFileData: $cropperdata");
         final Uint8List croppedFileData = cropperdata!;
-        return croppedFileData;
+
+        final result = GoRouter.of(
+          context,
+        ).push<Uint8List>('/imageview', extra: croppedFileData);
+        if (result != null && context.mounted) {
+          return result == 'close' ? null : result;
+        }
+
+        // return croppedFileData;
+        // final imagePath = await saveBytesToFile(croppedFileData);
+        // context.read<CameraBloc>().add(CroppExit(imagePath));
       }
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text("Picking From Gallery is failed")));
       return null;
     } catch (error) {
+      print(error);
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text(error.toString())));
@@ -144,12 +171,22 @@ class MediaService {
         ],
       );
       croppedImage = await cropdata?.readAsBytes();
+
       print("cropdata-imageBytes $croppedImage");
       return (croppedImage != null) ? croppedImage : null;
     } catch (error) {
       print("cropper error paster is here: $error");
       return null;
     }
+  }
+
+  Future<String> saveBytesToFile(Uint8List bytes) async {
+    final dir = await getTemporaryDirectory();
+    final path =
+        '${dir.path}/cropped_${DateTime.now().millisecondsSinceEpoch}.jpg';
+    final file = File(path);
+    await file.writeAsBytes(bytes);
+    return file.path;
   }
 }
 

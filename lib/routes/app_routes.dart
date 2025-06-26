@@ -24,6 +24,7 @@ import 'package:newsee/feature/auth/domain/repository/auth_repository.dart';
 import 'package:newsee/feature/auth/presentation/bloc/auth_bloc.dart';
 import 'package:newsee/feature/documentupload/presentation/bloc/document_bloc.dart';
 import 'package:newsee/feature/documentupload/presentation/pages/document_page.dart';
+import 'package:newsee/feature/documentupload/presentation/widget/image_view.dart';
 import 'package:newsee/feature/landholding/presentation/page/land_holding_page.dart';
 import 'package:newsee/feature/masters/data/repository/master_repo_impl.dart';
 import 'package:newsee/feature/masters/domain/repository/master_repo.dart';
@@ -149,9 +150,10 @@ final routes = GoRouter(
       builder:
           (context, state) => Scaffold(
             body: BlocProvider(
-              // create: (_) => CameraBloc()..add(CameraOpen()),
-              create:
-                  (_) => GetIt.instance.get<CameraBloc>()..add(CameraOpen()),
+              create: (_) => CameraBloc()..add(CameraOpen()),
+              lazy: false,
+              // create:
+              //     (_) => GetIt.instance.get<CameraBloc>()..add(CameraOpen()),
               child: CameraView(),
             ),
           ),
@@ -192,14 +194,7 @@ final routes = GoRouter(
     GoRoute(
       path: AppRouteConstants.DOCUMENT_PAGE['path']!,
       name: AppRouteConstants.DOCUMENT_PAGE['name'],
-      // builder: (context, state) => DocumentPage(),
-      // builder: (context, state) {
-      //   return BlocProvider(
-      //     create:
-      //         (_) =>
-      //             GetIt.instance.get<DocumentBloc>()..add(FetchDocTypesEvent()),
-      //     child: DocumentPage(),
-      //   );
+
       builder:
           (context, state) => PopScope(
             canPop: false,
@@ -231,8 +226,10 @@ final routes = GoRouter(
             child: BlocProvider(
               create:
                   (_) =>
-                      GetIt.instance.get<DocumentBloc>()
-                        ..add(FetchDocTypesEvent()),
+                      // GetIt.instance.get<DocumentBloc>()
+                      //   ..add(FetchDocTypesEvent()),
+                      DocumentBloc()..add(FetchDocTypesEvent()),
+              lazy: false,
               child: const DocumentPage(),
             ),
           ),
@@ -269,6 +266,28 @@ final routes = GoRouter(
             },
             child: CropDetailsPage(title: 'Crop Details'),
           ),
+    ),
+    GoRoute(
+      path: AppRouteConstants.IMAGE_VIEW_PAGE['path']!,
+      name: AppRouteConstants.IMAGE_VIEW_PAGE['name'],
+      builder: (context, state) {
+        final imageBytes = state.extra as Uint8List;
+        return ImageView(imageBytes: imageBytes);
+        // return MultiBlocProvider(
+        //   providers: [
+        //     BlocProvider<CameraBloc>(
+        //       create: (_) => CameraBloc()..add(CameraReCapture()),
+        //       lazy: false,
+        //     ),
+        //     BlocProvider<DocumentBloc>(
+        //       create: (_) => DocumentBloc()..add(UploadDocumentsEvent()),
+        //       lazy: false,
+        //     ),
+        //   ],
+
+        //   child: ImageView(imageBytes: imageBytes),
+        // );
+      },
     ),
   ],
   redirect: (context, state) {

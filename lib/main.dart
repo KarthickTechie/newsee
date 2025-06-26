@@ -10,7 +10,7 @@ void main() {
   // runApp(ToolBarSample()); // Toolbar App
   //runApp(LoginApp()); // Login Form App
   // dependencyInjection();
-  setupLocator();
+  // setupLocator();
   runApp(RouterApp()); // GoRouter Sample App
 }
 

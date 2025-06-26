@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:camera/camera.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -8,8 +10,11 @@ import 'package:newsee/Utils/media_service.dart';
 import 'package:newsee/blocs/camera/camera_bloc.dart';
 import 'package:newsee/blocs/camera/camera_event.dart';
 import 'package:newsee/blocs/camera/camera_state.dart';
+import 'package:newsee/feature/documentupload/presentation/bloc/document_bloc.dart';
+import 'package:newsee/feature/documentupload/presentation/bloc/document_event.dart';
 
 class CameraView extends StatelessWidget {
+  final mediaService = MediaService();
   @override
   Widget build(BuildContext context) {
     double screenwidth = MediaQuery.of(context).size.width;
@@ -17,16 +22,72 @@ class CameraView extends StatelessWidget {
 
     return BlocConsumer<CameraBloc, CameraState>(
       listener: (context, state) async {
-        if (state is CameraConfirmData) {
-          // final cropdata = await cropper(context, state.xfiledata.path);
-          final cropdata = await GetIt.instance<MediaService>().cropper(
-            context,
-            state.xfiledata.path,
-          );
-          final imageBytes = cropdata;
-          if (context.mounted) {
-            context.pop(imageBytes);
+        // try {
+        //   if (state is CameraConfirmData) {
+        //     // final cropdata = await GetIt.instance<MediaService>().cropper(
+        //     final cropdata = await mediaService.cropper(
+        //       context,
+        //       state.xfiledata.path,
+        //     );
+        //     final imageBytes = cropdata;
+        //     // final String imagePath;
+        //     if (context.mounted) {
+        //       // final imagePath = await mediaService.saveBytesToFile(imageBytes!);
+        //       final result = await context.push<Uint8List>(
+        //         '/imageview',
+        //         extra: imageBytes,
+        //       );
+        //       if (result != null && context.mounted) {
+        //         print('MediaPath: $result');
+        //         context.pop(imageBytes);
+        //       }
+        //     }
+        //   }
+        // } catch (e) {
+        //   print('MediaError: $e');
+        // }
+
+        try {
+          String? imagePath;
+          Uint8List? originalBytes;
+
+          if (state is CameraConfirmData) {
+            imagePath = state.xfiledata.path;
+            originalBytes = await state.xfiledata.readAsBytes();
+          } else if (state is CameraCaptureData) {
+            imagePath = state.captureresponse.xfile.path;
+            originalBytes = state.captureresponse.imageData;
           }
+          if (imagePath != null) {
+            final cropdata = await mediaService.cropper(context, imagePath);
+
+            if (cropdata != null && context.mounted) {
+              final result = await context.push('/imageview', extra: cropdata);
+              if (result != null && context.mounted) {
+                if (result == 'close') {
+                  context.pop();
+                } else {
+                  context.pop(result);
+                }
+              }
+            }
+            // If crop canceled
+            else if (context.mounted) {
+              final result = await context.push(
+                '/imageview',
+                extra: originalBytes,
+              );
+              if (result != null && context.mounted) {
+                if (result == 'close') {
+                  context.pop();
+                } else {
+                  context.pop(result);
+                }
+              }
+            }
+          }
+        } catch (e) {
+          print('Crop Error: $e');
         }
       },
       builder: (context, state) {
@@ -150,49 +211,65 @@ class CameraView extends StatelessWidget {
               ),
             ],
           );
-        } else if (state is CameraCaptureData) {
-          return Stack(
-            children: [
-              SizedBox.expand(
-                child: Image.memory(
-                  state.captureresponse.imageData,
-                  width: double.infinity,
-                  height: double.infinity,
-                ),
-              ),
-              Positioned(
-                top: (screenheight * 0.8),
-                left: (screenwidth * 0.2),
-                child: Center(
-                  child: ElevatedButton.icon(
-                    icon: const Icon(Icons.camera),
-                    onPressed:
-                        () => {
-                          context.read<CameraBloc>().add(CameraReCapture()),
-                        },
-                    label: Text("Capture"),
-                  ),
-                ),
-              ),
-              Positioned(
-                top: (screenheight * 0.8),
-                left: (screenwidth * 0.6),
-                child: Center(
-                  child: ElevatedButton.icon(
-                    icon: const Icon(Icons.check),
-                    onPressed:
-                        () => {
-                          context.read<CameraBloc>().add(
-                            CameraExit(state.captureresponse.xfile),
-                          ),
-                        },
-                    label: Text("Ok"),
-                  ),
-                ),
-              ),
-            ],
-          );
         }
+        //  else if (state is CameraCaptureData) {
+        //   return Stack(
+        //     children: [
+        //       SizedBox.expand(
+        //         child: Image.memory(
+        //           state.captureresponse.imageData,
+        //           width: double.infinity,
+        //           height: double.infinity,
+        //         ),
+        //       ),
+        //       Positioned(
+        //         top: (screenheight * 0.8),
+        //         left: (screenwidth * 0.1),
+        //         child: Center(
+        //           child: ElevatedButton.icon(
+        //             icon: const Icon(Icons.camera),
+        //             onPressed:
+        //                 () => {
+        //                   context.read<CameraBloc>().add(CameraReCapture()),
+        //                 },
+        //             label: Text("Capture"),
+        //           ),
+        //         ),
+        //       ),
+        //       Positioned(
+        //         top: (screenheight * 0.8),
+        //         left: (screenwidth * 0.5),
+        //         child: Center(
+        //           child: ElevatedButton.icon(
+        //             icon: const Icon(Icons.check),
+        //             onPressed:
+        //                 () => {
+        //                   print('Camera Data: ${state.captureresponse.xfile}'),
+        //                   context.read<CameraBloc>().add(
+        //                     CameraExit(state.captureresponse.xfile),
+        //                   ),
+        //                 },
+        //             label: Text("Ok"),
+        //           ),
+        //         ),
+        //       ),
+        //       Positioned(
+        //         top: (screenheight * 0.8),
+        //         left: (screenwidth * 0.8),
+        //         child: ElevatedButton(
+        //           onPressed: () {
+        //             print(
+        //               ' Uploading image: ${state.captureresponse.imageData}',
+        //             );
+        //             // context.read<DocumentBloc>().add(UploadDocumentsEvent());
+        //             context.pop();
+        //           },
+        //           child: const Icon(Icons.upload),
+        //         ),
+        //       ),
+        //     ],
+        //   );
+        // }
         return const Center(child: CircularProgressIndicator());
       },
     );

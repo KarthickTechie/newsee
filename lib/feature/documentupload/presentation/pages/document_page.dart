@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:newsee/feature/documentupload/presentation/widget/document_list.dart';
-import 'package:newsee/feature/documentupload/presentation/widget/show_document_form_bottom_sheet.dart';
+// import 'package:newsee/feature/documentupload/presentation/widget/show_document_form_bottom_sheet.dart';
 import '../bloc/document_bloc.dart';
 import '../bloc/document_event.dart';
 
@@ -13,15 +13,22 @@ class DocumentPage extends StatelessWidget {
     return BlocProvider(
       create: (_) => context.read<DocumentBloc>()..add(FetchDocTypesEvent()),
       child: Scaffold(
-        appBar: AppBar(title: const Text('Documents Upload')),
-        body: const SingleChildScrollView(
-          padding: EdgeInsets.all(16),
-          child: Column(children: [DocumentList()]),
+        appBar: AppBar(
+          title: const Text('Documents Upload'),
+          backgroundColor: Colors.grey[100],
+          // elevation: 1,
         ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () => showDocumentFormBottomSheet(context),
-          child: const Icon(Icons.add),
+        body: Container(
+          color: Colors.grey[100],
+          child: const SingleChildScrollView(
+            // padding: EdgeInsets.all(16),
+            child: Column(children: [DocumentList()]),
+          ),
         ),
+        // floatingActionButton: FloatingActionButton(
+        //   onPressed: () => showDocumentFormBottomSheet(context),
+        //   child: const Icon(Icons.add),
+        // ),
       ),
     );
   }

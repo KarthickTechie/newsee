@@ -18,3 +18,8 @@ class CameraExit extends CameraEvent {
   final XFile filePath;
   CameraExit(this.filePath);
 }
+
+class CroppExit extends CameraEvent {
+  final String imagePath;
+  CroppExit(this.imagePath);
+}

@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:camera/camera.dart';
 import 'package:newsee/blocs/camera/camera_repository.dart';
 
@@ -25,4 +27,9 @@ class CameraCaptureData extends CameraState {
 class CameraConfirmData extends CameraState {
   final XFile xfiledata;
   CameraConfirmData(this.xfiledata);
+}
+
+class CroppConfirmData extends CameraState {
+  final String imagePath;
+  CroppConfirmData(this.imagePath);
 }
