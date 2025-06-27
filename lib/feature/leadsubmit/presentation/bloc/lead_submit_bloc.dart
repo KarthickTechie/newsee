@@ -79,9 +79,9 @@ final class LeadSubmitBloc extends Bloc<LeadSubmitEvent, LeadSubmitState> {
     coappdataMap?.addAll({"residentialStatus": "4"});
     try {
       Map<String, dynamic> leadSubmitRequest = {
-        "userid": state.userId ?? "AGRI1124",
+        "userid": "AGRI1124",
         "vertical": "7",
-        "orgScode": state.orgCode ?? "14356",
+        "orgScode": "14356",
         "orgName": "BRAHMAMANGALAM",
         "orgLevel": "23",
         "coapplicantRequired": event.coapplicantData != null ? 'Y' : 'N',
