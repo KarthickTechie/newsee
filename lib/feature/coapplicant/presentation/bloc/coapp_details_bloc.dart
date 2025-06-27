@@ -17,6 +17,10 @@ import 'package:newsee/core/db/db_config.dart';
 import 'package:newsee/feature/addressdetails/data/repository/citylist_repo_impl.dart';
 import 'package:newsee/feature/addressdetails/domain/model/citydistrictrequest.dart';
 import 'package:newsee/feature/addressdetails/domain/repository/cityrepository.dart';
+import 'package:newsee/feature/cif/data/repository/cif_respository_impl.dart';
+import 'package:newsee/feature/cif/domain/model/user/cif_request.dart';
+import 'package:newsee/feature/cif/domain/model/user/cif_response.dart';
+import 'package:newsee/feature/cif/domain/repository/cif_repository.dart';
 import 'package:newsee/feature/coapplicant/domain/modal/coapplicant_data.dart';
 import 'package:newsee/feature/masters/domain/modal/geography_master.dart';
 import 'package:newsee/feature/masters/domain/modal/lov.dart';
@@ -33,6 +37,7 @@ final class CoappDetailsBloc
     on<CoAppDetailsInitEvent>(initCoAppDetailsPage);
     on<CoAppDetailsSaveEvent>(saveCoAppDetailsPage);
     on<OnStateCityChangeEvent>(getCityListBasedOnState);
+    on<SearchCifEvent>(onSearchCif);
   }
 
   Future<void> initCoAppDetailsPage(
@@ -103,5 +108,32 @@ final class CoappDetailsBloc
     CoappDetailsState coappDetailsState =
         mapGeographyMasterResponseForCoAppPage(state, response);
     emit(coappDetailsState);
+  }
+
+  /* 
+fetching dedupe for co applicant reusing dedupe page cif search logic here
+
+ */
+
+  Future onSearchCif(SearchCifEvent event, Emitter emit) async {
+    emit(state.copyWith(status: SaveStatus.loading));
+    CifRepository dedupeRepository = CifRepositoryImpl();
+    final response = await dedupeRepository.searchCif(event.request);
+    if (response.isRight()) {
+      CifResponse cifResponse = response.right;
+      // map cifresponse to CoapplicantData so we can set data to form()
+      CoapplicantData coapplicantDataFromCif = mapCoapplicantDataFromCif(
+        cifResponse,
+      );
+      emit(
+        state.copyWith(
+          status: SaveStatus.dedupesuccess,
+          selectedCoApp: coapplicantDataFromCif,
+        ),
+      );
+    } else {
+      print('cif failure response.left ');
+      emit(state.copyWith(status: SaveStatus.dedupefailure));
+    }
   }
 }

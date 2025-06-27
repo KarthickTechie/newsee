@@ -3,6 +3,8 @@ import 'package:intl/intl.dart';
 import 'package:newsee/AppData/app_constants.dart';
 import 'package:newsee/core/api/AsyncResponseHandler.dart';
 import 'package:newsee/feature/addressdetails/presentation/bloc/address_details_bloc.dart';
+import 'package:newsee/feature/cif/domain/model/user/cif_response.dart';
+import 'package:newsee/feature/coapplicant/domain/modal/coapplicant_data.dart';
 import 'package:newsee/feature/coapplicant/presentation/bloc/coapp_details_bloc.dart';
 import 'package:newsee/feature/masters/domain/modal/geography_master.dart';
 
@@ -36,6 +38,27 @@ String getCorrectDateFormat(dynamic value) {
     DateFormat parser = DateFormat('yyyy-MM-dd');
     DateTime date = parser.parse(value);
     DateFormat formatter = DateFormat('dd-MM-yyyy');
+    String convertedDateString = formatter.format(date);
+    return convertedDateString;
+  } catch (error) {
+    print("getCorrectDateFormat-string $error");
+    return "";
+  }
+}
+
+/// @desc   : converts date by provided arguments
+/// @param  : {from} - date to be formated , {to} will be retured formatted string
+/// @return : {String} - formatted date
+
+String getDateFormatedByProvided(
+  dynamic value, {
+  required String from,
+  required String to,
+}) {
+  try {
+    DateFormat parser = DateFormat(from);
+    DateTime date = parser.parse(value);
+    DateFormat formatter = DateFormat(to);
     String convertedDateString = formatter.format(date);
     return convertedDateString;
   } catch (error) {
@@ -124,4 +147,50 @@ void closeBottomSheetIfExists(BuildContext context) {
       Navigator.of(context).pop();
     }
   }
+}
+
+/* 
+    try {
+      form.control('firstName').updateValue(val.lleadfrstname!);
+      form.control('middleName').updateValue(val.lleadmidname!);
+      form.control('lastName').updateValue(val.lleadlastname!);
+      form.control('dob').updateValue(getDateFormat(val.lleaddob!));
+      form.control('primaryMobileNumber').updateValue(val.-!);
+      form.control('email').updateValue(val.lleademailid!);
+      form.control('panNumber').updateValue(val.lleadpanno!);
+      form.control('aadharRefNo').updateValue(val.lleadadharno!);
+      if (val.lleadadharno != null) {
+        refAadhaar = true;
+      }
+    } catch (error) {
+      print("autoPopulateData-catch-error $error");
+    }
+
+
+ */
+
+CoapplicantData mapCoapplicantDataFromCif(CifResponse response) {
+  CoapplicantData data = CoapplicantData(
+    firstName: response.lleadfrstname,
+    lastName: response.lleadlastname,
+    email: response.lleademailid,
+    primaryMobileNumber: response.lleadmobno,
+    panNumber: response.lleadpanno,
+    address1: response.lleadaddress,
+    address2: response.lleadaddresslane1,
+    address3: response.lleadaddresslane2,
+    pincode: response.lleadpinno,
+    cifNumber: response.lldCbsid,
+    aadharRefNo: response.lleadadharno,
+    dob: getDateFormat(response.lleaddob),
+    loanLiabilityCount: response.liabilityCount,
+    loanLiabilityAmount: response.liabilityAmount,
+    depositCount: response.depositCount,
+    depositAmount: response.depositAmount,
+    constitution: response.cifFlag,
+    title: response.lleadtitle,
+  );
+
+  print('mapCoapplicantDataFromCif => $data');
+  return data;
 }

@@ -24,12 +24,32 @@ class CifRepositoryImpl implements CifRepository {
       ).searchCif(payload);
 
       if (response.data[ApiConfig.API_RESPONSE_SUCCESS_KEY]) {
-        var cifResponse = CifResponse.fromJson(
+        final cifResponse = CifResponse.fromJson(
           response.data[ApiConfig
               .API_RESPONSE_RESPONSE_KEY]['lpretLeadDetails'],
         );
-        print('ChifResponseModel => ${cifResponse.toString()}');
-        return AsyncResponseHandler.right(cifResponse);
+        String depositAmount =
+            response.data[ApiConfig.API_RESPONSE_RESPONSE_KEY]['depositAmount'];
+        String depositCount =
+            response.data[ApiConfig.API_RESPONSE_RESPONSE_KEY]['depositCount'];
+        String liabilityCount =
+            response.data[ApiConfig
+                .API_RESPONSE_RESPONSE_KEY]['liabilityCount'];
+        String liabilityAmount =
+            response.data[ApiConfig
+                .API_RESPONSE_RESPONSE_KEY]['liabilityAmount'];
+        String cifFlag =
+            response.data[ApiConfig.API_RESPONSE_RESPONSE_KEY]['cifFlag'];
+
+        CifResponse _cifresponse = cifResponse.copyWith(
+          cifFlag: cifFlag,
+          liabilityCount: liabilityCount,
+          liabilityAmount: liabilityAmount,
+          depositCount: depositCount,
+          depositAmount: depositAmount,
+        );
+        print('ChifResponseModel => ${_cifresponse.toString()}');
+        return AsyncResponseHandler.right(_cifresponse);
       } else {
         var errorMessage = response.data['ErrorMessage'] ?? "Unknown error";
         print('CIF Search error => $errorMessage');

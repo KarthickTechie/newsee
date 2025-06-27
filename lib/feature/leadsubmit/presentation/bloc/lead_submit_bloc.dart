@@ -7,6 +7,7 @@ import 'package:newsee/Model/address_data.dart';
 import 'package:newsee/Model/personal_data.dart';
 import 'package:newsee/core/api/AsyncResponseHandler.dart';
 import 'package:newsee/core/api/failure.dart';
+import 'package:newsee/feature/coapplicant/domain/modal/coapplicant_data.dart';
 import 'package:newsee/feature/leadsubmit/data/repository/lead_submit_repo_impl.dart';
 import 'package:newsee/feature/leadsubmit/data/repository/proposal_repo_impl.dart';
 import 'package:newsee/feature/leadsubmit/domain/modal/dedupe.dart';
@@ -74,6 +75,8 @@ final class LeadSubmitBloc extends Bloc<LeadSubmitEvent, LeadSubmitState> {
   }
 
   Future<void> onLeadPush(LeadSubmitPushEvent event, Emitter emit) async {
+    final coappdataMap = event.coapplicantData?.toMap();
+    coappdataMap?.addAll({"residentialStatus": "4"});
     try {
       Map<String, dynamic> leadSubmitRequest = {
         "userid": state.userId ?? "AGRI1124",
@@ -81,12 +84,17 @@ final class LeadSubmitBloc extends Bloc<LeadSubmitEvent, LeadSubmitState> {
         "orgScode": state.orgCode ?? "14356",
         "orgName": "BRAHMAMANGALAM",
         "orgLevel": "23",
-        "token": ApiConstants.api_qa_token,
+        "coapplicantRequired": event.coapplicantData != null ? 'Y' : 'N',
+        "guarantorRequired": 'N',
+        "token":
+            "U2FsdGVkX1/Wa6+JeCIOVLl8LTr8WUocMz8kIGXVbEI9Q32v7zRLrnnvAIeJIVV3",
         "leadDetails": event.loanType.toMap(),
         "chooseProduct": event.loanProduct.toMap(),
         "dedupeSearch": event.dedupe.toMap(),
         "individualNonIndividualDetails": event.personalData?.toMap(),
         "addressDetails": [event.addressData?.toMap()],
+        "coApplicantDetils": event.coapplicantData != null ? coappdataMap : {},
+        "guarantorDetils": {},
       };
 
       AsyncResponseHandler<Failure, Map<String, dynamic>> responseHandler =
@@ -108,8 +116,7 @@ final class LeadSubmitBloc extends Bloc<LeadSubmitEvent, LeadSubmitState> {
       }
     } on DioException catch (e) {
       print('leadsubmit exception => $e');
-    } finally {
-      emit(state.copyWith(leadSubmitStatus: SubmitStatus.success));
+      emit(state.copyWith(leadSubmitStatus: SubmitStatus.failure));
     }
   }
 

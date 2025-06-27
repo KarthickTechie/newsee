@@ -15,6 +15,9 @@ class AppConstants {
 
   static const String CREATE_PROPOSAL = 'Create Proposal';
   static const String GOTO_INBOX = "GoTo Inbox";
+
+  static const String Format_yyyy_MM_dd = 'yyyy-MM-dd';
+  static const String Format_dd_MM_yyyy = 'dd-MM-yyyy';
 }
 
 class BioMetricResult {
@@ -38,4 +41,6 @@ enum SaveStatus {
   update,
   mastersucess,
   masterfailure,
+  dedupesuccess,
+  dedupefailure,
 }

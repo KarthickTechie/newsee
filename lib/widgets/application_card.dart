@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
 
 class ApplicationCard extends StatelessWidget {
+  final String leadId;
   final VoidCallback onProceedPressed; // Added callback parameter
 
-  const ApplicationCard({super.key, required this.onProceedPressed});
+  const ApplicationCard({
+    super.key,
+    required this.leadId,
+    required this.onProceedPressed,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +40,7 @@ class ApplicationCard extends StatelessWidget {
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Text(
-                  'LeadId-12345',
+                  'Lead Id - $leadId ',
                   style: theme.textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.bold,
                     color: Colors.teal[800],

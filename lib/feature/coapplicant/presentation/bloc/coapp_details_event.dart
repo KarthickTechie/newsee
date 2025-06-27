@@ -32,3 +32,8 @@ class OnStateCityChangeEvent extends CoappDetailsEvent {
   final String? cityCode;
   OnStateCityChangeEvent({required this.stateCode, this.cityCode});
 }
+
+class SearchCifEvent extends CoappDetailsEvent {
+  final CIFRequest request;
+  SearchCifEvent({required this.request});
+}

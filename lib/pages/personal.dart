@@ -46,9 +46,14 @@ class Personal extends StatelessWidget {
             form.control('firstName').updateValue(getNameArray[0]);
           }
         }
-        form
-            .control('dob')
-            .updateValue(getCorrectDateFormat(val?.dateOfBirth!));
+        final formattedDate = getDateFormatedByProvided(
+          val?.dateOfBirth!,
+          from: AppConstants.Format_dd_MM_yyyy,
+          to: AppConstants.Format_yyyy_MM_dd,
+        );
+        print('formattedDate in personal page => $formattedDate');
+
+        form.control('dob').updateValue(formattedDate);
         // form.control('primaryMobileNumber').updateValue(val?.mobile!);
         form.control('email').updateValue(val?.email!);
       }
@@ -195,9 +200,9 @@ class Personal extends StatelessWidget {
                           );
                           if (pickedDate != null) {
                             final formatted =
-                                "${pickedDate.day.toString().padLeft(2, '0')}/"
-                                "${pickedDate.month.toString().padLeft(2, '0')}/"
-                                "${pickedDate.year}";
+                                "${pickedDate.year}-"
+                                "${pickedDate.month.toString().padLeft(2, '0')}-"
+                                "${pickedDate.day.toString().padLeft(2, '0')}";
                             form.control('dob').value = formatted;
                           }
                         },
@@ -554,9 +559,18 @@ class Personal extends StatelessWidget {
                             PersonalData personalData = PersonalData.fromMap(
                               form.value,
                             );
+                            PersonalData personalDataFormatted = personalData
+                                .copyWith(
+                                  dob: getDateFormatedByProvided(
+                                    personalData.dob,
+                                    from: AppConstants.Format_dd_MM_yyyy,
+                                    to: AppConstants.Format_yyyy_MM_dd,
+                                  ),
+                                );
+
                             context.read<PersonalDetailsBloc>().add(
                               PersonalDetailsSaveEvent(
-                                personalData: personalData,
+                                personalData: personalDataFormatted,
                               ),
                             );
                           } else {
