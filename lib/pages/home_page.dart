@@ -13,6 +13,9 @@ import '../widgets/lead_tab_bar.dart';
 import '../widgets/search_bar.dart';
 
 class HomePage extends StatefulWidget {
+  int? tabdata;
+
+  HomePage({Key? key, this.tabdata}) : super(key: key);
 
   @override
   State<HomePage> createState() => HomePageState();
@@ -24,7 +27,16 @@ class HomePageState extends State<HomePage> {
   bool loading = false;
   final TextEditingController searchController = TextEditingController();
 
+  @override
+  void initState() {
+    super.initState();
+    if (widget.tabdata != null) {
+      selectedIndex = widget.tabdata!;
+    }
+  }
+
   Future<void> onItemTapped(int index) async {
+    print("tabdata ${widget.tabdata}");
     setState(() => loading = true);
     await Future.delayed(Duration(seconds: 2));
     setState(() {
@@ -34,32 +46,38 @@ class HomePageState extends State<HomePage> {
   }
 
   Widget getPage() {
-    if (selectedIndex == 0) {
-      return LeadTabBar(searchQuery: searchQuery);
-    } else if (selectedIndex == 1) {
-      return Center(
-        child: Text("Application Inbox", style: TextStyle(fontSize: 24)),
-      );
-    } else if (selectedIndex == 2) {
-      return Center(child: Text("Query Inbox", style: TextStyle(fontSize: 24)));
-    } else {
-      return Center(
-        child: Text("Masters Update", style: TextStyle(fontSize: 24)),
-      );
+    switch (selectedIndex) {
+      case 0:
+        return LeadTabBar(searchQuery: searchQuery);
+      case 1:
+        return Center(
+          child: Text("Application Inbox", style: TextStyle(fontSize: 24)),
+        );
+      case 2:
+        return Center(
+          child: Text("Query Inbox", style: TextStyle(fontSize: 24)),
+        );
+      case 3:
+      default:
+        return Center(
+          child: Text("Masters Update", style: TextStyle(fontSize: 24)),
+        );
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: Sidenavigationbar(),
+      drawer: Sidenavigationbar(
+        onTabSelected: (index) {
+          setState(() => selectedIndex = index);
+        },
+      ),
       body: Column(
         children: [
           SearchBarWidget(
             controller: searchController,
-            onChanged: (value) {
-              setState(() => searchQuery = value);
-            },
+            onChanged: (value) => setState(() => searchQuery = value),
           ),
           if (loading) LinearProgressIndicator(minHeight: 3),
           Expanded(child: getPage()),

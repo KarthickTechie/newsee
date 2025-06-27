@@ -15,7 +15,7 @@ import 'package:newsee/pages/address.dart';
 import 'package:newsee/pages/lead_submit_page.dart';
 import 'package:newsee/pages/loan.dart';
 import 'package:newsee/pages/personal.dart';
-import 'package:newsee/widgets/side_navigation.dart';
+import '../widgets/side_navigation.dart';
 
 class NewLeadPage extends StatelessWidget {
   @override
