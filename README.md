@@ -45,3 +45,30 @@ saying creating proposal for lead Id - Lead/xxxx/xxxxx
 Step 3 : once proposal creation is successful show success icon show two buttons
 left button - goto proposal Inbox
 Rightbutton - goto LandHolding Details
+
+## Master Update
+
+step 1:
+to meticulously trace the logs to monitor master update lifecycle
+create a auditlog table when login is successful.
+id | log_date | time | feature | logdata | errorresponse
+
+---
+
+1 | 26-06-2025 | 10:44 | masterdowload | json string | api / runtime error
+
+logdata = { 'page':'masterdownload','request':'','action':'tabledelete-lovmaster' , data:''}
+logdata = { 'page':'masterdownload','request':'apirequest','action':'api-lovmaster' , data:''}
+logdata = { 'page':'masterdownload','request':'','action':'tableinsert-lovmaster' , data:''}
+
+step 2 :
+create audit log page , have provision to choose date and time window and feature
+query auditlog table and show reault as list
+on click listtile , show a logdata in table , keep logdata json key to the left of the table
+and value to the right column
+
+this way user can see the auditlog data and can identify the rootcause at ease
+
+further download logdata provision and upload to lendperfect server backend to be added
+
+---
