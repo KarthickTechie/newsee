@@ -147,9 +147,9 @@ class CompletedLeads extends StatelessWidget {
                               onTap: () {
                                 context.pushNamed(
                                   'landholdings',
-                                  queryParameters: {
-                                    'proposalId': "456789012346789",
-                                  },
+                                  // queryParameters: {
+                                  //   'proposalId': "456789012346789",
+                                  // },
                                 );
                               },
                             ),

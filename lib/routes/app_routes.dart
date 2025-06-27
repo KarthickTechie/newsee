@@ -160,7 +160,7 @@ final routes = GoRouter(
       path: AppRouteConstants.LAND_HOLDING_PAGE['path']!,
       name: AppRouteConstants.LAND_HOLDING_PAGE['name'],
       builder: (context, state) {
-        final proposalId = state.uri.queryParameters['proposalId'];
+        final proposalNumber = state.uri.queryParameters['proposalNumber'];
         return PopScope(
           canPop: false,
           onPopInvokedWithResult: (didpop, data) async {
@@ -189,7 +189,7 @@ final routes = GoRouter(
           },
           child: LandHoldingPage(
             title: 'Land Holding Details',
-            proposalId: proposalId,
+            // proposalNumber: '234234234234',
           ),
         );
       },

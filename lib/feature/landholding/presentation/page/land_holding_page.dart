@@ -19,18 +19,18 @@ import 'package:newsee/widgets/radio.dart';
 import 'package:newsee/widgets/integer_text_field.dart';
 
 class LandHoldingPage extends StatelessWidget {
-  final String? proposalId;
+  final String? proposalNumber;
   final String title;
 
   final form = AppForms.LAND_HOLDING_FORM;
 
-  LandHoldingPage({super.key, required this.title, this.proposalId});
+  LandHoldingPage({super.key, required this.title, this.proposalNumber});
 
   void handleSubmit(BuildContext context, LandHoldingState state) {
     if (form.valid) {
-      final landFormData = LandData.fromForm(form.value);
+      // final landFormData = LandData.fromForm(form.value);
       context.read<LandHoldingBloc>().add(
-        LandDetailsSaveEvent(landData: landFormData),
+        LandDetailsSaveEvent(landData: form.value),
       );
     } else {
       form.markAllAsTouched();
@@ -63,16 +63,16 @@ class LandHoldingPage extends StatelessWidget {
                                 final item = entries[index];
                                 return OptionsSheet(
                                   icon: Icons.grass,
-                                  title: item.applicantName,
+                                  title: item.lslLandApplicantName!,
                                   details: [
-                                    item.surveyNo,
-                                    item.village,
-                                    item.totalAcreage,
+                                    item.lslLandSurveyNo!,
+                                    item.lslLandVillage!,
+                                    item.lslLandTotAcre.toString(),
                                   ],
                                   detailsName: [
                                     "Survey No",
                                     "Village",
-                                    "Total Acerage",
+                                    "Total Acreage",
                                   ],
                                   onTap: () {
                                     Navigator.pop(context);
@@ -84,46 +84,46 @@ class LandHoldingPage extends StatelessWidget {
                               },
                             ),
                   ),
-                  if (entries.isNotEmpty)
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 12,
-                      ),
-                      child: ElevatedButton.icon(
-                        onPressed: () {},
-                        icon: const Icon(Icons.send, color: Colors.white),
-                        label: RichText(
-                          text: const TextSpan(
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
-                            ),
-                            children: [
-                              TextSpan(text: 'Push to '),
-                              TextSpan(
-                                text: 'LEND',
-                                style: TextStyle(color: Colors.white),
-                              ),
-                              TextSpan(
-                                text: 'perfect',
-                                style: TextStyle(fontStyle: FontStyle.italic),
-                              ),
-                            ],
-                          ),
-                        ),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color.fromARGB(
-                            255,
-                            75,
-                            33,
-                            83,
-                          ),
-                          minimumSize: const Size(double.infinity, 50),
-                        ),
-                      ),
-                    ),
+                  // if (entries.isNotEmpty)
+                  //   Padding(
+                  //     padding: const EdgeInsets.symmetric(
+                  //       horizontal: 16,
+                  //       vertical: 12,
+                  //     ),
+                  //     child: ElevatedButton.icon(
+                  //       onPressed: () {},
+                  //       icon: const Icon(Icons.send, color: Colors.white),
+                  //       label: RichText(
+                  //         text: const TextSpan(
+                  //           style: TextStyle(
+                  //             color: Colors.white,
+                  //             fontWeight: FontWeight.bold,
+                  //             fontSize: 16,
+                  //           ),
+                  //           children: [
+                  //             TextSpan(text: 'Push to '),
+                  //             TextSpan(
+                  //               text: 'LEND',
+                  //               style: TextStyle(color: Colors.white),
+                  //             ),
+                  //             TextSpan(
+                  //               text: 'perfect',
+                  //               style: TextStyle(fontStyle: FontStyle.italic),
+                  //             ),
+                  //           ],
+                  //         ),
+                  //       ),
+                  //       style: ElevatedButton.styleFrom(
+                  //         backgroundColor: const Color.fromARGB(
+                  //           255,
+                  //           75,
+                  //           33,
+                  //           83,
+                  //         ),
+                  //         minimumSize: const Size(double.infinity, 50),
+                  //       ),
+                  //     ),
+                  //   ),
                 ],
               ),
             ),
@@ -133,12 +133,58 @@ class LandHoldingPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print(' Received Proposal ID: $proposalId');
+    print(' Received  proposalNumber: $proposalNumber');
 
     final globalLoadingBloc = context.read<GlobalLoadingBloc>();
 
     return Scaffold(
-      appBar: AppBar(title: Text(title)),
+      appBar: AppBar(
+        toolbarHeight: MediaQuery.of(context).size.height * 0.15,
+        automaticallyImplyLeading: false,
+        flexibleSpace: Container(decoration: BoxDecoration(color: Colors.teal)),
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(height: 10),
+            Text(
+              title,
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+            ),
+            SizedBox(height: 10),
+
+            Center(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      left: 8,
+                      right: 8,
+                      bottom: 20,
+                      top: 10,
+                    ),
+                    child: const Text(
+                      "proposalId: ",
+                      style: TextStyle(fontSize: 14, color: Colors.white),
+                    ),
+                  ),
+                  SizedBox(
+                    width: 200,
+                    height: 30,
+                    child: Text(
+                      proposalNumber ?? 'N/A',
+                      style: TextStyle(color: Colors.white, fontSize: 14),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
       body: BlocProvider(
         create: (_) => LandHoldingBloc()..add(LandHoldingInitEvent()),
         child: BlocConsumer<LandHoldingBloc, LandHoldingState>(
@@ -146,8 +192,9 @@ class LandHoldingPage extends StatelessWidget {
             if (state.status == SaveStatus.success) {
               form.reset();
             }
-            if (state.selectedLandData != null) {
-              form.patchValue(state.selectedLandData!.toMap());
+            if (state.selectedLandData != null &&
+                state.status == SaveStatus.update) {
+              form.patchValue(state.selectedLandData!.mapForm());
             }
             if (state.status == SaveStatus.mastersucess ||
                 state.status == SaveStatus.masterfailure) {
@@ -171,228 +218,234 @@ class LandHoldingPage extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           const SizedBox(height: 12),
-                          Padding(
-                            padding: const EdgeInsets.all(16),
-                            child: Column(
-                              children: [
-                                Dropdown(
-                                  controlName: 'applicantName',
-                                  label: 'Applicant Name / Guarantor',
-                                  items: [
-                                    '--Select--',
-                                    'Ravi Kumar',
-                                    'Sita Devi',
-                                    'Vikram R',
-                                  ],
-                                ),
-                                SearchableDropdown(
-                                  controlName: 'state',
-                                  label: 'State',
-                                  items: state.stateCityMaster!,
-                                  onChangeListener: (GeographyMaster val) {
-                                    form.controls['state']?.updateValue(
-                                      val.code,
-                                    );
-                                    globalLoadingBloc.add(
-                                      ShowLoading(message: "Fetching city..."),
-                                    );
+                          Card(
+                            child: Padding(
+                              padding: const EdgeInsets.all(16),
+                              child: Column(
+                                children: [
+                                  Dropdown(
+                                    controlName: 'applicantName',
+                                    label: 'Applicant Name / Guarantor',
+                                    items: [
+                                      '--Select--',
+                                      'Ravi Kumar',
+                                      'Sita Devi',
+                                      'Vikram R',
+                                    ],
+                                  ),
+                                  SearchableDropdown(
+                                    controlName: 'state',
+                                    label: 'State',
+                                    items: state.stateCityMaster!,
+                                    onChangeListener: (GeographyMaster val) {
+                                      form.controls['state']?.updateValue(
+                                        val.code,
+                                      );
+                                      globalLoadingBloc.add(
+                                        ShowLoading(
+                                          message: "Fetching city...",
+                                        ),
+                                      );
 
-                                    context.read<LandHoldingBloc>().add(
-                                      OnStateCityChangeEvent(
-                                        stateCode: val.code,
-                                      ),
-                                    );
-                                  },
-                                  selItem: () => null,
-                                ),
-                                SearchableDropdown(
-                                  controlName: 'district',
-                                  label: 'District',
-                                  items: state.cityMaster!,
-                                  onChangeListener: (GeographyMaster val) {
-                                    form.controls['district']?.updateValue(
-                                      val.code,
-                                    );
-                                  },
-                                  selItem: () => null,
-                                ),
-                                CustomTextField(
-                                  controlName: 'village',
-                                  label: 'Village',
-                                  mantatory: true,
-                                ),
-                                CustomTextField(
-                                  controlName: 'taluk',
-                                  label: 'Taluk',
-                                  mantatory: true,
-                                ),
-                                CustomTextField(
-                                  controlName: 'locationOfFarm',
-                                  label: 'Location of Farm',
-                                  mantatory: true,
-                                ),
-                                IntegerTextField(
-                                  controlName: 'distanceFromBranch',
-                                  label: 'Distance from Branch (in Kms)',
-                                  mantatory: true,
-                                  minlength: 1,
-                                  maxlength: 3,
-                                ),
+                                      context.read<LandHoldingBloc>().add(
+                                        OnStateCityChangeEvent(
+                                          stateCode: val.code,
+                                        ),
+                                      );
+                                    },
+                                    selItem: () => null,
+                                  ),
+                                  SearchableDropdown(
+                                    controlName: 'district',
+                                    label: 'District',
+                                    items: state.cityMaster!,
+                                    onChangeListener: (GeographyMaster val) {
+                                      form.controls['district']?.updateValue(
+                                        val.code,
+                                      );
+                                    },
+                                    selItem: () => null,
+                                  ),
+                                  CustomTextField(
+                                    controlName: 'village',
+                                    label: 'Village',
+                                    mantatory: true,
+                                  ),
+                                  CustomTextField(
+                                    controlName: 'taluk',
+                                    label: 'Taluk',
+                                    mantatory: true,
+                                  ),
+                                  CustomTextField(
+                                    controlName: 'locationOfFarm',
+                                    label: 'Location of Farm',
+                                    mantatory: true,
+                                  ),
+                                  IntegerTextField(
+                                    controlName: 'distanceFromBranch',
+                                    label: 'Distance from Branch (in Kms)',
+                                    mantatory: true,
+                                    minlength: 1,
+                                    maxlength: 3,
+                                  ),
 
-                                IntegerTextField(
-                                  controlName: 'surveyNo',
-                                  label: 'Survey No.',
-                                  mantatory: true,
-                                ),
+                                  IntegerTextField(
+                                    controlName: 'surveyNo',
+                                    label: 'Survey No.',
+                                    mantatory: true,
+                                  ),
 
-                                IntegerTextField(
-                                  controlName: 'firka',
-                                  label: 'Firka (as per Adangal/Chitta/Patta)',
-                                  mantatory: true,
-                                ),
-                                IntegerTextField(
-                                  controlName: 'totalAcreage',
-                                  label: 'Total Acreage (in Acres)',
-                                  mantatory: true,
-                                  maxlength: 2,
-                                  minlength: 1,
-                                ),
-                                IntegerTextField(
-                                  controlName: 'irrigatedLand',
-                                  label:
-                                      'Out of Total acreage, how much is the Irrigated Land (in Acres)',
-                                  mantatory: true,
-                                  maxlength: 2,
-                                  minlength: 1,
-                                ),
-                                RadioButton(
-                                  label: 'Lands situated in compact blocks',
-                                  controlName: 'compactBlocks',
-                                  optionOne: 'Yes',
-                                  optionTwo: 'No',
-                                ),
-                                RadioButton(
-                                  label:
-                                      'Do the particulars of the holdings given in the application tally with the particulars given in village officers certificate',
-                                  controlName: 'villageOfficerCertified',
-                                  optionOne: 'Yes',
-                                  optionTwo: 'No',
-                                ),
-                                RadioButton(
-                                  label: 'Land owned by the Applicant',
-                                  controlName: 'landOwnedByApplicant',
-                                  optionOne: 'Yes',
-                                  optionTwo: 'No',
-                                ),
-                                // Dropdown(
-                                //   controlName: '',
-                                //   label: 'Nature of Right',
-                                //   items: [
-                                //     '--Select--',
-                                //     'Owned',natureOfRight
-                                //     'Leaseholder',
-                                //     'Ancestral',
-                                //   ],
-                                // ),
-                                SearchableDropdown<Lov>(
-                                  controlName: 'natureOfRight',
-                                  label: 'Nature of Right',
-                                  items:
-                                      state.lovlist!
+                                  IntegerTextField(
+                                    controlName: 'firka',
+                                    label:
+                                        'Firka (as per Adangal/Chitta/Patta)',
+                                    mantatory: true,
+                                  ),
+                                  IntegerTextField(
+                                    controlName: 'totalAcreage',
+                                    label: 'Total Acreage (in Acres)',
+                                    mantatory: true,
+                                    maxlength: 2,
+                                    minlength: 1,
+                                  ),
+                                  IntegerTextField(
+                                    controlName: 'irrigatedLand',
+                                    label:
+                                        'Out of Total acreage, how much is the Irrigated Land (in Acres)',
+                                    mantatory: true,
+                                    maxlength: 2,
+                                    minlength: 1,
+                                  ),
+                                  RadioButton(
+                                    label: 'Lands situated in compact blocks',
+                                    controlName: 'compactBlocks',
+                                    optionOne: 'Yes',
+                                    optionTwo: 'No',
+                                  ),
+                                  RadioButton(
+                                    label:
+                                        'Do the particulars of the holdings given in the application tally with the particulars given in village officers certificate',
+                                    controlName: 'villageOfficerCertified',
+                                    optionOne: 'Yes',
+                                    optionTwo: 'No',
+                                  ),
+                                  RadioButton(
+                                    label: 'Land owned by the Applicant',
+                                    controlName: 'landOwnedByApplicant',
+                                    optionOne: 'Yes',
+                                    optionTwo: 'No',
+                                  ),
+                                  // Dropdown(
+                                  //   controlName: '',
+                                  //   label: 'Nature of Right',
+                                  //   items: [
+                                  //     '--Select--',
+                                  //     'Owned',natureOfRight
+                                  //     'Leaseholder',
+                                  //     'Ancestral',
+                                  //   ],
+                                  // ),
+                                  SearchableDropdown<Lov>(
+                                    controlName: 'natureOfRight',
+                                    label: 'Nature of Right',
+                                    items:
+                                        state.lovlist!
+                                            .where(
+                                              (v) =>
+                                                  v.Header == 'NatureOfRight',
+                                            )
+                                            .toList(),
+                                    onChangeListener: (Lov val) {
+                                      form.controls['natureOfRight']
+                                          ?.updateValue(val.optvalue);
+                                    },
+                                    selItem: () {
+                                      final value =
+                                          form.control('natureOfRight').value;
+                                      if (value == null ||
+                                          value.toString().isEmpty) {
+                                        return null;
+                                      }
+                                      return state.lovlist!
                                           .where(
                                             (v) => v.Header == 'NatureOfRight',
                                           )
-                                          .toList(),
-                                  onChangeListener: (Lov val) {
-                                    form.controls['natureOfRight']?.updateValue(
-                                      val.optvalue,
-                                    );
-                                  },
-                                  selItem: () {
-                                    final value =
-                                        form.control('natureOfRight').value;
-                                    if (value == null ||
-                                        value.toString().isEmpty) {
-                                      return null;
-                                    }
-                                    return state.lovlist!
-                                        .where(
-                                          (v) => v.Header == 'NatureOfRight',
-                                        )
-                                        .firstWhere(
-                                          (lov) => lov.optvalue == value,
-                                          orElse:
-                                              () => Lov(
-                                                Header: 'NatureOfRight',
-                                                optDesc: '',
-                                                optvalue: '',
-                                                optCode: '',
-                                              ),
-                                        );
-                                  },
-                                ),
-                                // Dropdown(
-                                //   controlName: 'irrigationFacilities',
-                                //   label: 'Nature of Irrigation facilities',
-                                //   items: [
-                                //     '--Select--',
-                                //     'Canal',
-                                //     'Well',
-                                //     'Tube Wells',
-                                //   ],
-                                // ),
-                                SearchableDropdown<Lov>(
-                                  controlName: 'irrigationFacilities',
-                                  label: 'Nature of Irrigation facilities',
-                                  items:
-                                      state.lovlist!
+                                          .firstWhere(
+                                            (lov) => lov.optvalue == value,
+                                            orElse:
+                                                () => Lov(
+                                                  Header: 'NatureOfRight',
+                                                  optDesc: '',
+                                                  optvalue: '',
+                                                  optCode: '',
+                                                ),
+                                          );
+                                    },
+                                  ),
+                                  // Dropdown(
+                                  //   controlName: 'irrigationFacilities',
+                                  //   label: 'Nature of Irrigation facilities',
+                                  //   items: [
+                                  //     '--Select--',
+                                  //     'Canal',
+                                  //     'Well',
+                                  //     'Tube Wells',
+                                  //   ],
+                                  // ),
+                                  SearchableDropdown<Lov>(
+                                    controlName: 'irrigationFacilities',
+                                    label: 'Nature of Irrigation facilities',
+                                    items:
+                                        state.lovlist!
+                                            .where(
+                                              (v) =>
+                                                  v.Header == 'NatureOfIrrFac',
+                                            )
+                                            .toList(),
+                                    onChangeListener: (Lov val) {
+                                      form.controls['irrigationFacilities']
+                                          ?.updateValue(val.optvalue);
+                                    },
+                                    selItem: () {
+                                      final value =
+                                          form
+                                              .control('irrigationFacilities')
+                                              .value;
+                                      if (value == null ||
+                                          value.toString().isEmpty) {
+                                        return null;
+                                      }
+                                      return state.lovlist!
                                           .where(
                                             (v) => v.Header == 'NatureOfIrrFac',
                                           )
-                                          .toList(),
-                                  onChangeListener: (Lov val) {
-                                    form.controls['irrigationFacilities']
-                                        ?.updateValue(val.optvalue);
-                                  },
-                                  selItem: () {
-                                    final value =
-                                        form
-                                            .control('irrigationFacilities')
-                                            .value;
-                                    if (value == null ||
-                                        value.toString().isEmpty) {
-                                      return null;
-                                    }
-                                    return state.lovlist!
-                                        .where(
-                                          (v) => v.Header == 'NatureOfIrrFac',
-                                        )
-                                        .firstWhere(
-                                          (lov) => lov.optvalue == value,
-                                          orElse:
-                                              () => Lov(
-                                                Header: 'NatureOfIrrFac',
-                                                optDesc: '',
-                                                optvalue: '',
-                                                optCode: '',
-                                              ),
-                                        );
-                                  },
-                                ),
-                                RadioButton(
-                                  label:
-                                      'Are the Holdings in any way affected by land ceiling enactments',
-                                  controlName: 'affectedByCeiling',
-                                  optionOne: 'Yes',
-                                  optionTwo: 'No',
-                                ),
-                                RadioButton(
-                                  label: 'Whether Land Agriculturally Active',
-                                  controlName: 'landAgriActive',
-                                  optionOne: 'Yes',
-                                  optionTwo: 'No',
-                                ),
-                              ],
+                                          .firstWhere(
+                                            (lov) => lov.optvalue == value,
+                                            orElse:
+                                                () => Lov(
+                                                  Header: 'NatureOfIrrFac',
+                                                  optDesc: '',
+                                                  optvalue: '',
+                                                  optCode: '',
+                                                ),
+                                          );
+                                    },
+                                  ),
+                                  RadioButton(
+                                    label:
+                                        'Are the Holdings in any way affected by land ceiling enactments',
+                                    controlName: 'affectedByCeiling',
+                                    optionOne: 'Yes',
+                                    optionTwo: 'No',
+                                  ),
+                                  RadioButton(
+                                    label: 'Whether Land Agriculturally Active',
+                                    controlName: 'landAgriActive',
+                                    optionOne: 'Yes',
+                                    optionTwo: 'No',
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         ],

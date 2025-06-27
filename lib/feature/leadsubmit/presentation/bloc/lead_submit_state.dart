@@ -9,12 +9,19 @@ class LeadSubmitState extends Equatable {
   final String? proposalNo;
   final SaveStatus? proposalSubmitStatus;
 
+  // final String? orgCode;
+  // final String? userId;
+  // final String? userName;
+
   LeadSubmitState({
     required this.leadId,
     required this.leadSubmitRequest,
     required this.leadSubmitStatus,
     required this.proposalNo,
     required this.proposalSubmitStatus,
+    // required this.orgCode,
+    // required this.userId,
+    // required this.userName,
   });
 
   factory LeadSubmitState.init() => LeadSubmitState(
@@ -23,6 +30,9 @@ class LeadSubmitState extends Equatable {
     leadSubmitStatus: SubmitStatus.init,
     proposalNo: null,
     proposalSubmitStatus: SaveStatus.init,
+    // orgCode: null,
+    // userId: null,
+    // userName: null,
   );
 
   LeadSubmitState copyWith({
@@ -31,6 +41,9 @@ class LeadSubmitState extends Equatable {
     SubmitStatus? leadSubmitStatus,
     String? proposalNo,
     SaveStatus? proposalSubmitStatus,
+    // String? orgCode,
+    // String? userId,
+    // String? userName,
   }) {
     return LeadSubmitState(
       leadId: leadId ?? this.leadId,
@@ -38,6 +51,9 @@ class LeadSubmitState extends Equatable {
       leadSubmitStatus: leadSubmitStatus ?? this.leadSubmitStatus,
       proposalNo: proposalNo ?? this.proposalNo,
       proposalSubmitStatus: proposalSubmitStatus ?? this.proposalSubmitStatus,
+      // orgCode: orgCode ?? this.orgCode,
+      // userId: userId ?? this.userId,
+      // userName: userName ?? this.userName,
     );
   }
 
@@ -51,5 +67,8 @@ class LeadSubmitState extends Equatable {
     leadSubmitStatus,
     proposalNo,
     proposalSubmitStatus,
+    // orgCode,
+    // userId,
+    // userName,
   ];
 }

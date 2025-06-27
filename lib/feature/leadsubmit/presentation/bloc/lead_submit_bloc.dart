@@ -29,7 +29,20 @@ final class LeadSubmitBloc extends Bloc<LeadSubmitEvent, LeadSubmitState> {
     on<LeadSubmitPageInitEvent>(onLeadSubmitPageInit);
     on<LeadSubmitPushEvent>(onLeadPush);
     on<CreateProposalEvent>(onCreateProposalRequest);
+    // on<InitPreferenceEvent>(onInitPreference);
   }
+
+  // Future<void> onInitPreference(InitPreferenceEvent event, Emitter emit) async {
+  //   final orgCode = event.loginMap['Orgscode'];
+  //   final userId = event.loginMap['LPuserID'];
+  //   final userName = event.loginMap['UserName'];
+
+  //   print(
+  //     "Loaded from SharedPrefs => Org: $orgCode, ID: $userId, Name: $userName",
+  //   );
+
+  //   emit(state.copyWith(orgCode: orgCode, userId: userId, userName: userName));
+  // }
 
   Future<void> onLeadSubmitPageInit(
     LeadSubmitPageInitEvent event,
@@ -63,13 +76,12 @@ final class LeadSubmitBloc extends Bloc<LeadSubmitEvent, LeadSubmitState> {
   Future<void> onLeadPush(LeadSubmitPushEvent event, Emitter emit) async {
     try {
       Map<String, dynamic> leadSubmitRequest = {
-        "userid": "AGRI1124",
+        "userid": state.userId ?? "AGRI1124",
         "vertical": "7",
-        "orgScode": "14356",
+        "orgScode": state.orgCode ?? "14356",
         "orgName": "BRAHMAMANGALAM",
         "orgLevel": "23",
-        "token":
-            "U2FsdGVkX1/Wa6+JeCIOVLl8LTr8WUocMz8kIGXVbEI9Q32v7zRLrnnvAIeJIVV3",
+        "token": ApiConstants.api_qa_token,
         "leadDetails": event.loanType.toMap(),
         "chooseProduct": event.loanProduct.toMap(),
         "dedupeSearch": event.dedupe.toMap(),

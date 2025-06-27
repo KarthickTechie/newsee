@@ -24,6 +24,7 @@ import 'package:newsee/widgets/success_bottom_sheet.dart';
 import 'package:newsee/widgets/sysmo_notification_card.dart';
 import 'package:newsee/widgets/sysmo_title.dart';
 import 'package:newsee/widgets/sysmo_title1.dart';
+// import 'package:shared_preferences/shared_preferences.dart';
 
 class LeadSubmitPage extends StatelessWidget {
   final String title;
@@ -33,6 +34,26 @@ class LeadSubmitPage extends StatelessWidget {
   // late final DedupeState? dedupeState;
 
   LeadSubmitPage({required this.title, super.key});
+
+  // Future<void> saveLoginData({
+  //   required String orgcode,
+  //   required String userId,
+  //   required String userName,
+  // }) async {
+  //   final prefs = await SharedPreferences.getInstance();
+  //   await prefs.setString('Orgscode', orgcode);
+  //   await prefs.setString('LPuserID', userId);
+  //   await prefs.setString('UserName', userName);
+  // }
+
+  // Future<Map<String, String>> getLoginDataPreference() async {
+  //   final prefs = await SharedPreferences.getInstance();
+  //   return {
+  //     'Orgscode': prefs.getString('Orgscode') ?? '',
+  //     'LPuserID': prefs.getString('LPuserID') ?? '',
+  //     'UserName': prefs.getString('UserName') ?? '',
+  //   };
+  // }
 
   submitLead({
     required BuildContext context,
@@ -73,6 +94,13 @@ class LeadSubmitPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Future.microtask(() async {
+    //   final getLoginData = await getLoginDataPreference();
+    //   context.read<LeadSubmitBloc>().add(
+    //     InitPreferenceEvent(loginMap: getLoginData),
+    //   );
+    // });
+
     return Scaffold(
       appBar: AppBar(title: Text(title), automaticallyImplyLeading: false),
       body: BlocConsumer<LeadSubmitBloc, LeadSubmitState>(
@@ -126,7 +154,11 @@ class LeadSubmitPage extends StatelessWidget {
                 }
               },
               onPressedRightButton: () {
-                context.pushNamed(AppRouteConstants.LAND_HOLDING_PAGE['name']!);
+                context.pushNamed(
+                  'landHolding',
+                  // queryParameters: {'proposalNo': state.proposalNo},
+                  // queryParameters: {'proposalNo': 'ahhhhshjkskjnkklk'},
+                );
               },
               leftButtonLabel: 'Go To Inbox',
               rightButtonLabel: 'Go To LandHolding',

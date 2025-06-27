@@ -17,6 +17,11 @@ class LeadSubmitPageInitEvent extends LeadSubmitEvent {
   LeadSubmitPageInitEvent({required this.personalData});
 }
 
+// class InitPreferenceEvent extends LeadSubmitEvent {
+//   final Map<String, String> loginMap;
+//   InitPreferenceEvent({required this.loginMap});
+// }
+
 class LeadSubmitPushEvent extends LeadSubmitEvent {
   final LoanType loanType;
   final LoanProduct loanProduct;

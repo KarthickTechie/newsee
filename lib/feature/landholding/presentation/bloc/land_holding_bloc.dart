@@ -1,7 +1,9 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:newsee/AppData/DBConstants/table_key_geographymaster.dart';
+import 'package:newsee/AppData/app_api_constants.dart';
 import 'package:newsee/AppData/app_constants.dart';
+import 'package:newsee/AppSamples/ReactiveForms/config/appconfig.dart';
 import 'package:newsee/Utils/geographymaster_response_mapper.dart';
 import 'package:newsee/Utils/utils.dart';
 import 'package:newsee/core/api/AsyncResponseHandler.dart';
@@ -10,7 +12,10 @@ import 'package:newsee/feature/addressdetails/data/repository/citylist_repo_impl
 import 'package:newsee/feature/addressdetails/domain/model/citydistrictrequest.dart';
 import 'package:newsee/feature/addressdetails/domain/repository/cityrepository.dart';
 import 'package:newsee/feature/coapplicant/presentation/bloc/coapp_details_bloc.dart';
+import 'package:newsee/feature/landholding/data/repository/land_Holding_respository_impl.dart';
 import 'package:newsee/feature/landholding/domain/modal/LandData.dart';
+import 'package:newsee/feature/landholding/domain/modal/land_Holding_request.dart';
+import 'package:newsee/feature/landholding/domain/repository/landHolding_repository.dart';
 import 'package:newsee/feature/masters/domain/modal/geography_master.dart';
 import 'package:newsee/feature/masters/domain/modal/lov.dart';
 import 'package:newsee/feature/masters/domain/repository/geographymaster_crud_repo.dart';
@@ -59,19 +64,86 @@ final class LandHoldingBloc extends Bloc<LandHoldingEvent, LandHoldingState> {
     LandDetailsSaveEvent event,
     Emitter<LandHoldingState> emit,
   ) async {
-    final newList = [...?state.landData, event.landData];
-    emit(
-      state.copyWith(
-        status: SaveStatus.success,
-        landData: newList,
-        selectedLandData: null,
-      ),
-    );
+    try {
+      // final newList = [...?state.landData, event.landData as LandData];
+      print("event.landData not a map => ${event.landData}");
+      final landdata = event.landData;
+      print("event.landData => $landdata");
+
+      LandHoldingRequest req = LandHoldingRequest(
+        proposalNumber: '143560000000633',
+        applicantName: event.landData['applicantName'] ?? '',
+        LandOwnedByApplicant:
+            event.landData['landOwnedByApplicant'].toString() == 'true'
+                ? 'Y'
+                : 'N',
+        LocationOfFarm: event.landData['locationOfFarm'] ?? '',
+        DistanceFromBranch: event.landData['distanceFromBranch'] ?? '',
+        State: event.landData['state'] ?? '',
+        District: event.landData['district'] ?? '',
+        Taluk: event.landData['taluk'] ?? '',
+        Village: event.landData['village'] ?? '',
+        Firka: event.landData['firka'] ?? '',
+        SurveyNo: event.landData['surveyNo'] ?? '',
+        TotalAcreage: event.landData['totalAcreage'] ?? '',
+        NatureOfRight: event.landData['natureOfRight'] ?? '',
+        OutOfTotalAcreage: event.landData['irrigatedLand'] ?? '',
+        NatureOfIrrigation: event.landData['irrigationFacilities'] ?? '',
+        LandsSituatedCompactBlocks:
+            event.landData['landsSituatedCompactBlocks'].toString() == 'true'
+                ? '1'
+                : '2',
+        landCeilingEnactments:
+            event.landData['landCeilingEnactments'].toString() == 'true'
+                ? '1'
+                : '2',
+        villageOfficersCertificate:
+            event.landData['villageOfficersCertificate'].toString() == 'true'
+                ? '1'
+                : '2',
+        LandAgriculturellyActive:
+            event.landData['landAgricultureActive'].toString() == 'true'
+                ? '1'
+                : '2',
+        token: ApiConstants.api_qa_token,
+      );
+
+      final landReq = req;
+      print('final request for land holding => $landReq');
+
+      final LandHoldingRepository landHoldingRepository =
+          LandHoldingRespositoryImpl();
+      final response = await landHoldingRepository.submitLandHolding(landReq);
+      List<LandData> landData =
+          response.right.agriLandHoldingsList
+              .map((e) => LandData.fromMap(e))
+              .toList();
+
+      print("LandData from response => $landData");
+      emit(
+        state.copyWith(
+          status: SaveStatus.success,
+          landData: landData,
+          selectedLandData: null,
+        ),
+      );
+    } catch (e) {
+      print("Error in LandDetailsSaveEvent: $e");
+      emit(
+        state.copyWith(status: SaveStatus.failure, errorMessage: e.toString()),
+      );
+      return;
+    }
   }
 
   // Load data into form for editing
   void _onLoad(LandDetailsLoadEvent event, Emitter<LandHoldingState> emit) {
-    emit(state.copyWith(selectedLandData: event.landData));
+    emit(
+      state.copyWith(
+        status: SaveStatus.update,
+        selectedLandData: event.landData,
+      ),
+    );
   }
 
   Future<void> getCityListBasedOnState(

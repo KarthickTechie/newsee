@@ -27,4 +27,5 @@ class ApiConfig {
       'MobileService/saveLeadDetails';
 
   static const String CREATE_PROPOSAL = 'MobileService/getProposalCreation';
+  static const String LAND_HOLDING_ENDPOINT = 'MobileService/saveLandHold';
 }

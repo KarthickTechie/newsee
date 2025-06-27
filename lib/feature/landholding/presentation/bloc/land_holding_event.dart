@@ -7,7 +7,7 @@ abstract class LandHoldingEvent {
 class LandHoldingInitEvent extends LandHoldingEvent {}
 
 class LandDetailsSaveEvent extends LandHoldingEvent {
-  final LandData landData;
+  final Map<String, dynamic> landData;
 
   const LandDetailsSaveEvent({required this.landData});
 }
