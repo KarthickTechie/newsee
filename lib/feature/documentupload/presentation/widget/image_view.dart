@@ -135,7 +135,7 @@ class _ImageViewState extends State<ImageView> {
           if (!_isUploaded && !_isUploading)
             Positioned(
               bottom: 30,
-              left: screenWidth * 0.4,
+              left: screenWidth * 0.5,
               child: ElevatedButton.icon(
                 onPressed: _uploadImage,
                 icon: const Icon(Icons.upload),
@@ -147,7 +147,7 @@ class _ImageViewState extends State<ImageView> {
           if (!_isUploading)
             Positioned(
               bottom: 30,
-              left: screenWidth * 0.7,
+              left: screenWidth * 0.8,
               child: ElevatedButton.icon(
                 onPressed: () => context.pop(),
                 icon: const Icon(Icons.close),

@@ -1,43 +1,52 @@
 enum UploadStatus { initial, uploading, success, failed }
 
 class DocumentImage {
-  final String name;
-  final double size;
-  final String path;
+  final String fileName;
+  final String fileLocation;
+  final String docId;
+  final String rowId;
   final UploadStatus imgStatus;
   DocumentImage({
-    required this.name,
-    required this.size,
-    required this.path,
+    required this.fileName,
+    required this.fileLocation,
+    required this.docId,
+    required this.rowId,
     this.imgStatus = UploadStatus.initial,
   });
 
   DocumentImage copyWith({UploadStatus? imgStatus}) {
     return DocumentImage(
-      name: name,
-      size: size,
-      path: path,
+      fileName: fileName,
+      fileLocation: fileLocation,
+      docId: docId,
+      rowId: rowId,
       imgStatus: imgStatus ?? this.imgStatus,
     );
   }
 
   Map<String, dynamic> toMap() {
     return {
-      'name': name,
-      'size': size,
-      'path': path,
+      'fileName': fileName,
+      'fileLocation': fileLocation,
+      'docId': docId,
+      'rowId': rowId,
       'imgStatus': imgStatus.name,
     };
   }
 
   factory DocumentImage.fromMap(Map<String, dynamic> map) {
     return DocumentImage(
-      name: map['name'],
-      size: (map['size'] as num).toDouble(),
-      path: map['path'],
+      fileName: map['fileName'],
+      fileLocation: map['fileLocation'],
+      docId: (map['docId']),
+      rowId: map['rowId'],
       imgStatus: UploadStatus.values.firstWhere(
         (e) => e.name == map['imgStatus'],
-        orElse: () => UploadStatus.initial,
+        orElse:
+            () =>
+                map['rowId'] != null
+                    ? UploadStatus.success
+                    : UploadStatus.initial,
       ),
     );
   }

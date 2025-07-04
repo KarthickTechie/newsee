@@ -38,12 +38,12 @@ void showFilesViewerBottomSheet(
                 itemCount: doc.imgs.length,
                 itemBuilder: (context, imgIndex) {
                   final file = doc.imgs[imgIndex];
-                  final isImage = isImageFile(file.name);
+                  final isImage = isImageFile(file.fileName);
 
                   return ListTile(
                     leading: Icon(isImage ? Icons.image : Icons.picture_as_pdf),
-                    title: Text(file.name),
-                    subtitle: Text('${file.size.toStringAsFixed(1)} MB'),
+                    title: Text(file.fileName),
+                    // subtitle: Text('${file.size.toStringAsFixed(1)} MB'),
                     trailing: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
@@ -107,7 +107,9 @@ void showFilesViewerBottomSheet(
                         showDialog(
                           context: context,
                           builder:
-                              (_) => Dialog(child: Image.file(File(file.path))),
+                              (_) => Dialog(
+                                child: Image.file(File(file.fileLocation)),
+                              ),
                         );
                       } else {
                         ScaffoldMessenger.of(context).showSnackBar(

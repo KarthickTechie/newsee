@@ -29,7 +29,6 @@ void loginActionSheet(BuildContext context) {
 
   final double screenwidth = MediaQuery.of(context).size.width;
   final double screenheight = MediaQuery.of(context).size.height;
-  
 
   showCupertinoModalPopup(
     context: context,
@@ -111,8 +110,11 @@ class LoginpageWithAC extends StatelessWidget {
               context.goNamed('masters');
             } else if (masterVersionCheckResponseHandler.isRight()) {
               if (masterVersionCheckResponseHandler.right.isNotEmpty) {
-                Globalconfig.diffListOfMaster =  masterVersionCheckResponseHandler.right;
-                print("Globalconfig.diffListOfMaster ${Globalconfig.diffListOfMaster}");
+                Globalconfig.diffListOfMaster =
+                    masterVersionCheckResponseHandler.right;
+                print(
+                  "Globalconfig.diffListOfMaster ${Globalconfig.diffListOfMaster}",
+                );
                 context.goNamed('masters');
               } else {
                 context.goNamed('home');

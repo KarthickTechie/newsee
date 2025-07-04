@@ -76,5 +76,6 @@ class UploadDocumentByBytesEvent extends DocumentEvent {
 
 class FetchDocumentImagesEvent extends DocumentEvent {
   final int docIndex;
-  FetchDocumentImagesEvent({required this.docIndex});
+  final int imgIndex;
+  FetchDocumentImagesEvent({required this.docIndex, required this.imgIndex});
 }

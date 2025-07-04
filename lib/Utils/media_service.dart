@@ -194,12 +194,11 @@ class MediaService {
     }
   }
 
-  Future<String> saveBytesToFile(Uint8List bytes, filename, count) async {
+  Future<File> saveBytesToFile(Uint8List bytes, filename) async {
     final dir = await getTemporaryDirectory();
-    final path = '${dir.path}/${filename}_$count.jpg';
+    final path = '${dir.path}/$filename';
     final file = File(path);
-    await file.writeAsBytes(bytes);
-    return file.path;
+    return await file.writeAsBytes(bytes);
   }
 }
 
