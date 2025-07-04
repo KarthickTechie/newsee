@@ -37,7 +37,7 @@ class Sidenavigationbar extends StatelessWidget {
           ),
           ListTile(
             leading: Icon(Icons.mail_rounded, color: Colors.teal),
-            title: Text("Application Inbox"),
+            title: Text("Field Visit Inbox"),
             onTap: () {
               Navigator.push(
                 context,

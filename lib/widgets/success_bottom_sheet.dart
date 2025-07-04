@@ -21,22 +21,22 @@ void showSuccessBottomSheet({
   required VoidCallback? onPressedRightButton,
   required String? leftButtonLabel,
   required String? rightButtonLabel,
+  SaveStatus? status,
 }) {
   showModalBottomSheet(
     context: context,
     isScrollControlled: true,
     isDismissible: false,
     backgroundColor: Colors.transparent,
-    builder:
-        (context) => _AnimatedSuccessContent(
-          headerTxt: headerTxt,
-          lead: lead,
-          message: message,
-          onPressedLeftButton: onPressedLeftButton,
-          onPressedRightButton: onPressedRightButton,
-          leftButtonLabel: leftButtonLabel,
-          rightButtonLabel: rightButtonLabel,
-        ),
+    builder: (context) => _AnimatedSuccessContent(
+      headerTxt: headerTxt,
+      lead: lead,
+      message: message,
+      onPressedLeftButton: onPressedLeftButton,
+      onPressedRightButton: onPressedRightButton,
+      leftButtonLabel: leftButtonLabel,
+      rightButtonLabel: rightButtonLabel,
+    ),
     shape: RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
     ),
@@ -52,7 +52,7 @@ class _AnimatedSuccessContent extends StatefulWidget {
   final String? leftButtonLabel;
   final String? rightButtonLabel;
 
-  const _AnimatedSuccessContent({
+  _AnimatedSuccessContent({
     required this.headerTxt,
     required this.lead,
     required this.message,
@@ -76,7 +76,6 @@ class _AnimatedSuccessContentState extends State<_AnimatedSuccessContent>
   @override
   void initState() {
     super.initState();
-
     _controller = AnimationController(
       vsync: this,
       duration: Duration(milliseconds: 400),
@@ -136,11 +135,9 @@ class _AnimatedSuccessContentState extends State<_AnimatedSuccessContent>
               ),
               SizedBox(height: 24),
               Row(
-                spacing: 10.0,
                 children: [
                   Flexible(
                     flex: 4,
-
                     child: ElevatedButton(
                       onPressed: widget.onPressedLeftButton,
                       style: ElevatedButton.styleFrom(
@@ -155,13 +152,15 @@ class _AnimatedSuccessContentState extends State<_AnimatedSuccessContent>
                       child: Text(widget.leftButtonLabel ?? "Cancel"),
                     ),
                   ),
+                  SizedBox(width: 10),
                   Flexible(
                     flex: 4,
                     child: ElevatedButton(
-                      onPressed: widget.onPressedRightButton,
+                      onPressed: 
+                                               widget.onPressedRightButton,
+                      
                       style: ElevatedButton.styleFrom(
                         padding: EdgeInsets.all(8),
-
                         minimumSize: Size(
                           MediaQuery.of(context).size.width * 0.4,
                           20,

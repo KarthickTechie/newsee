@@ -31,7 +31,7 @@ class BottomNavBar extends StatelessWidget {
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.mail_outlined),
-          label: "Application Inbox",
+          label: "Field Visit Inbox",
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.message_outlined),

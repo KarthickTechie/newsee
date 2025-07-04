@@ -24,7 +24,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 part './lead_submit_event.dart';
 part './lead_submit_state.dart';
-
 /* 
 @author   : karthick.d  13/06/2025
 @desc     : submiting lead business logic
@@ -66,12 +65,15 @@ final class LeadSubmitBloc extends Bloc<LeadSubmitEvent, LeadSubmitState> {
   }
 
   Future<void> onLeadPush(LeadSubmitPushEvent event, Emitter emit) async {
+    emit(state.copyWith(leadSubmitStatus: SubmitStatus.loading));
+
     final coappdataMap = event.coapplicantData?.toMap();
     coappdataMap?.addAll({"residentialStatus": "4"});
 
     final SharedPreferencesAsync asyncPrefs = SharedPreferencesAsync();
     String? getString = await asyncPrefs.getString('userdetails');
     UserDetails userdetails = UserDetails.fromJson(jsonDecode(getString!)); 
+
     try {
       Map<String, dynamic> leadSubmitRequest = {
         "userid": userdetails.LPuserID,
@@ -81,8 +83,7 @@ final class LeadSubmitBloc extends Bloc<LeadSubmitEvent, LeadSubmitState> {
         "orgLevel": userdetails.OrgLevel,
         "coapplicantRequired": event.coapplicantData != null ? 'Y' : 'N',
         "guarantorRequired": 'N',
-        "token":
-            "U2FsdGVkX1/Wa6+JeCIOVLl8LTr8WUocMz8kIGXVbEI9Q32v7zRLrnnvAIeJIVV3",
+        "token": ApiConstants.api_qa_token,
         "leadDetails": event.loanType.toMap(),
         "chooseProduct": event.loanProduct.toMap(),
         "dedupeSearch": event.dedupe.toMap(),
@@ -97,8 +98,7 @@ final class LeadSubmitBloc extends Bloc<LeadSubmitEvent, LeadSubmitState> {
       if (responseHandler.isRight()) {
         final response = responseHandler.right;
         String leadId = response['saveLeadDetails']['lleadid'] as String;
-
-        print('Lead Submit Success..');
+  print('Lead Submit Success..');
         emit(
           state.copyWith(
             leadSubmitStatus: SubmitStatus.success,
@@ -107,14 +107,17 @@ final class LeadSubmitBloc extends Bloc<LeadSubmitEvent, LeadSubmitState> {
           ),
         );
       } else {
-        print('Lead Submit Failure...');
+                print('Lead Submit Failure...');
+
         emit(state.copyWith(leadSubmitStatus: SubmitStatus.failure));
       }
     } on DioException catch (e) {
-      print('leadsubmit exception => $e');
+            print('leadsubmit exception => $e');
+
       emit(state.copyWith(leadSubmitStatus: SubmitStatus.failure));
     } catch (error) {
-      print('leadsubmit catch error => $error');
+            print('leadsubmit catch error => $error');
+
       emit(state.copyWith(leadSubmitStatus: SubmitStatus.failure));
     }
   }
@@ -124,6 +127,7 @@ final class LeadSubmitBloc extends Bloc<LeadSubmitEvent, LeadSubmitState> {
     Emitter emit,
   ) async {
     try {
+      emit(state.copyWith(proposalSubmitStatus: SaveStatus.loading));
       final SharedPreferencesAsync asyncPrefs = SharedPreferencesAsync();
       String? getString = await asyncPrefs.getString('userdetails');
       UserDetails userdetails = UserDetails.fromJson(jsonDecode(getString!)); 

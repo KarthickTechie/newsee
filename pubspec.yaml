@@ -39,14 +39,14 @@ dependencies:
   reactive_forms: ^18.0.0
   dropdown_search: ^5.0.6
   dio: ^5.7.0 #$ http calls
-  go_router: ^14.3.0 # roting library
+  go_router: ^16.0.0 # roting library
   flutter_svg: ^2.0.10+1
   pretty_dio_logger: ^1.4.0
   bloc: ^9.0.0 # state management library
   flutter_bloc: ^9.1.0
   get_it: ^8.0.0 # DI
   socket_io_client: ^3.0.0
-  share_plus: ^10.1.0
+  share_plus: ^11.0.0
   equatable: ^2.0.5 # efficent revuild algorithm
   camera: ^0.11.1
   image_cropper: ^9.1.0
@@ -66,15 +66,16 @@ dependencies:
   shimmer: ^3.0.0
   keyboard_detection: ^0.8.0
   popover: ^0.3.1
-  intl: 0.19.0
+  intl: 0.20.2
   path_provider: ^2.1.2
   biometric_signature: ^6.2.0
   mobile_scanner: ^7.0.1
-  permission_handler: ^11.3.1
+  permission_handler: ^12.0.1
   xml2json: ^6.2.7
   google_mlkit_text_recognition: ^0.15.0
   google_ml_kit: ^0.20.0
   shared_preferences: ^2.5.3
+  number_paginator: ^1.1.0
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -84,7 +85,7 @@ dev_dependencies:
   # activated in the `analysis_options.yaml` file located at the root of your
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
-  flutter_lints: ^5.0.0
+  flutter_lints: ^6.0.0
   build_runner: ^2.4.13
   json_serializable: ^6.8.0
 

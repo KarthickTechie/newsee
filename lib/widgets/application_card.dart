@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:newsee/AppData/app_constants.dart';
 
 class ApplicationCard extends StatelessWidget {
   final String leadId;
   final VoidCallback onProceedPressed; // Added callback parameter
+  final SaveStatus? status;
 
   const ApplicationCard({
     super.key,
     required this.leadId,
     required this.onProceedPressed,
+    this.status
   });
 
   @override
@@ -81,7 +84,7 @@ class ApplicationCard extends StatelessWidget {
                   borderRadius: BorderRadius.circular(8),
                 ),
               ),
-              child: const Text(
+              child: status == SaveStatus.loading ? CircularProgressIndicator() : const Text(
                 'Click to Proceed Proposal',
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),

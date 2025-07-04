@@ -233,7 +233,6 @@ class CropDetailsPage extends StatelessWidget {
     );
   }
 
-  
 
   @override
   Widget build(BuildContext context) {
@@ -251,7 +250,8 @@ class CropDetailsPage extends StatelessWidget {
           title: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(height: 10),
+              // SizedBox(height: 10),
+            
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 
@@ -278,83 +278,121 @@ class CropDetailsPage extends StatelessWidget {
                   )
                 ],
               ),
-              SizedBox(height: 10),
-              // Text(
-              //   'No of acres crops cultivated',
-              //   style: TextStyle(
-              //     fontSize: 16
-              //   )
-              // ),
-              // SizedBox(height: 5),
-              Center(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Text(
-                      "Irrigated: ",
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.white
-                      )
+               Center(
+                
+                child: Padding(
+                  padding: const EdgeInsets.only(bottom: 02),
+                  child: Container(
+                    width: double.infinity,
+                    margin: const EdgeInsets.symmetric(horizontal: 8,),
+                        padding: const EdgeInsets.all(8),
+                  
+                          decoration: BoxDecoration(
+                              color: Colors.black.withOpacity(0.10),
+                      borderRadius: BorderRadius.circular(6),
                     ),
-                    SizedBox(
-                      width: 50,
-                      height: 30,
-                      child: TextField(
-                        controller: irrigatedController,
-                        keyboardType: TextInputType.number,
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 14
+                     child: Row(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(5.0),
+                              child: Text(
+                                "Proposal Id: ",
+                                style: TextStyle(fontSize: 14, color: Colors.white, fontWeight: FontWeight.bold) ,
+                              ),
+                            ),
+                            Expanded(
+                              child: Padding(
+                                padding: const EdgeInsets.all(5),
+                                child: Text(
+                                  proposalnumber ?? 'N/A',
+                                
+                                  style: TextStyle(color: Colors.white, fontSize: 14,  fontWeight: FontWeight.bold),
+                                  overflow: TextOverflow.ellipsis, 
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
-                        decoration: const InputDecoration(
-                          contentPadding: EdgeInsets.symmetric(horizontal: 8),
-                          border: OutlineInputBorder(),
-                          filled: true,
-                          fillColor: Colors.white24,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 10),
-                    const Text(
-                      "Rainfed: ",
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.white
-                      )
-                    ),
-                    SizedBox(
-                      width: 50,
-                      height: 30,
-                      child: TextField(
-                        controller: rainfedController,
-                        keyboardType: TextInputType.number,
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 14
-                        ),
-                        decoration: const InputDecoration(
-                          contentPadding: EdgeInsets.symmetric(horizontal: 8),
-                          border: OutlineInputBorder(),
-                          filled: true,
-                          fillColor: Colors.white24,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 10),
-                    ValueListenableBuilder<int>(
-                      valueListenable: totalNotifier,
-                      builder: (context, value, _) => Text(
-                        "Total: $value (Acres)",
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: Colors.white,
-                        )
-                      ),
-                    ),
-                  ],
+                           ),
                 ),
               ),
+             Padding(
+                padding: const EdgeInsets.only(top:10,bottom: 20),
+                child: Center(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text(
+                        "Irrigated: ",
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.white
+                        )
+                      ),
+                      SizedBox(
+                        width: 50,
+                        height: 30,
+                        child: TextField(
+                          controller: irrigatedController,
+                          keyboardType: TextInputType.number,
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 14
+                          ),
+                          decoration: const InputDecoration(
+                            contentPadding: EdgeInsets.symmetric(horizontal: 8),
+                            border: OutlineInputBorder(),
+                            filled: true,
+                            fillColor: Colors.white24,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      
+                      const Text(
+                        "Rainfed: ",
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.white
+                        )
+                      ),
+                      SizedBox(
+                        width: 50,
+                        height: 30,
+                        child: TextField(
+                          controller: rainfedController,
+                          keyboardType: TextInputType.number,
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 14
+                          ),
+                          decoration: const InputDecoration(
+                            contentPadding: EdgeInsets.symmetric(horizontal: 8),
+                            border: OutlineInputBorder(),
+                            filled: true,
+                            fillColor: Colors.white24,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      ValueListenableBuilder<int>(
+                        valueListenable: totalNotifier,
+                        builder: (context, value, _) => Text(
+                          "Total: $value (Acres)",
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: Colors.white,
+                          )
+                        ),
+                      ),
+                    ],
+                    
+                
+                  ),
+                
+                ),
+              ),
+              
             ],
           ),
         ),
@@ -432,18 +470,18 @@ class CropDetailsPage extends StatelessWidget {
                                 padding: const EdgeInsets.all(16),
                                 child: Column(
                                   children: [
-                                    Row(
-                                      children: [
-                                        Text('Proposal Number: '),
-                                        SizedBox(width: 20,),
-                                        Text(
-                                          proposalnumber,
-                                          style: TextStyle(
-                                            color: Colors.teal
-                                          ),
-                                        ),
-                                      ],
-                                    ),
+                                    // Row(
+                                    //   children: [
+                                    //     Text('Proposal Number: '),
+                                    //     SizedBox(width: 20,),
+                                    //     Text(
+                                    //       proposalnumber,
+                                    //       style: TextStyle(
+                                    //         color: Colors.teal
+                                    //       ),
+                                    //     ),
+                                    //   ],
+                                    // ),
                                     // Dropdown(
                                     //   controlName: 'serveynumber',
                                     //   label: 'Survey Number',
