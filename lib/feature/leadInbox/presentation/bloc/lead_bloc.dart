@@ -48,7 +48,7 @@ class LeadBloc extends Bloc<LeadEvent, LeadState> {
         state.copyWith(
           status: LeadStatus.success,
           leadResponseModel: response.right,
-        ),
+          currentPage: event.pageNo + 1        ),
       );
     } else {
       print('Lead failure response.left');

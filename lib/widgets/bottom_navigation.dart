@@ -24,7 +24,8 @@ class BottomNavBar extends StatelessWidget {
       unselectedItemColor: Colors.grey,
       currentIndex: currentIndex,
       onTap: onTap,
-      items: const [
+      items: const [ 
+        
         BottomNavigationBarItem(
           icon: Icon(Icons.dashboard_outlined),
           label: "Dashboard",
@@ -32,6 +33,10 @@ class BottomNavBar extends StatelessWidget {
         BottomNavigationBarItem(
           icon: Icon(Icons.mail_outlined),
           label: "Field Visit Inbox",
+        ),
+         BottomNavigationBarItem(
+          icon: Icon(Icons.home),
+          label: "Home",
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.message_outlined),

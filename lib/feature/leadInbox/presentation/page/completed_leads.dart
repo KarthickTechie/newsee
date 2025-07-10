@@ -95,18 +95,15 @@ class CompletedLeads extends StatelessWidget {
             );
           }
 
-          final itemsPerPage = 1;
+          final itemsPerPage = 5;
           // final totalPages = (filteredLeads.length / itemsPerPage).ceil();
           final totalPages = (filteredLeads.length);
           final currentPage = state.currentPage - 1;
 
-          final startIndex = currentPage * itemsPerPage;
-          final endIndex = ((currentPage + filteredLeads.length) * itemsPerPage)
-              .clamp(0, filteredLeads.length);
-          final paginatedLeads = filteredLeads.sublist(
-            startIndex,
-            endIndex > filteredLeads.length ? filteredLeads.length : endIndex,
-          );
+         final startIndex = currentPage * itemsPerPage;
+         final endIndex = ((currentPage + 1) * itemsPerPage).clamp(0, filteredLeads.length);
+         final paginatedLeads = filteredLeads.sublist(startIndex, endIndex);
+
 
           return RefreshIndicator(
             onRefresh: onRefresh,

@@ -1,14 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:newsee/AppSamples/ReactiveForms/view/login_mpin.dart';
-
+ 
 createMpin(BuildContext context) {
-    final List<TextEditingController> newMpinControllers =
-      List.generate(4, (_) => TextEditingController());
-  final List<TextEditingController> confirmMpinControllers =
-      List.generate(4, (_) => TextEditingController());
-
-  // show the custom modal bottom sheet
   showModalBottomSheet<void>(
     isScrollControlled: true,
 
@@ -61,7 +55,6 @@ createMpin(BuildContext context) {
                       borderRadius: BorderRadius.circular(10),
                     ),
                 
-                      // fingerprint icon for biometric authentication
                       child:
                           Center(
                                 child: TextField(
@@ -76,8 +69,7 @@ createMpin(BuildContext context) {
                                   onChanged: (v) {
                                     if (v.isNotEmpty && i + 1 < 5) {
                                       print('onChanged Value V:  $v' );
-                                     
-
+                                      
 
                                       FocusScope.of(context).nextFocus();
                                     }
@@ -94,7 +86,6 @@ createMpin(BuildContext context) {
                   ),
 
                   Row(
-                  // Four TextFields for entering a numeric MPIN
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   
                   children: List.generate(4, (i) {
@@ -107,7 +98,6 @@ createMpin(BuildContext context) {
                       borderRadius: BorderRadius.circular(10),
                     ),
                 
-                      // fingerprint icon for biometric authentication
                       child:
                           Center(
                                 child: TextField(

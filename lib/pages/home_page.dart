@@ -12,6 +12,7 @@ import '../widgets/bottom_navigation.dart';
 import '../widgets/floating_action.dart';
 import '../widgets/lead_tab_bar.dart';
 import '../widgets/search_bar.dart';
+import 'package:go_router/go_router.dart';
 
 class HomePage extends StatefulWidget {
   int? tabdata;
@@ -36,10 +37,17 @@ class HomePageState extends State<HomePage> {
     }
   }
 
+
   Future<void> onItemTapped(int index) async {
     print("tabdata ${widget.tabdata}");
     setState(() => loading = true);
     await Future.delayed(Duration(seconds: 2));
+    if (index == 2) {
+    GoRouter.of(context).goNamed('newlead');
+    setState(() => loading = false); 
+    return;
+  }
+
     setState(() {
       selectedIndex = index;
       loading = false;
@@ -54,16 +62,18 @@ class HomePageState extends State<HomePage> {
         return Center(
           child: Text("Field Visit Inbox", style: TextStyle(fontSize: 24)),
         );
-      case 2:
+ 
+      case 3:
         return Center(
           child: Text("Query Inbox", style: TextStyle(fontSize: 24)),
         );
-      case 3:
+      case 4:
       default:
         return Center(
           // child: Text("Masters Update", style: TextStyle(fontSize: 24)),
           child: MasterUpdate(),
         );
+      break;
     }
   }
 
@@ -89,10 +99,10 @@ class HomePageState extends State<HomePage> {
         currentIndex: selectedIndex,
         onTap: onItemTapped,
       ),
-      floatingActionButton: selectedIndex !=3
-      ?FloatingActionBarWidget()
-      :null,
-      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+      // floatingActionButton: selectedIndex !=3
+      // ?FloatingActionBarWidget()
+      // :null,
+      // floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );
   }
 }
