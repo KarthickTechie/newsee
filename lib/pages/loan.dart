@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:newsee/AppData/app_constants.dart';
 import 'package:newsee/AppData/globalconfig.dart';
+import 'package:newsee/Utils/customlogutiles.dart';
 import 'package:newsee/Utils/utils.dart';
 import 'package:newsee/feature/loanproductdetails/presentation/bloc/loanproduct_bloc.dart';
 import 'package:newsee/feature/masters/domain/modal/product.dart';
@@ -320,8 +321,8 @@ class Loan extends StatelessWidget {
                           final blocState =
                               context.read<LoanproductBloc>().state;
                           final selectedProduct = blocState.selectedProduct;
-
                           if (form.valid) {
+                              CustomLog.log("This will always log");
                             if (selectedProduct == null) {
                               showDialog(
                                 context: context,
