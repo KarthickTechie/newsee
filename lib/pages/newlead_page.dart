@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:newsee/AppData/app_constants.dart';
 import 'package:newsee/AppData/globalconfig.dart';
+import 'package:newsee/Utils/utils.dart';
 import 'package:newsee/feature/CropDetails/presentation/page/cropdetailspage.dart';
 import 'package:newsee/feature/addressdetails/presentation/bloc/address_details_bloc.dart';
 import 'package:newsee/feature/cif/presentation/bloc/cif_bloc.dart';
@@ -20,6 +21,7 @@ import 'package:newsee/pages/personal.dart';
 import 'package:newsee/widgets/address_tab_bar.dart';
 import 'package:newsee/widgets/latlongbutton.dart';
 import 'package:newsee/widgets/side_navigation.dart';
+import 'package:newsee/widgets/sysmo_alert.dart';
 
 class NewLeadPage extends StatelessWidget {
   @override
@@ -116,45 +118,56 @@ class NewLeadPage extends StatelessWidget {
                                           tabController.previousIndex,
                                 );
 
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Row(
-                                      children: [
-                                        Icon(
-                                          Icons.warning_amber_rounded,
-                                          color: Colors.white,
-                                        ),
-                                        SizedBox(width: 12),
-                                        Expanded(
-                                          child: Text(
-                                            "Please complete the previous step before processing.",
-                                            style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 15,
-                                              fontWeight: FontWeight.w500,
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    backgroundColor: Colors.teal,
+                                // ScaffoldMessenger.of(context).showSnackBar(
+                                //   SnackBar(
+                                //     content: Row(
+                                //       children: [
+                                //         Icon(
+                                //           Icons.warning_amber_rounded,
+                                //           color: Colors.white,
+                                //         ),
+                                //         SizedBox(width: 12),
+                                //         Expanded(
+                                //           child: Text(
+                                //             "Please complete the previous step before processing.",
+                                //             style: TextStyle(
+                                //               color: Colors.white,
+                                //               fontSize: 15,
+                                //               fontWeight: FontWeight.w500,
+                                //             ),
+                                //           ),
+                                //         ),
+                                //       ],
+                                //     ),
+                                //     backgroundColor: Colors.teal,
 
-                                    behavior: SnackBarBehavior.floating,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(12),
-                                    ),
-                                    margin: const EdgeInsets.symmetric(
-                                      horizontal: 20,
-                                      vertical: 16,
-                                    ),
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 20,
-                                      vertical: 16,
-                                    ),
-                                    duration: const Duration(seconds: 2),
-                                  ),
-                                );
-                              }
+                                //     behavior: SnackBarBehavior.floating,
+                                //     shape: RoundedRectangleBorder(
+                                //       borderRadius: BorderRadius.circular(12),
+                                //     ),
+                                //     margin: const EdgeInsets.symmetric(
+                                //       horizontal: 20,
+                                //       vertical: 16,
+                                //     ),
+                                //     padding: const EdgeInsets.symmetric(
+                                //       horizontal: 20,
+                                //       vertical: 16,
+                                //     ),
+                                //     duration: const Duration(seconds: 2),
+                                //   ),
+                                // );
+                                showDialog(
+                context: context,
+                builder:
+                    (_) => SysmoAlert.warning(
+                      message: "Please complete the previous step before processing.",
+                      onButtonPressed: () {
+                        Navigator.pop(context);
+                        goToNextTab(context: context);
+                      },
+                    ),
+              );
+                   }
                             },
                             tabs: <Widget>[
                               statusTabBar(

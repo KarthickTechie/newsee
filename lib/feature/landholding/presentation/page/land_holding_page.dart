@@ -13,6 +13,7 @@ import 'package:newsee/feature/masters/domain/modal/lov.dart';
 import 'package:newsee/widgets/k_willpopscope.dart';
 import 'package:newsee/widgets/options_sheet.dart';
 import 'package:newsee/widgets/searchable_drop_down.dart';
+import 'package:newsee/widgets/sysmo_alert.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 import 'package:newsee/widgets/custom_text_field.dart';
 import 'package:newsee/widgets/drop_down.dart';
@@ -229,7 +230,16 @@ class LandHoldingPage extends StatelessWidget {
               if (state.status == SaveStatus.mastersucess ||
                   state.status == SaveStatus.masterfailure) {
                 if (state.status == SaveStatus.masterfailure) {
-                  showSnack(context, message: 'Failed to Fetch Masters...');
+                   showDialog(
+                context: context,
+                builder:
+                    (_) => SysmoAlert.failure(
+                      message: "Failed to Fetch Masters...",
+                      onButtonPressed: () {
+                        Navigator.pop(context);
+                      },
+                    ),
+              );
                 }
 
                 print('city list => ${state.cityMaster}');
