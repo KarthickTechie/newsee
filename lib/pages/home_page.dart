@@ -61,7 +61,6 @@ class HomePageState extends State<HomePage> {
       case 3:
       default:
         return Center(
-          // child: Text("Masters Update", style: TextStyle(fontSize: 24)),
           child: MasterUpdate(),
         );
     }

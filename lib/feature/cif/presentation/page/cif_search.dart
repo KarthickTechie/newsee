@@ -26,11 +26,8 @@ class CIFSearch extends StatelessWidget {
       context: context,
       barrierDismissible: false,
       builder:
-          (_) => SysmoAlert(
+          (_) => SysmoAlert.success(
             message: "Dedupe Details Saved Successfully",
-            iconColor: Colors.green,
-            icon: Icons.check_circle,
-            buttonText: 'OK',
             onButtonPressed: () {
               Navigator.pop(context);
               Navigator.of(context).pop();

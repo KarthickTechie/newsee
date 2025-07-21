@@ -14,6 +14,7 @@ import 'package:newsee/feature/addressdetails/domain/repository/cityrepository.d
 import 'package:newsee/feature/coapplicant/presentation/bloc/coapp_details_bloc.dart';
 import 'package:newsee/feature/landholding/data/repository/land_Holding_respository_impl.dart';
 import 'package:newsee/feature/landholding/domain/modal/LandData.dart';
+import 'package:newsee/feature/landholding/domain/modal/Land_Holding_delete_request.dart';
 import 'package:newsee/feature/landholding/domain/modal/land_Holding_request.dart';
 import 'package:newsee/feature/landholding/domain/repository/landHolding_repository.dart';
 import 'package:newsee/feature/masters/domain/modal/geography_master.dart';
@@ -32,6 +33,7 @@ final class LandHoldingBloc extends Bloc<LandHoldingEvent, LandHoldingState> {
     on<LandDetailsSaveEvent>(_onSubmit);
     on<LandDetailsLoadEvent>(_onLoad);
     on<OnStateCityChangeEvent>(getCityListBasedOnState);
+    on<LandDetailsDeleteEvent>(_onDelete);
   }
 
   Future initLandHoldingDetails(
@@ -88,6 +90,7 @@ final class LandHoldingBloc extends Bloc<LandHoldingEvent, LandHoldingState> {
     Emitter<LandHoldingState> emit,
   ) async {
     try {
+      emit(state.copyWith(status: SaveStatus.loading));
       // final newList = [...?state.landData, event.landData as LandData];
       print("event.landData not a map => ${event.landData}");
       final landdata = event.landData;
@@ -135,6 +138,7 @@ final class LandHoldingBloc extends Bloc<LandHoldingEvent, LandHoldingState> {
           status: SaveStatus.success,
           landData: landData,
           selectedLandData: null,
+          errorMessage: null
         ),
       );
     } catch (e) {
@@ -152,8 +156,52 @@ final class LandHoldingBloc extends Bloc<LandHoldingEvent, LandHoldingState> {
       state.copyWith(
         status: SaveStatus.update,
         selectedLandData: event.landData,
+        errorMessage: null
       ),
     );
+  }
+
+  Future<void> _onDelete(LandDetailsDeleteEvent event, Emitter emit) async {
+    try {
+      emit(state.copyWith(status: SaveStatus.loading));
+      final LandHoldingDeleteRequest landDeleteReq = LandHoldingDeleteRequest(
+        proposalNumber: event.landData.lslPropNo.toString(),
+        rowId: event.landData.lslLandRowid.toString(), 
+        token: ApiConstants.api_qa_token,
+      );
+
+      final LandHoldingRepository landHoldingRepository =
+          LandHoldingRespositoryImpl();
+      final response = await landHoldingRepository.deleteLandHoldingData(landDeleteReq);
+      if (response.isRight()) {
+        List<LandData> landDetailsList = state.landData!;
+        landDetailsList.removeAt(event.index);
+        print("final landDetailsList $landDetailsList");
+        emit(
+          state.copyWith(
+            status: SaveStatus.delete, 
+            errorMessage: response.right,
+            landData: landDetailsList
+          ),
+        );
+      } else {
+        emit(
+          state.copyWith(
+            status: SaveStatus.failure, 
+            errorMessage: response.left.message
+          ),
+        );
+      }
+
+    } catch(error) {
+      emit(
+        state.copyWith(
+          status: SaveStatus.failure, 
+          errorMessage: error.toString()
+        ),
+      );
+      print("LandDetailsDeleteEvent-error $error");
+    }
   }
 
   Future<void> getCityListBasedOnState(

@@ -41,3 +41,15 @@ class CropDetailsSubmitEvent extends CropyieldpageEvent{
     required this.total
   });
 }
+
+class CropDetailsDeleteEvent extends CropyieldpageEvent {
+  final String proposalNumber;
+  final String rowId;
+  final int index;
+  CropDetailsDeleteEvent({required this.proposalNumber, required this.rowId, required this.index});
+}
+
+class CropDetailsRemoveEvent extends CropyieldpageEvent{
+  final int index;
+  CropDetailsRemoveEvent({required this.index});
+}

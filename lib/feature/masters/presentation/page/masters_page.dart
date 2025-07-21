@@ -130,10 +130,11 @@ class MastersPage extends StatelessWidget {
                   print('progress completed => $progress');
                   await Future.delayed(const Duration(seconds: 2));
                   if(Globalconfig.masterUpdate) {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => HomePage(tabdata: 3)),
-                    );
+                    // Navigator.push(
+                    //   context,
+                    //   MaterialPageRoute(builder: (context) => HomePage(tabdata: 4)),
+                    // );
+                    context.push('/home', extra: {'tabdata': 3});
                   } else {
                     goTo('home');
                   }

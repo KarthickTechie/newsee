@@ -98,7 +98,7 @@ class SearchableDropdown<T> extends StatelessWidget {
             popupProps: PopupProps.menu(
               showSearchBox: true,
               searchFieldProps: TextFieldProps(
-                autofocus: true,
+                autofocus: false,
                 decoration: const InputDecoration(
                   hintText: 'Search',
                   border: UnderlineInputBorder(),
@@ -109,7 +109,7 @@ class SearchableDropdown<T> extends StatelessWidget {
               if (val != null) {
                 print('field value => ${itemvalueMapper(val)}');
               }
-
+        
               _onChangeListener(val);
             },
           ),

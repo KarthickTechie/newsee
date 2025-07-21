@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:path/path.dart';
 
 /*
   @author     : akshayaa.p
@@ -23,11 +24,99 @@ class SysmoAlert extends StatelessWidget {
     required this.message,
     this.textColor = Colors.black,
     this.backgroundColor = Colors.white,
-    required this.iconColor,
-    required this.icon,
-    required this.buttonText,
+    this.iconColor = Colors.black,
+    this.icon = Icons.info_outline,
+    this.buttonText = 'OK',
     required this.onButtonPressed,
   });
+
+  factory SysmoAlert.success({
+    Key? key,
+    required String message,
+    VoidCallback? onButtonPressed,
+    Color? textColor,
+    Color? backgroundColor,
+    Color? iconColor,
+    IconData? icon,
+    String? buttonText,
+  }) {
+    return SysmoAlert(
+      key: key,
+      message: message,
+      textColor: textColor ?? Colors.black,
+      backgroundColor: backgroundColor ?? Colors.green.shade50,
+      iconColor: iconColor ?? Colors.green,
+      icon: icon ?? Icons.check_circle_outline,
+      buttonText: buttonText ?? 'OK',
+      onButtonPressed: onButtonPressed ?? () {},
+    );
+  }
+
+  factory SysmoAlert.failure({
+    Key? key,
+    required String message,
+    VoidCallback? onButtonPressed,
+    Color? textColor,
+    Color? backgroundColor,
+    Color? iconColor,
+    IconData? icon,
+    String? buttonText,
+  }) {
+    return SysmoAlert(
+      key: key,
+      message: message,
+      textColor: textColor ?? Colors.black,
+      backgroundColor: backgroundColor ?? Colors.red.shade50,
+      iconColor: iconColor ?? Colors.red,
+      icon: icon ?? Icons.error_outline,
+      buttonText: buttonText ?? 'OK',
+      onButtonPressed: onButtonPressed ?? () {},
+    );
+  }
+
+  factory SysmoAlert.warning({
+    Key? key,
+    required String message,
+    VoidCallback? onButtonPressed,
+    Color? textColor,
+    Color? backgroundColor,
+    Color? iconColor,
+    IconData? icon,
+    String? buttonText,
+  }) {
+    return SysmoAlert(
+      key: key,
+      message: message,
+      textColor: textColor ?? Colors.black,
+      backgroundColor: backgroundColor ?? Colors.orange.shade50,
+      iconColor: iconColor ?? Colors.orange,
+      icon: icon ?? Icons.warning_amber_rounded,
+      buttonText: buttonText ?? 'OK',
+      onButtonPressed: onButtonPressed ?? () {},
+    );
+  }
+
+  factory SysmoAlert.info({
+    Key? key,
+    required String message,
+    VoidCallback? onButtonPressed,
+    Color? textColor,
+    Color? backgroundColor,
+    Color? iconColor,
+    IconData? icon,
+    String? buttonText,
+  }) {
+    return SysmoAlert(
+      key: key,
+      message: message,
+      textColor: textColor ?? Colors.black,
+      backgroundColor: backgroundColor ?? Colors.blue.shade50,
+      iconColor: iconColor ?? Colors.blue,
+      icon: icon ?? Icons.info_outline,
+      buttonText: buttonText ?? 'OK',
+      onButtonPressed: onButtonPressed ?? () {},
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -57,13 +146,13 @@ class SysmoAlert extends StatelessWidget {
                 Text(
                   message,
                   textAlign: TextAlign.center,
-                  style: TextStyle(color: textColor, fontSize: 25),
+                  style: TextStyle(color: textColor, fontSize: 22),
                 ),
                 const SizedBox(height: 20),
                 ElevatedButton(
                   onPressed: onButtonPressed,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color.fromARGB(255, 3, 9, 110),
+                    backgroundColor: iconColor,
                     foregroundColor: Colors.white,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),

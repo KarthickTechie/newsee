@@ -68,19 +68,16 @@ class CompletedLeads extends StatelessWidget {
           if (state.proposalSubmitStatus == SaveStatus.failure) {
             showDialog(
               context: context,
-              barrierDismissible: false,
               builder:
-                  (_) => SysmoAlert(
+                  (_) => SysmoAlert.failure(
                     message: "Proposal Creation Failed",
-                    iconColor: Colors.red,
-                    icon: Icons.cancel_rounded,
-                    buttonText: 'OK',
-                    onButtonPressed: () => Navigator.pop(context),
+                    onButtonPressed: () {
+                      Navigator.pop(context);
+                    },
                   ),
             );
           }
         },
-
         builder: (context, state) {
           Future<void> onRefresh() async {
             context.read<LeadBloc>().add(SearchLeadEvent());
@@ -166,6 +163,7 @@ class CompletedLeads extends StatelessWidget {
                           : 'Existing Customer',
                   product: lead['lfProdId'] ?? 'N/A',
                   phone: lead['lleadmobno'] ?? 'N/A',
+                  ennablePhoneTap: true,
                   createdon: lead['lpdCreatedOn'] ?? 'N/A',
                   location: lead['lleadprefbrnch'] ?? 'N/A',
                   loanamount: lead['lldLoanamtRequested']?.toString() ?? '',
@@ -177,6 +175,13 @@ class CompletedLeads extends StatelessWidget {
                         CreateProposalLeadEvent(leadId: lead['lleadid'] ?? ''),
                       );
                     },
+                    style: TextButton.styleFrom(
+                      side: const BorderSide(color: Colors.teal),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      minimumSize: const Size(40, 25),
+                    ),
                     child: const Text(
                       'Create Proposal',
                       style: TextStyle(color: Colors.teal),

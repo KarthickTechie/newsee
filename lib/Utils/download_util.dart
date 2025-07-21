@@ -22,9 +22,8 @@ Future<Response> downloadPDF({
   void Function(String path)? downloadedFilePath,
 }) async {
   try {
-    final filePath = dirPath.endsWith('/')
-        ? '$dirPath$fileName'
-        : '$dirPath/$fileName';
+    final filePath =
+        dirPath.endsWith('/') ? '$dirPath$fileName' : '$dirPath/$fileName';
 
     final response = await ApiClient().getDio().download(
       remoteFilePath,
@@ -37,6 +36,7 @@ Future<Response> downloadPDF({
         }
       },
     );
+    downloadedFilePath!(filePath);
     return response;
   } catch (e) {
     rethrow;

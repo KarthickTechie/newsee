@@ -9,6 +9,7 @@ import 'package:newsee/feature/loanproductdetails/presentation/bloc/loanproduct_
 import 'package:newsee/feature/masters/domain/modal/product.dart';
 import 'package:newsee/feature/masters/domain/modal/product_master.dart';
 import 'package:newsee/feature/masters/domain/modal/productschema.dart';
+import 'package:newsee/widgets/k_willpopscope.dart';
 import 'package:newsee/widgets/sysmo_alert.dart';
 import 'package:newsee/widgets/bottom_sheet.dart';
 import 'package:newsee/widgets/drop_down.dart';
@@ -68,253 +69,251 @@ class Loan extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final _context = context;
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Loan Details"),
-        automaticallyImplyLeading: false,
-      ),
-      body: BlocConsumer<LoanproductBloc, LoanproductState>(
-        listener: (context, state) {
-          BuildContext ctxt = context;
-          print('LoanProductBlocListener:: log =>  ${state.showBottomSheet}');
-
-          if (state.showBottomSheet == true) {
-            openBottomSheet(
-              context,
-              0.7,
-              0.5,
-              0.9,
-              // (context, scrollController) => Expanded(
-              (context, scrollController) => ListView.builder(
-                controller: scrollController,
-                itemCount: state.productmasterList.length,
-                itemBuilder: (context, index) {
-                  final product = state.productmasterList[index];
-                  return Padding(
-                    padding: EdgeInsets.all(5.0),
-                    child: InkWell(
-                      // card widget for showing products
-                      onTap: () {
-                        ProductMaster selectedProduct = product;
-                        ctxt.read<LoanproductBloc>().add(
-                          ResetShowBottomSheet(
-                            selectedProduct: selectedProduct,
-                          ),
-                        );
-                      },
-                      child: ProductCard(
-                        productId: product.prdCode,
-                        productDescription: product.prdDesc,
-                        amountFrom: formatAmount(product.prdamtFromRange),
-                        amountTo: formatAmount(product.prdamtToRange),
+    return Kwillpopscope(
+      routeContext: context,
+      form:form,
+      widget: Scaffold(
+        appBar: AppBar(
+          title: Text("Loan Details"),
+          automaticallyImplyLeading: false,
+        ),
+        body: BlocConsumer<LoanproductBloc, LoanproductState>(
+          listener: (context, state) {
+            BuildContext ctxt = context;
+            print('LoanProductBlocListener:: log =>  ${state.showBottomSheet}');
+      
+            if (state.showBottomSheet == true) {
+              openBottomSheet(
+                context,
+                0.7,
+                0.5,
+                0.9,
+                // (context, scrollController) => Expanded(
+                (context, scrollController) => ListView.builder(
+                  controller: scrollController,
+                  itemCount: state.productmasterList.length,
+                  itemBuilder: (context, index) {
+                    final product = state.productmasterList[index];
+                    return Padding(
+                      padding: EdgeInsets.all(5.0),
+                      child: InkWell(
+                        // card widget for showing products
+                        onTap: () {
+                          ProductMaster selectedProduct = product;
+                          ctxt.read<LoanproductBloc>().add(
+                            ResetShowBottomSheet(
+                              selectedProduct: selectedProduct,
+                            ),
+                          );
+                        },
+                        child: ProductCard(
+                          productId: product.prdCode,
+                          productDescription: product.prdDesc,
+                          amountFrom: formatAmount(product.prdamtFromRange),
+                          amountTo: formatAmount(product.prdamtToRange),
+                        ),
                       ),
-                    ),
-                  );
-                },
-              ),
-              // ),
-            );
-          }
-
-          if (state.selectedProduct != null &&
-              state.showBottomSheet == false &&
-              state.status != SaveStatus.success) {
-            print('poping current route');
-            LoanproductState.init();
-            Navigator.of(_context).pop();
-          }
-
-          if (state.status == SaveStatus.success) {
-            Globalconfig.loanAmountMaximum = int.parse(
-              state.selectedProduct?.prdamtToRange ?? '0',
-            );
-            print(
-              'loan details saved success =>prodscheme ${state.selectedProductScheme}  maincat ${state.selectedMainCategory} subCat ${state.selectedSubCategoryList} status ${state.status} Globalconfig.loanAmountMaximum ${Globalconfig.loanAmountMaximum}',
-            );
-            showDialog(
-              context: context,
-              barrierDismissible: false,
-              builder:
-                  (_) => SysmoAlert(
-                    message: "Loan Details Saved Successfully",
-                    iconColor: Colors.green,
-                    icon: Icons.check_circle,
-                    buttonText: 'OK',
-                    onButtonPressed: () {
-                      Navigator.pop(context);
-                      goToNextTab(context: context);
-                    },
-                  ),
-            );
-          } else if (state.status == SaveStatus.failure) {
-            showDialog(
-              context: context,
-              barrierDismissible: false,
-              builder:
-                  (_) => SysmoAlert(
-                    message: "Failed to save Loan Details",
-                    iconColor: Colors.red,
-                    icon: Icons.cancel_rounded,
-                    buttonText: 'OK',
-                    onButtonPressed: () => Navigator.pop(context),
-                  ),
-            );
-          }
-        },
-        // child: BlocBuilder<LoanproductBloc, LoanproductState>(
-        builder: (context, state) {
-          return ReactiveForm(
-            formGroup: form,
-            child: SafeArea(
-              child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    SearchableDropdown<ProductSchema>(
-                      controlName: 'typeofloan',
-                      label: 'Type Of Loan',
-                      items: state.productSchemeList,
-                      onChangeListener: (ProductSchema val) {
-                        form.controls['typeofloan']?.updateValue(
-                          val.optionValue,
-                        );
-
-                        context.read<LoanproductBloc>().add(
-                          LoanProductDropdownChange(field: val),
-                        );
-                      },
-                      selItem: () {
-                        final value = form.control('typeofloan').value;
-                        if (value == null || value.toString().isEmpty) {
-                          return null;
-                        }
-                        return state.productSchemeList.firstWhere(
-                          (element) => element.optionValue == value,
-                          orElse:
-                              () => ProductSchema(
-                                optionId: '',
-                                optionDesc: '',
-                                optionValue: '',
-                              ),
-                        );
-
-                        // if (state.selectedProductScheme != null) {
-                        //   form.controls['typeofloan']?.updateValue(
-                        //     state.selectedProductScheme?.optionValue,
-                        //   );
-                        //   return state.selectedProductScheme;
-                        // } else {
-                        //   return null;
-                        // }
+                    );
+                  },
+                ),
+                // ),
+              );
+            }
+      
+            if (state.selectedProduct != null &&
+                state.showBottomSheet == false &&
+                state.status != SaveStatus.success) {
+              print('poping current route');
+              LoanproductState.init();
+              Navigator.of(_context).pop();
+            }
+      
+            if (state.status == SaveStatus.success) {
+              Globalconfig.loanAmountMaximum = int.parse(
+                state.selectedProduct?.prdamtToRange ?? '0',
+              );
+              print(
+                'loan details saved success =>prodscheme ${state.selectedProductScheme}  maincat ${state.selectedMainCategory} subCat ${state.selectedSubCategoryList} status ${state.status} Globalconfig.loanAmountMaximum ${Globalconfig.loanAmountMaximum}',
+              );
+              showDialog(
+                context: context,
+                builder:
+                    (_) => SysmoAlert.success(
+                      message: "Loan Details Saved Successfully",
+                      onButtonPressed: () {
+                        Navigator.pop(context);
+                        goToNextTab(context: context);
                       },
                     ),
-                    SearchableDropdown(
-                      controlName: 'maincategory',
-                      label: 'Main Category',
-                      items: state.mainCategoryList,
-                      onChangeListener: (Product val) {
-                        form.controls['maincategory']?.updateValue(
-                          val.lsfFacId,
-                        );
-
-                        context.read<LoanproductBloc>().add(
-                          LoanProductDropdownChange(field: val),
-                        );
-                      },
-                      selItem: () {
-                        final value = form.control('maincategory').value;
-                        if (value == null || value.toString().isEmpty) {
-                          return null;
-                        }
-                        return state.mainCategoryList.firstWhere(
-                          (element) => element.lsfFacId == value,
-                          orElse:
-                              () => Product(
-                                lsfFacId: '',
-                                lsfFacDesc: '',
-                                lsfFacType: '',
-                                lsfFacParentId: '',
-                                lsfBizVertical: '',
-                              ),
-                        );
-
-                        // if (state.selectedMainCategory != null) {
-                        //   form.controls['maincategory']?.updateValue(
-                        //     state.selectedMainCategory?.lsfFacId,
-                        //   );
-                        //   return state.selectedMainCategory;
-                        // } else {
-                        //   return null;
-                        // }
+              );
+            } else if (state.status == SaveStatus.failure) {
+              showDialog(
+                context: context,
+                builder:
+                    (_) => SysmoAlert.failure(
+                      message: "Failed to save loan details",
+                      onButtonPressed: () {
+                        Navigator.pop(context);
                       },
                     ),
-                    SearchableDropdown(
-                      controlName: 'subcategory',
-                      label: 'Sub Category',
-                      items: state.subCategoryList,
-                      onChangeListener: (Product val) {
-                        form.controls['subcategory']?.updateValue(val.lsfFacId);
-
-                        context.read<LoanproductBloc>().add(
-                          LoanProductDropdownChange(field: val),
-                        );
-                      },
-                      selItem: () {
-                        final value = form.control('subcategory').value;
-                        if (value == null || value.toString().isEmpty) {
-                          return null;
-                        }
-                        return state.subCategoryList.firstWhere(
-                          (element) => element.lsfFacId == value,
-                          orElse:
-                              () => Product(
-                                lsfFacId: '',
-                                lsfFacDesc: '',
-                                lsfFacType: '',
-                                lsfFacParentId: '',
-                                lsfBizVertical: '',
-                              ),
-                        );
-
-                        // if (state.selectedSubCategoryList != null) {
-                        //   form.controls['subcategory']?.updateValue(
-                        //     state.selectedSubCategoryList?.lsfFacId,
-                        //   );
-                        //   return state.selectedSubCategoryList;
-                        // } else {
-                        //   return null;
-                        // }
-                      },
-                    ),
-
-                    Column(
-                      children:
-                          state.selectedProduct != null
-                              ? [
-                                ProductCard(
-                                  productId: state.selectedProduct!.prdCode,
-                                  productDescription:
-                                      state.selectedProduct!.prdDesc,
-                                  amountFrom: formatAmount(
-                                    state.selectedProduct!.prdamtFromRange,
-                                  ),
-                                  amountTo: formatAmount(
-                                    state.selectedProduct!.prdamtToRange,
-                                  ),
+              );
+            }
+          },
+          // child: BlocBuilder<LoanproductBloc, LoanproductState>(
+          builder: (context, state) {
+            return ReactiveForm(
+              formGroup: form,
+              child: SafeArea(
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      SearchableDropdown<ProductSchema>(
+                        controlName: 'typeofloan',
+                        label: 'Type Of Loan',
+                        items: state.productSchemeList,
+                        onChangeListener: (ProductSchema val) {
+                          form.controls['typeofloan']?.updateValue(
+                            val.optionValue,
+                          );
+      
+                          context.read<LoanproductBloc>().add(
+                            LoanProductDropdownChange(field: val),
+                          );
+                        },
+                        selItem: () {
+                          final value = form.control('typeofloan').value;
+                          if (value == null || value.toString().isEmpty) {
+                            return null;
+                          }
+                          return state.productSchemeList.firstWhere(
+                            (element) => element.optionValue == value,
+                            orElse:
+                                () => ProductSchema(
+                                  optionId: '',
+                                  optionDesc: '',
+                                  optionValue: '',
                                 ),
-                              ]
-                              : [Text('')],
-                    ),
-                    Center(
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Color.fromARGB(255, 3, 9, 110),
-                          foregroundColor: Colors.white,
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 24,
-                            vertical: 12,
-                          ),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
+                          );
+      
+                          // if (state.selectedProductScheme != null) {
+                          //   form.controls['typeofloan']?.updateValue(
+                          //     state.selectedProductScheme?.optionValue,
+                          //   );
+                          //   return state.selectedProductScheme;
+                          // } else {
+                          //   return null;
+                          // }
+                        },
+                      ),
+                      SearchableDropdown(
+                        controlName: 'maincategory',
+                        label: 'Main Category',
+                        items: state.mainCategoryList,
+                        onChangeListener: (Product val) {
+                          form.controls['maincategory']?.updateValue(
+                            val.lsfFacId,
+                          );
+      
+                          context.read<LoanproductBloc>().add(
+                            LoanProductDropdownChange(field: val),
+                          );
+                        },
+                        selItem: () {
+                          final value = form.control('maincategory').value;
+                          if (value == null || value.toString().isEmpty) {
+                            return null;
+                          }
+                          return state.mainCategoryList.firstWhere(
+                            (element) => element.lsfFacId == value,
+                            orElse:
+                                () => Product(
+                                  lsfFacId: '',
+                                  lsfFacDesc: '',
+                                  lsfFacType: '',
+                                  lsfFacParentId: '',
+                                  lsfBizVertical: '',
+                                ),
+                          );
+      
+                          // if (state.selectedMainCategory != null) {
+                          //   form.controls['maincategory']?.updateValue(
+                          //     state.selectedMainCategory?.lsfFacId,
+                          //   );
+                          //   return state.selectedMainCategory;
+                          // } else {
+                          //   return null;
+                          // }
+                        },
+                      ),
+                      SearchableDropdown(
+                        controlName: 'subcategory',
+                        label: 'Sub Category',
+                        items: state.subCategoryList,
+                        onChangeListener: (Product val) {
+                          form.controls['subcategory']?.updateValue(val.lsfFacId);
+      
+                          context.read<LoanproductBloc>().add(
+                            LoanProductDropdownChange(field: val),
+                          );
+                        },
+                        selItem: () {
+                          final value = form.control('subcategory').value;
+                          if (value == null || value.toString().isEmpty) {
+                            return null;
+                          }
+                          return state.subCategoryList.firstWhere(
+                            (element) => element.lsfFacId == value,
+                            orElse:
+                                () => Product(
+                                  lsfFacId: '',
+                                  lsfFacDesc: '',
+                                  lsfFacType: '',
+                                  lsfFacParentId: '',
+                                  lsfBizVertical: '',
+                                ),
+                          );
+      
+                          // if (state.selectedSubCategoryList != null) {
+                          //   form.controls['subcategory']?.updateValue(
+                          //     state.selectedSubCategoryList?.lsfFacId,
+                          //   );
+                          //   return state.selectedSubCategoryList;
+                          // } else {
+                          //   return null;
+                          // }
+                        },
+                      ),
+      
+                      Column(
+                        children:
+                            state.selectedProduct != null
+                                ? [
+                                  ProductCard(
+                                    productId: state.selectedProduct!.prdCode,
+                                    productDescription:
+                                        state.selectedProduct!.prdDesc,
+                                    amountFrom: formatAmount(
+                                      state.selectedProduct!.prdamtFromRange,
+                                    ),
+                                    amountTo: formatAmount(
+                                      state.selectedProduct!.prdamtToRange,
+                                    ),
+                                  ),
+                                ]
+                                : [Text('')],
+                      ),
+                      Center(
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Color.fromARGB(255, 3, 9, 110),
+                            foregroundColor: Colors.white,
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 24,
+                              vertical: 12,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
                           ),
                         ),
                         onPressed: () {
@@ -339,41 +338,41 @@ class Loan extends StatelessWidget {
                                               fontSize: 20,
                                               fontWeight: FontWeight.bold,
                                             ),
+                                          ],
+                                        ),
+                                        content: Text(
+                                          'Please choose a product before processing..',
+                                          style: TextStyle(fontSize: 18),
+                                        ),
+                                        actions: [
+                                          TextButton(
+                                            onPressed:
+                                                () => Navigator.of(ctx).pop(),
+                                            child: Text('OK'),
                                           ),
                                         ],
                                       ),
-                                      content: Text(
-                                        'Please choose a product before processing..',
-                                        style: TextStyle(fontSize: 18),
-                                      ),
-                                      actions: [
-                                        TextButton(
-                                          onPressed:
-                                              () => Navigator.of(ctx).pop(),
-                                          child: Text('OK'),
-                                        ),
-                                      ],
-                                    ),
+                                );
+                                return;
+                              }
+                              print('loan product form value => ${form.value}');
+                              context.read<LoanproductBloc>().add(
+                                SaveLoanProduct(choosenProduct: form.value),
                               );
-                              return;
+                            } else {
+                              form.markAllAsTouched();
                             }
-                            print('loan product form value => ${form.value}');
-                            context.read<LoanproductBloc>().add(
-                              SaveLoanProduct(choosenProduct: form.value),
-                            );
-                          } else {
-                            form.markAllAsTouched();
-                          }
-                        },
-                        child: Text('Next'),
+                          },
+                          child: Text('Next'),
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
-            ),
-          );
-        },
+            );
+          },
+        ),
       ),
     );
   }

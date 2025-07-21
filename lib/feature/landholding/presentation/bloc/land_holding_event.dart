@@ -17,8 +17,13 @@ class LandDetailsSaveEvent extends LandHoldingEvent {
 
 class LandDetailsLoadEvent extends LandHoldingEvent {
   final LandData landData;
+  const LandDetailsLoadEvent({ required this.landData});
+}
 
-  const LandDetailsLoadEvent({required this.landData});
+class LandDetailsDeleteEvent extends LandHoldingEvent {
+  final LandData landData;
+  final int index;
+  const LandDetailsDeleteEvent({required this.index, required this.landData});
 }
 
 class OnStateCityChangeEvent extends LandHoldingEvent {

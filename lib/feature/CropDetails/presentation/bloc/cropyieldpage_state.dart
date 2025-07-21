@@ -3,15 +3,16 @@ part of './cropyieldpage_bloc.dart';
 enum CropPageStatus {init, loading, save, set, reset, success, failure}
 
 class CropyieldpageState extends Equatable {
-   final CropPageStatus? status;
-    final List<Lov>? lovlist;
-    final List<CropDetailsModal>? cropData;
-    final String? errorMessage;
-    final CropDetailsModal? selectedCropData;
-    final Map<String,dynamic>? landDetails;
-    final List<LandData>? landData;
+  final SaveStatus? status;
+  final List<Lov>? lovlist;
+  final List<CropDetailsModal>? cropData;
+  String? errorMessage;
+  final CropDetailsModal? selectedCropData;
+  final Map<String,dynamic>? landDetails;
+  final List<LandData>? landData;
+  final bool showSubmit;
 
-  const CropyieldpageState({
+  CropyieldpageState({
     this.status,
     this.lovlist,
     this.cropData,
@@ -19,24 +20,27 @@ class CropyieldpageState extends Equatable {
     this.selectedCropData,
     this.landDetails,
     this.landData,
+    this.showSubmit = false
   });
 
    factory CropyieldpageState.init() => CropyieldpageState(
-    status: CropPageStatus.init,
+    status: SaveStatus.init,
     lovlist: [],
     cropData: null,
     errorMessage: null,
     selectedCropData: null,
+    showSubmit: false
   );
 
   CropyieldpageState copyWith({
-    CropPageStatus? status,
+    SaveStatus? status,
     List<Lov>? lovlist,
     List<CropDetailsModal>? cropData,
     String? errorMessage,
     CropDetailsModal? selectedCropData,
     Map<String,dynamic>? landDetails,
     List<LandData>? landData,
+    bool? showSubmit
   }) {
     return CropyieldpageState(
       status: status ?? this.status,
@@ -46,6 +50,7 @@ class CropyieldpageState extends Equatable {
       selectedCropData: selectedCropData ?? this.selectedCropData,
       landDetails: landDetails ?? this.landDetails,
       landData: landData ?? this.landData,
+      showSubmit: showSubmit ?? this.showSubmit
     );
   }
 
@@ -58,6 +63,7 @@ class CropyieldpageState extends Equatable {
       'selectedCropData': selectedCropData?.toMap(),
       'landDetails': landDetails,
       'landData': landData?.map((x) => x.toMap()).toList(),
+      'showSubmit': showSubmit
     };
   }
 
@@ -71,6 +77,7 @@ class CropyieldpageState extends Equatable {
       selectedCropData,
       landDetails,
       landData,
+      showSubmit
     ];
   }
 

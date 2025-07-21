@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:newsee/AppData/app_constants.dart';
 import 'package:newsee/AppData/globalconfig.dart';
 import 'package:newsee/feature/loader/presentation/bloc/global_loading_bloc.dart';
 import 'package:newsee/feature/loader/presentation/bloc/global_loading_event.dart';
@@ -27,7 +28,7 @@ class MasterUpdate extends StatelessWidget{
       create: (context) => MasterUpdateBloc()..add(MasterVersionCheck()),
       child: BlocConsumer<MasterUpdateBloc, MasterUpdateState>(
         listener: (context, state) {
-          if (state.status == MasterUpdateStatus.loading) {
+          if (state.status == SaveStatus.loading) {
             globalLoadingBloc.add(
               ShowLoading(message: "Fetching Masters Version..."),
             );

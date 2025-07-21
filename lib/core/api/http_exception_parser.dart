@@ -37,6 +37,12 @@ class DioHttpExceptionParser {
         );
 
       case DioExceptionType.unknown:
+        if (exception.error =='NoInternetException') {
+          return HttpConnectionFailure(
+            message: exception.message.toString()
+          );
+        } 
+
         return HttpConnectionFailure(
           message: 'Some Error Occured , Pls Try Again in sometimes',
         );

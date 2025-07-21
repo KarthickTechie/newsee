@@ -101,7 +101,7 @@ class AppForms {
     'farmerType': FormControl<String>(validators: [Validators.required]),
     'religion': FormControl<String>(validators: [Validators.required]),
     'caste': FormControl<String>(validators: [Validators.required]),
-    'residentialStatus': FormControl<String>(validators: [Validators.required]),
+    'gender': FormControl<String>(validators: [Validators.required]),
     'subActivity': FormControl<String>(validators: [Validators.required]),
   });
 

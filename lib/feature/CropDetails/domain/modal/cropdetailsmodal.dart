@@ -2,7 +2,7 @@
 import 'dart:convert';
 
 class CropDetailsModal {
-  final int? lasSeqno;
+  final String lasSeqno;
   final String? lasSeason;
   final String? lasCrop;
   final String? lasAreaofculti;
@@ -14,7 +14,7 @@ class CropDetailsModal {
   final String? lasPrePerAcre;
   final String? lasPreToCollect;
   CropDetailsModal({
-    this.lasSeqno,
+    this.lasSeqno = '0',
     this.lasSeason,
     this.lasCrop,
     this.lasAreaofculti,
@@ -28,7 +28,7 @@ class CropDetailsModal {
   });
 
   CropDetailsModal copyWith({
-    int? lasSeqno,
+    String? lasSeqno,
     String? lasSeason,
     String? lasCrop,
     String? lasAreaofculti,
@@ -89,7 +89,7 @@ class CropDetailsModal {
 
   factory CropDetailsModal.fromMap(Map<String, dynamic> map) {
     return CropDetailsModal(
-      lasSeqno: map['lasSeqno'] != null ? map['lasSeqno'] as int : null,
+      lasSeqno: map['lasSeqno'],
       lasSeason: map['lasSeason'] != null ? map['lasSeason'] as String : null,
       lasCrop: map['lasCrop'] != null ? map['lasCrop'] as String : null,
       lasAreaofculti: map['lasAreaofculti'] != null ? map['lasAreaofculti'] as String : null,
@@ -105,7 +105,7 @@ class CropDetailsModal {
 
   factory CropDetailsModal.fromForm(Map<String, dynamic> form) {
     return CropDetailsModal(
-      lasSeqno: form['lasSeqno'] != null ? int.parse(form['lasSeqno']) : null,
+      lasSeqno: form['lasSeqno'] ?? '0',
       lasSeason: form['lasSeason'] ?? '',
       lasCrop: form['lasCrop'] ?? '',
       lasAreaofculti: form['lasAreaofculti'] ?? '',
@@ -121,7 +121,7 @@ class CropDetailsModal {
 
   factory CropDetailsModal.fromGetApi(Map<String, dynamic> map) {
     return CropDetailsModal(
-      lasSeqno: map['lasSeqno'] != null ? map['lasSeqno'] as int : null,
+      lasSeqno: map['lasSeqno']?.toString() ?? '0',
       lasSeason: map['lasSeason']?.toString() ?? '',
       lasCrop: map['lasCrop']?.toString() ?? '',
       lasAreaofculti: map['lasAreaofculti']?.toString() ?? '',

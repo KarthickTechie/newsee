@@ -30,18 +30,8 @@ void contact(
   showCupertinoModalPopup<void>(
     context: context,
     builder:
-        (BuildContext context) => CupertinoActionSheet(
-          title: Text(
-            title,
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: Colors.black,
-            ),
-            textAlign: TextAlign.start,
-          ),
-          // list of Action sheet
-          actions: [
+        (BuildContext context) {
+          var actions = [
             CupertinoActionSheetAction(
               onPressed: () {
                 // print(number1);
@@ -77,7 +67,20 @@ void contact(
                 ],
               ),
             ),
-          ],
-        ),
+          ];
+          return CupertinoActionSheet(
+          title: Text(
+            title,
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: Colors.black,
+            ),
+            textAlign: TextAlign.start,
+          ),
+          // list of Action sheet
+          actions: actions,
+        );
+        },
   );
 }

@@ -5,7 +5,6 @@ import 'package:newsee/AppData/globalconfig.dart';
 import 'package:newsee/feature/CropDetails/presentation/page/cropdetailspage.dart';
 import 'package:newsee/feature/addressdetails/presentation/bloc/address_details_bloc.dart';
 import 'package:newsee/feature/cif/presentation/bloc/cif_bloc.dart';
-import 'package:newsee/feature/cropyield/presentation/page/cropyieldpage.dart';
 import 'package:newsee/feature/coapplicant/presentation/bloc/coapp_details_bloc.dart';
 import 'package:newsee/feature/coapplicant/presentation/page/coapp_page.dart';
 import 'package:newsee/feature/dedupe/presentation/bloc/dedupe_bloc.dart';
@@ -35,7 +34,6 @@ class NewLeadPage extends StatelessWidget {
                   ),
         ),
         BlocProvider(create: (context) => DedupeBloc()),
-
         BlocProvider(
           create:
               (context) =>
@@ -54,7 +52,6 @@ class NewLeadPage extends StatelessWidget {
           create: (context) => CoappDetailsBloc()..add(CoAppDetailsInitEvent()),
           lazy: false,
         ),
-
         BlocProvider(create: (context) => LeadSubmitBloc()),
       ],
       child: DefaultTabController(
@@ -64,164 +61,133 @@ class NewLeadPage extends StatelessWidget {
               Globalconfig.isInitialRoute
                   ? null
                   : AppBar(
-                    title: Text(
+                    title: const Text(
                       'Lead Details',
                       style: TextStyle(color: Colors.white),
                     ),
                     flexibleSpace: Container(
-                      decoration: BoxDecoration(color: Colors.teal),
+                      decoration: const BoxDecoration(color: Colors.teal),
                     ),
                     bottom: PreferredSize(
-                      preferredSize: Size.fromHeight(60.0),
+                      preferredSize: const Size.fromHeight(60.0),
                       child: Builder(
                         builder: (context) {
+                          final loanState =
+                              context.watch<LoanproductBloc>().state;
+                          final dedupeState = context.watch<DedupeBloc>().state;
+
                           final personalState =
                               context.watch<PersonalDetailsBloc>().state;
                           final addressState =
                               context.watch<AddressDetailsBloc>().state;
-                          final dedupeState = context.watch<DedupeBloc>().state;
-                          final loanState =
-                              context.watch<LoanproductBloc>().state;
+
                           final coappState =
                               context.watch<CoappDetailsBloc>().state;
 
+                          final TabController tabController =
+                              DefaultTabController.of(context);
+
                           return TabBar(
+                            controller: tabController,
                             indicatorColor: Colors.white,
                             indicatorWeight: 3,
-                            tabs: <Widget>[
-                              Tab(
-                                icon: FittedBox(
-                                  fit: BoxFit.scaleDown,
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      const Icon(
-                                        Icons.badge,
-                                        color: Colors.white,
-                                      ),
-                                      if (loanState.status?.name ==
-                                          SaveStatus.success.name)
-                                        const Padding(
-                                          padding: EdgeInsets.symmetric(
-                                            horizontal: 4.0,
-                                          ),
-                                          child: Icon(
-                                            Icons.check_circle,
-                                            size: 14,
-                                            color: Colors.white,
-                                          ),
-                                        ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                              Tab(
-                                icon: FittedBox(
-                                  fit: BoxFit.scaleDown,
+                            onTap: (index) {
+                              final statusList = [
+                                loanState.status,
+                                dedupeState.status,
+                                personalState.status,
+                                addressState.status,
+                                // coappState.status,
+                              ];
 
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      const Icon(
-                                        Icons.file_copy,
-                                        color: Colors.white,
-                                      ),
-                                      if (dedupeState.status?.name ==
-                                          SaveStatus.success.name)
-                                        const Padding(
-                                          padding: EdgeInsets.symmetric(
-                                            horizontal: 4.0,
-                                          ),
-                                          child: Icon(
-                                            Icons.check_circle,
-                                            size: 14,
-                                            color: Colors.white,
+                              bool canNavigate = true;
+                              for (int i = 0; i < index; i++) {
+                                if (statusList[i] != SaveStatus.success &&
+                                    statusList[i] !=
+                                        DedupeFetchStatus.success) {
+                                  canNavigate = false;
+                                  break;
+                                }
+                              }
+                              if (!canNavigate) {
+                                Future.microtask(
+                                  () =>
+                                      tabController.index =
+                                          tabController.previousIndex,
+                                );
+
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Row(
+                                      children: [
+                                        Icon(
+                                          Icons.warning_amber_rounded,
+                                          color: Colors.white,
+                                        ),
+                                        SizedBox(width: 12),
+                                        Expanded(
+                                          child: Text(
+                                            "Please complete the previous step before processing.",
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.w500,
+                                            ),
                                           ),
                                         ),
-                                    ],
+                                      ],
+                                    ),
+                                    backgroundColor: Colors.teal,
+
+                                    behavior: SnackBarBehavior.floating,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    margin: const EdgeInsets.symmetric(
+                                      horizontal: 20,
+                                      vertical: 16,
+                                    ),
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 20,
+                                      vertical: 16,
+                                    ),
+                                    duration: const Duration(seconds: 2),
                                   ),
-                                ),
+                                );
+                              }
+                            },
+                            tabs: <Widget>[
+                              statusTabBar(
+                                icon: Icons.badge,
+                                isComplete:
+                                    loanState.status == SaveStatus.success,
+                              ),
+                              statusTabBar(
+                                icon: Icons.file_copy,
+                                isComplete:
+                                    dedupeState.status ==
+                                    DedupeFetchStatus.success,
+                              ),
+                              statusTabBar(
+                                icon: Icons.face,
+                                isComplete:
+                                    personalState.status == SaveStatus.success,
+                              ),
+                              statusTabBar(
+                                icon: Icons.location_city,
+                                isComplete:
+                                    addressState.status == SaveStatus.success,
+                              ),
+                              statusTabBar(
+                                icon: Icons.add_reaction,
+                                isComplete:
+                                    coappState.status == SaveStatus.success,
                               ),
                               Tab(
-                                icon: FittedBox(
-                                  fit: BoxFit.scaleDown,
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      const Icon(
-                                        Icons.face,
-                                        color: Colors.white,
-                                      ),
-                                      if (personalState.status?.name ==
-                                          SaveStatus.success.name)
-                                        const Padding(
-                                          padding: EdgeInsets.symmetric(
-                                            horizontal: 4.0,
-                                          ),
-                                          child: Icon(
-                                            Icons.check_circle,
-                                            size: 14,
-                                            color: Colors.white,
-                                          ),
-                                        ),
-                                    ],
-                                  ),
+                                icon: Icon(
+                                  Icons.done_all,
+                                  color: Colors.white70,
                                 ),
-                              ),
-                              Tab(
-                                icon: FittedBox(
-                                  fit: BoxFit.scaleDown,
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      const Icon(
-                                        Icons.location_city,
-                                        color: Colors.white,
-                                      ),
-                                      if (addressState.status ==
-                                          SaveStatus.success)
-                                        const Padding(
-                                          padding: EdgeInsets.symmetric(
-                                            horizontal: 4.0,
-                                          ),
-                                          child: Icon(
-                                            Icons.check_circle,
-                                            size: 14,
-                                            color: Colors.white,
-                                          ),
-                                        ),
-                                    ],
-                                  ),
-                                ),
-                              ), // address tab
-                              Tab(
-                                icon: FittedBox(
-                                  fit: BoxFit.scaleDown,
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      const Icon(
-                                        Icons.add_reaction,
-                                        color: Colors.white,
-                                      ),
-                                      if (coappState.status ==
-                                          SaveStatus.success)
-                                        const Padding(
-                                          padding: EdgeInsets.symmetric(
-                                            horizontal: 4.0,
-                                          ),
-                                          child: Icon(
-                                            Icons.check_circle,
-                                            size: 14,
-                                            color: Colors.white,
-                                          ),
-                                        ),
-                                    ],
-                                  ),
-                                ),
-                              ), // co applicant tab
-                              const Tab(
-                                icon: Icon(Icons.done_all, color: Colors.white),
                               ),
                             ],
                           );
@@ -240,6 +206,25 @@ class NewLeadPage extends StatelessWidget {
               LeadSubmitPage(title: 'Lead Details'),
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  Tab statusTabBar({required IconData icon, required bool isComplete}) {
+    return Tab(
+      icon: FittedBox(
+        fit: BoxFit.scaleDown,
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, color: isComplete ? Colors.white : Colors.white70),
+            if (isComplete)
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 4.0),
+                child: Icon(Icons.check_circle, size: 14, color: Colors.white),
+              ),
+          ],
         ),
       ),
     );

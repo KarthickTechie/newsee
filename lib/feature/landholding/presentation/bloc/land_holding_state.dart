@@ -5,13 +5,13 @@ class LandHoldingState extends Equatable {
   final SaveStatus? status;
   final List<Lov>? lovlist;
   final List<LandData>? landData;
-  final String? errorMessage;
+  String? errorMessage;
   final LandData? selectedLandData;
   final List<GeographyMaster>? stateCityMaster;
   final List<GeographyMaster>? districtMaster;
   final List<GeographyMaster>? cityMaster;
 
-  const LandHoldingState({
+  LandHoldingState({
     required this.status,
     required this.lovlist,
     required this.landData,
@@ -44,7 +44,7 @@ class LandHoldingState extends Equatable {
     );
   }
 
-  factory LandHoldingState.init() => const LandHoldingState(
+  factory LandHoldingState.init() => LandHoldingState(
     status: SaveStatus.init,
     lovlist: [],
     landData: [],

@@ -28,6 +28,7 @@ class CustomTextField extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(16),
       child: ReactiveTextField<String>(
+        autofocus: false,
         formControlName: controlName,
         maxLength: maxlength,
         textCapitalization:

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:newsee/AppData/app_constants.dart';
 import 'package:newsee/AppData/app_forms.dart';
 import 'package:newsee/Utils/utils.dart';
@@ -9,7 +10,6 @@ import 'package:newsee/feature/loader/presentation/bloc/global_loading_bloc.dart
 import 'package:newsee/feature/loader/presentation/bloc/global_loading_event.dart';
 import 'package:newsee/feature/masters/domain/modal/geography_master.dart';
 import 'package:newsee/feature/masters/domain/modal/lov.dart';
-import 'package:newsee/widgets/alpha_text_field.dart';
 import 'package:newsee/widgets/k_willpopscope.dart';
 import 'package:newsee/widgets/options_sheet.dart';
 import 'package:newsee/widgets/searchable_drop_down.dart';
@@ -33,10 +33,10 @@ class LandHoldingPage extends StatelessWidget {
     required this.proposalNumber,
   });
 
-  void handleSubmit(BuildContext context, LandHoldingState state) {
+  void handleSubmit(BuildContext context, LandHoldingState state) async {
     if (form.valid) {
-      final globalLoadingBloc = context.read<GlobalLoadingBloc>();
-      globalLoadingBloc.add(ShowLoading(message: "Land Holding Details Submitting..."));
+      // final globalLoadingBloc = context.read<GlobalLoadingBloc>();
+      // globalLoadingBloc.add(ShowLoading(message: "Land Holding Details Submitting..."));
       context.read<LandHoldingBloc>().add(
         LandDetailsSaveEvent(
           landData: form.value,
@@ -56,89 +56,88 @@ class LandHoldingPage extends StatelessWidget {
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
       ),
-      builder:
-          (_) => SafeArea(
-            child: SizedBox(
-              height: 500,
-              child: Column(
-                children: [
-                  Expanded(
-                    child:
-                        entries.isEmpty
-                            ? const Center(child: Text('No saved entries.'))
-                            : ListView.separated(
-                              padding: const EdgeInsets.all(16),
-                              itemCount: entries.length,
-                              separatorBuilder: (_, __) => const Divider(),
-                              itemBuilder: (ctx, index) {
-                                final item = entries[index];
-                                return OptionsSheet(
-                                  icon: Icons.grass,
-                                  title: item.lslLandApplicantName.toString(),
-                                  details: [
-                                    item.lslLandSurveyNo.toString(),
-                                    item.lslLandVillage.toString(),
-                                    item.lslLandTotAcre.toString(),
-                                  ],
-                                  detailsName: [
-                                    "Survey No",
-                                    "Village",
-                                    "Total Acreage",
-                                  ],
-                                  onTap: () {
-                                    Navigator.pop(context);
-                                    context.read<LandHoldingBloc>().add(
-                                      LandDetailsLoadEvent(landData: item),
-                                    );
-                                  },
-                                );
-                              },
-                            ),
-                  ),
-                  // if (entries.isNotEmpty)
-                  //   Padding(
-                  //     padding: const EdgeInsets.symmetric(
-                  //       horizontal: 16,
-                  //       vertical: 12,
-                  //     ),
-                  //     child: ElevatedButton.icon(
-                  //       onPressed: () {},
-                  //       icon: const Icon(Icons.send, color: Colors.white),
-                  //       label: RichText(
-                  //         text: const TextSpan(
-                  //           style: TextStyle(
-                  //             color: Colors.white,
-                  //             fontWeight: FontWeight.bold,
-                  //             fontSize: 16,
-                  //           ),
-                  //           children: [
-                  //             TextSpan(text: 'Push to '),
-                  //             TextSpan(
-                  //               text: 'LEND',
-                  //               style: TextStyle(color: Colors.white),
-                  //             ),
-                  //             TextSpan(
-                  //               text: 'perfect',
-                  //               style: TextStyle(fontStyle: FontStyle.italic),
-                  //             ),
-                  //           ],
-                  //         ),
-                  //       ),
-                  //       style: ElevatedButton.styleFrom(
-                  //         backgroundColor: const Color.fromARGB(
-                  //           255,
-                  //           75,
-                  //           33,
-                  //           83,
-                  //         ),
-                  //         minimumSize: const Size(double.infinity, 50),
-                  //       ),
-                  //     ),
-                  //   ),
-                ],
+      builder: (_) {
+            return  BlocProvider<LandHoldingBloc>.value(
+              value: context.read<LandHoldingBloc>(),
+              child: SafeArea(
+              child: SizedBox(
+                height: 500,
+                child: Column(
+                  children: [
+                    SizedBox(height: 10),
+                    Text(
+                      "Note: Scroll left or right to delete land detail",
+                      style: TextStyle(
+                        color: Colors.red,
+                        fontWeight: FontWeight.bold
+                      ),
+                    ),
+                    Expanded(
+                      child:
+                          entries.isEmpty
+                              ? const Center(child: Text('No saved entries.'))
+                              : ListView.separated(
+                                padding: const EdgeInsets.all(16),
+                                itemCount: entries.length,
+                                separatorBuilder: (_, __) => const Divider(),
+                                itemBuilder: (ctx, index) {
+                                  final item = entries[index];
+                                  return Slidable(
+                                    key: ValueKey(item.lslLandRowid),
+                                    endActionPane: ActionPane(
+                                      motion: ScrollMotion(),
+                                      extentRatio: 0.25, // Controls width of action pane
+                                      children: [
+                                        SlidableAction(
+                                          onPressed: (slidableContext) {
+                                            try {
+                                              // await Future.delayed(Duration(seconds: 1));
+                                              // final globalLoadingBloc = slidableContext.read<GlobalLoadingBloc>();
+                                              // globalLoadingBloc.add(ShowLoading(message: "please Wait..."));
+                                              slidableContext.read<LandHoldingBloc>().add(
+                                                LandDetailsDeleteEvent(landData: item, index: index),
+                                              );
+                                            } catch(error) {
+                                              print("deleteLandData-error $error");
+                                            }
+                                          },
+                                          backgroundColor: Colors.red,
+                                          foregroundColor: Colors.white,
+                                          icon: Icons.delete,
+                                          label: 'Delete',
+                                        ),
+                                      ],
+                                    ),
+                                    child: OptionsSheet(
+                                      icon: Icons.grass,
+                                      title: item.lslLandApplicantName.toString(),
+                                      details: [
+                                        item.lslLandSurveyNo.toString(),
+                                        item.lslLandVillage.toString(),
+                                        item.lslLandTotAcre.toString(),
+                                      ],
+                                      detailsName: [
+                                        "Survey No",
+                                        "Village",
+                                        "Total Acreage",
+                                      ],
+                                      onTap: () {
+                                        Navigator.pop(context);
+                                        context.read<LandHoldingBloc>().add(
+                                          LandDetailsLoadEvent(landData: item),
+                                        );
+                                      },
+                                    ),
+                                  );
+                                },
+                              ),
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ),
+                        ),
+            );
+        }
     );
   }
 
@@ -172,7 +171,6 @@ class LandHoldingPage extends StatelessWidget {
               SizedBox(height: 10),
 
               Center(
-                
                 child: Container(
                   width: double.infinity,
                   margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
@@ -182,28 +180,28 @@ class LandHoldingPage extends StatelessWidget {
                             color: Colors.black.withOpacity(0.10),
                     borderRadius: BorderRadius.circular(6),
                   ),
-                   child: Row(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(
-                              "Proposal Id: ",
-                              style: TextStyle(fontSize: 14, color: Colors.white, fontWeight: FontWeight.bold) ,
-                            ),
-                          ),
-                          Expanded(
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text(
-                                proposalNumber ?? 'N/A',
-                                style: TextStyle(color: Colors.white, fontSize: 14,  fontWeight: FontWeight.bold),
-                                overflow: TextOverflow.ellipsis, 
-                              ),
-                            ),
-                          ),
-                        ],
+                  child: Row(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          "Proposal Id: ",
+                          style: TextStyle(fontSize: 14, color: Colors.white, fontWeight: FontWeight.bold) ,
+                        ),
                       ),
-                                 ),
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(
+                            proposalNumber ?? 'N/A',
+                            style: TextStyle(color: Colors.white, fontSize: 14,  fontWeight: FontWeight.bold),
+                            overflow: TextOverflow.ellipsis, 
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ),
             ],
           ),
@@ -215,6 +213,9 @@ class LandHoldingPage extends StatelessWidget {
                     ..add(LandHoldingInitEvent(proposalNumber: proposalNumber)),
           child: BlocConsumer<LandHoldingBloc, LandHoldingState>(
             listener: (context, state) {
+              if (state.status == SaveStatus.loading) {
+                globalLoadingBloc.add(ShowLoading(message: 'Please wait...'));
+              }
               if (state.status == SaveStatus.success) {
                 globalLoadingBloc.add(HideLoading());
                 form.reset();
@@ -233,6 +234,12 @@ class LandHoldingPage extends StatelessWidget {
 
                 print('city list => ${state.cityMaster}');
                 globalLoadingBloc.add(HideLoading());
+              }
+              if (state.status == SaveStatus.delete && state.errorMessage != null) {
+                globalLoadingBloc.add(HideLoading());
+                ScaffoldMessenger.of(
+                  context,
+                ).showSnackBar(SnackBar(content: Text(state.errorMessage.toString())));
               }
             },
             builder: (context, state) {
@@ -268,11 +275,11 @@ class LandHoldingPage extends StatelessWidget {
                                         form.controls['state']?.updateValue(
                                           val.code,
                                         );
-                                        globalLoadingBloc.add(
-                                          ShowLoading(
-                                            message: "Fetching city...",
-                                          ),
-                                        );
+                                        // globalLoadingBloc.add(
+                                        //   ShowLoading(
+                                        //     message: "Fetching city...",
+                                        //   ),
+                                        // );
 
                                         context.read<LandHoldingBloc>().add(
                                           OnStateCityChangeEvent(

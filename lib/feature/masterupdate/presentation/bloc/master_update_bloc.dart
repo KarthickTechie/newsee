@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:newsee/AppData/app_constants.dart';
 import 'package:newsee/AppData/globalconfig.dart';
 import 'package:newsee/Utils/masterversioncheck.dart';
 import 'package:newsee/core/api/AsyncResponseHandler.dart';
@@ -22,13 +23,13 @@ class MasterUpdateBloc extends Bloc<MasterUpdateEvent, MasterUpdateState> {
         Globalconfig.masterUpdate = false;
         emit(
             state.copyWith(
-              status: MasterUpdateStatus.init,
+              status: SaveStatus.init,
               masterDifferent: false,
               listOfMaster: [],
             )
           );
       } else {
-        emit(state.copyWith(status: MasterUpdateStatus.loading));
+        emit(state.copyWith(status: SaveStatus.loading));
         MasterUpdateRepository masterUpdateRepository = MasterUpdateRepoImpl();
         var masterVersionResponse = await masterUpdateRepository.getMastersVersion();
         if (masterVersionResponse.isRight()) {
@@ -41,7 +42,7 @@ class MasterUpdateBloc extends Bloc<MasterUpdateEvent, MasterUpdateState> {
             if (masterVersionCheckResponseHandler.right.isNotEmpty) {
               emit(
                 state.copyWith(
-                  status: MasterUpdateStatus.success,
+                  status: SaveStatus.success,
                   masterDifferent: true,
                   listOfMaster: masterVersionCheckResponseHandler.right
                 )
@@ -49,7 +50,7 @@ class MasterUpdateBloc extends Bloc<MasterUpdateEvent, MasterUpdateState> {
             } else {
               emit(
                 state.copyWith(
-                  status: MasterUpdateStatus.success,
+                  status: SaveStatus.success,
                   masterDifferent: false,
                   listOfMaster: []
                 )
@@ -58,7 +59,7 @@ class MasterUpdateBloc extends Bloc<MasterUpdateEvent, MasterUpdateState> {
           } else {
             emit(
               state.copyWith(
-                status: MasterUpdateStatus.success,
+                status: SaveStatus.success,
                 masterDifferent: false,
                 listOfMaster: []
               )
@@ -68,7 +69,7 @@ class MasterUpdateBloc extends Bloc<MasterUpdateEvent, MasterUpdateState> {
         } else {
           emit(
             state.copyWith(
-              status: MasterUpdateStatus.failure,
+              status: SaveStatus.failure,
               masterDifferent: false,
               listOfMaster: [],
               errorMessage: masterVersionResponse.left.message
@@ -79,7 +80,7 @@ class MasterUpdateBloc extends Bloc<MasterUpdateEvent, MasterUpdateState> {
     } catch (error) {
       emit(
         state.copyWith(
-          status: MasterUpdateStatus.failure,
+          status: SaveStatus.failure,
           masterDifferent: false,
           listOfMaster: [],
           errorMessage: error.toString()

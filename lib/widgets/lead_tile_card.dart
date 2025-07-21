@@ -23,6 +23,7 @@ class LeadTileCard extends StatelessWidget {
   final VoidCallback? onTap;
   final bool showarrow;
   final Widget? button;
+  final bool ennablePhoneTap;
 
   const LeadTileCard({
     Key? key,
@@ -39,6 +40,7 @@ class LeadTileCard extends StatelessWidget {
     this.onTap,
     this.showarrow = true,
     this.button,
+    this.ennablePhoneTap = false,
   }) : super(key: key);
 
   @override
@@ -97,17 +99,15 @@ class LeadTileCard extends StatelessWidget {
                   Expanded(
                     child: GestureDetector(
                       onTap: () async {
+                        if (!ennablePhoneTap) return;
+
                         FocusScope.of(context).unfocus();
                         final phoneNumber = "919940362579";
                         final Uri uri = Uri.parse('tel:$phoneNumber');
                         if (await canLaunchUrl(uri)) {
-
-                          await launchUrl(uri);
+                            await launchUrl(uri);
                         } else {
-                          throw (
-                            AppConstants.GLOBAL_COULD_NOT_LAUNCH,
-                            uri.toString(),
-                          );
+                         throw 'Could not launch $uri';
                         }
                       },
                       child: iconWithLabel(

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:go_router/go_router.dart';
+import 'package:newsee/AppData/app_constants.dart';
 import 'package:newsee/AppData/app_forms.dart';
 import 'package:newsee/Utils/shared_preference_utils.dart';
 import 'package:newsee/Utils/utils.dart';
@@ -10,8 +12,8 @@ import 'package:newsee/feature/auth/domain/model/user_details.dart';
 import 'package:newsee/feature/loader/presentation/bloc/global_loading_bloc.dart';
 import 'package:newsee/feature/loader/presentation/bloc/global_loading_event.dart';
 import 'package:newsee/feature/masters/domain/modal/lov.dart';
-import 'package:newsee/widgets/drop_down.dart';
 import 'package:newsee/widgets/k_willpopscope.dart';
+import 'package:newsee/widgets/options_sheet.dart';
 import 'package:newsee/widgets/searchable_drop_down.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 import 'package:newsee/widgets/radio.dart';
@@ -100,7 +102,7 @@ class CropDetailsPage extends StatelessWidget {
 
         print("handleSave =>  ${form.value}");
 
-        final cropFormData = CropDetailsModal.fromForm(form.value);
+        final cropFormData = CropDetailsModal.fromForm(form.rawValue);
         context.read<CropyieldpageBloc>().add(
           CropFormSaveEvent(cropData: cropFormData),
         );
@@ -113,8 +115,6 @@ class CropDetailsPage extends StatelessWidget {
   }
 
   void handleSubmit(BuildContext context) async {
-    final globalLoadingBloc = context.read<GlobalLoadingBloc>();
-    globalLoadingBloc.add(ShowLoading(message: "Crop Details Submitting..."));
     final irrigated = int.tryParse(irrigatedController.text) ?? 0;
     final rainfed = int.tryParse(rainfedController.text) ?? 0;
     UserDetails? userDetails = await loadUser();
@@ -154,7 +154,7 @@ class CropDetailsPage extends StatelessWidget {
       form.control('lasPrePerAcre').updateValue(prePerAcre);
       form.control('lasPreToCollect').updateValue(premiumCollecte);
 
-      final cropFormData = CropDetailsModal.fromForm(form.value);
+      final cropFormData = CropDetailsModal.fromForm(form.rawValue);
       context.read<CropyieldpageBloc>().add(
         CropDetailsUpdateEvent(
           cropData: cropFormData,
@@ -167,21 +167,32 @@ class CropDetailsPage extends StatelessWidget {
   }
 
   void showBottomSheet(BuildContext context, CropyieldpageState state) {
-    print("CropyieldpageState-showBottomSheet $state");
     final entries = state.cropData ?? [];
     final lovlist = state.lovlist;
-    final submitButtonshow = state.status == CropPageStatus.save ? true : false;
+    // final showSubmitButton = state.showSubmit;
     showModalBottomSheet(
       context: context,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
       ),
-      builder:
-          (_) => SizedBox(
-            height: 400,
-            child: SafeArea(
+      builder: (_) { 
+        final showSubmitButton = state.showSubmit;
+        print("showSubmitButton $showSubmitButton");
+        return BlocProvider<CropyieldpageBloc>.value(
+          value: context.read<CropyieldpageBloc>(),
+          child: SafeArea(
+            child: SizedBox(
+              height: 400,
               child: Column(
                 children: [
+                  SizedBox(height: 10),
+                  Text(
+                    "Note: Scroll left or right to delete land detail",
+                    style: TextStyle(
+                      color: Colors.red,
+                      fontWeight: FontWeight.bold
+                    ),
+                  ),
                   Expanded(
                     child:
                         entries.isEmpty
@@ -205,32 +216,83 @@ class CropDetailsPage extends StatelessWidget {
                                       v.optvalue == item.lasCrop,
                                 );
                                 print("cropname $cropname");
-                                return ListTile(
-                                  leading: Icon(
-                                    Icons.agriculture,
-                                    size: 30,
-                                    color: Colors.teal,
+                                return Slidable(
+                                  key: ValueKey(item.lasSeqno),
+                                  endActionPane: ActionPane(
+                                    motion: ScrollMotion(),
+                                    extentRatio: 0.25, // Controls width of action pane
+                                    children: [
+                                      SlidableAction(
+                                        onPressed: (slidableContext) {
+                                          try {
+                                            if (item.lasSeqno != '') {
+                                              slidableContext.read<CropyieldpageBloc>().add(
+                                                CropDetailsDeleteEvent(
+                                                  proposalNumber: proposalnumber,
+                                                  rowId: item.lasSeqno ?? '',
+                                                  index: index
+                                                ),
+                                              );
+                                            } else {
+                                              slidableContext.read<CropyieldpageBloc>().add(
+                                                CropDetailsRemoveEvent(index: index),
+                                              );
+                                            }
+                                          } catch(error) {
+                                            print("deleteLandData-error $error");
+                                          }
+                                        },
+                                        backgroundColor: Colors.red,
+                                        foregroundColor: Colors.white,
+                                        icon: Icons.delete,
+                                        label: 'Delete',
+                                      ),
+                                    ],
                                   ),
-                                  title: Text('LandType - ${landname.optDesc}'),
-                                  subtitle: Text(
-                                    'Name of the Crop - ${cropname.optDesc}',
-                                  ),
-                                  trailing: const Icon(
-                                    Icons.arrow_forward_ios,
-                                    size: 16,
-                                  ),
-                                  onTap: () {
-                                    currentIndex.value = index;
-                                    Navigator.pop(context);
-                                    context.read<CropyieldpageBloc>().add(
-                                      CropDetailsSetEvent(cropData: item),
-                                    );
-                                  },
+                                  child: OptionsSheet(
+                                icon: Icons.agriculture,
+                                title: 'LandType - ${landname.optDesc}',
+                                details: [
+                                  cropname.optDesc
+                                ],
+                                detailsName: [
+                                  "Name of the Crop",
+                                ],
+                                onTap: () {
+                                  currentIndex.value = index;
+                                  Navigator.pop(context);
+                                  context.read<CropyieldpageBloc>().add(
+                                    CropDetailsSetEvent(cropData: item),
+                                  );
+                                },
+                              ),
+                                  // ListTile(
+                                  //   leading: Icon(
+                                  //     Icons.agriculture,
+                                  //     size: 30,
+                                  //     color: Colors.teal,
+                                  //   ),
+                                  //   title: Text('LandType - ${landname.optDesc}'),
+                                  //   subtitle: Text(
+                                  //     'Name of the Crop - ${cropname.optDesc}',
+                                  //   ),
+                                  //   trailing: const Icon(
+                                  //     Icons.arrow_forward_ios,
+                                  //     size: 16,
+                                  //   ),
+                                  //   onTap: () {
+                                  //     currentIndex.value = index;
+                                  //     Navigator.pop(context);
+                                  //     context.read<CropyieldpageBloc>().add(
+                                  //       CropDetailsSetEvent(cropData: item),
+                                  //     );
+                                  //   },
+                                  // ),
                                 );
                               },
                             ),
                   ),
-                  (entries.isNotEmpty && submitButtonshow == true)
+                  (entries.isNotEmpty && context.read<CropyieldpageBloc>().state.showSubmit)
                       ? Center(
                         child: Padding(
                           padding: const EdgeInsets.all(10),
@@ -275,8 +337,11 @@ class CropDetailsPage extends StatelessWidget {
                       : SizedBox.shrink(),
                 ],
               ),
+              
             ),
           ),
+        );
+      }
     );
   }
 
@@ -436,24 +501,34 @@ class CropDetailsPage extends StatelessWidget {
               (_) =>
                   CropyieldpageBloc()
                     ..add(CropPageInitialEvent(proposalNumber: proposalnumber)),
-          lazy: true,
+          // lazy: true,
           child: BlocConsumer<CropyieldpageBloc, CropyieldpageState>(
             listener: (context, state) {
-              if (state.status == CropPageStatus.init) {
+              if (state.status == SaveStatus.loading) {
+                globalLoadingBloc.add(ShowLoading(message: 'Please wait...'));
+              }
+
+              if (state.status == SaveStatus.delete) {
                 globalLoadingBloc.add(HideLoading());
-                if ((state.cropData != null && state.cropData!.isNotEmpty) &&
-                    (state.landDetails != null &&
-                        state.landDetails!.isNotEmpty)) {
-                  irrigatedController.text =
-                      state.landDetails!['lpAgriPcIrrigated'].toString();
-                  rainfedController.text =
-                      state.landDetails!['lpAgriPcRainfed'].toString();
+                showSnack(
+                  context,
+                  message: 'Crop Details Deleted Successfully',
+                ); 
+              } 
+
+              if (state.status == SaveStatus.init) {
+                globalLoadingBloc.add(
+                  HideLoading(),
+                );
+                if ((state.cropData != null && state.cropData!.isNotEmpty) && (state.landDetails != null && state.landDetails!.isNotEmpty)) {
+                  irrigatedController.text = state.landDetails!['lpAgriPcIrrigated'].toString();
+                  rainfedController.text = state.landDetails!['lpAgriPcRainfed'].toString();
                 }
-              } else if (state.status == CropPageStatus.save) {
+              } else if (state.status == SaveStatus.mastersucess) {
                 form.reset();
-              } else if (state.status == CropPageStatus.reset) {
+              } else if (state.status == SaveStatus.reset) {
                 form.reset();
-              } else if (state.status == CropPageStatus.success) {
+              } else if (state.status == SaveStatus.success) {
                 form.reset();
                 context.pop();
                 globalLoadingBloc.add(HideLoading());
@@ -461,32 +536,36 @@ class CropDetailsPage extends StatelessWidget {
                   context,
                   message: 'Crop Details Submitted Successfully',
                 );
+              } else if (state.status == SaveStatus.failure && state.errorMessage != null) {
+                globalLoadingBloc.add(HideLoading());
+                ScaffoldMessenger.of(
+                  context,
+                ).showSnackBar(SnackBar(content: Text(state.errorMessage.toString())));
               }
             },
             builder: (context, state) {
-              // globalLoadingBloc.add(
-              //   ShowLoading(message: 'Fetching Crop Details...'),
-              // );
-              if (state.status == CropPageStatus.set &&
-                  state.selectedCropData != null) {
-                print(
-                  "currently current selected cropdetails index is ${currentIndex.value}",
-                );
+              print("state.showSubmit-builer ${state.showSubmit}");
+              if (state.status == SaveStatus.update && state.selectedCropData != null) {
+                print("currently current selected cropdetails index is ${currentIndex.value}");
                 print("state.selectedCropData is => ${state.selectedCropData}");
                 form.patchValue(state.selectedCropData!.toForm());
                 if (state.selectedCropData!.notifiedCropFlag!) {
                   form.control('lasPrePerAcre').markAsEnabled();
-                  form.control('lasPreToCollect').markAsEnabled();
                   form.control('lasPrePerAcre').setValidators([
                     Validators.required,
                   ]);
+
+                  form.control('lasPreToCollect').markAsEnabled();
                   form.control('lasPreToCollect').setValidators([
                     Validators.required,
                   ]);
                 } else {
+                  form.control('lasPrePerAcre').updateValue(null);
                   form.control('lasPrePerAcre').markAsDisabled();
-                  form.control('lasPreToCollect').markAsDisabled();
                   form.control('lasPrePerAcre').clearValidators();
+
+                  form.control('lasPreToCollect').updateValue(null);
+                  form.control('lasPreToCollect').markAsDisabled();
                   form.control('lasPreToCollect').clearValidators();
                 }
                 form.updateValueAndValidity();
@@ -711,79 +790,57 @@ class CropDetailsPage extends StatelessWidget {
                                       isRupeeFormat: true,
                                     ),
                                     Center(
-                                      child:
-                                          state.status == CropPageStatus.set
-                                              ? ElevatedButton.icon(
-                                                onPressed:
-                                                    () => handleUpdate(
-                                                      context,
-                                                      state,
-                                                    ),
-                                                icon: const Icon(
-                                                  Icons.save,
-                                                  color: Colors.white,
-                                                ),
-                                                label: const Text(
-                                                  'Update',
-                                                  style: TextStyle(
-                                                    fontWeight: FontWeight.bold,
-                                                    color: Colors.white,
-                                                  ),
-                                                ),
-                                                style: ElevatedButton.styleFrom(
-                                                  // backgroundColor: const Color.fromARGB(
-                                                  //   212,
-                                                  //   5,
-                                                  //   8,
-                                                  //   205,
-                                                  // ),
-                                                  backgroundColor: Colors.teal,
-                                                  padding:
-                                                      const EdgeInsets.symmetric(
-                                                        horizontal: 32,
-                                                        vertical: 14,
-                                                      ),
-                                                  shape: RoundedRectangleBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                          8,
-                                                        ),
-                                                  ),
-                                                ),
-                                              )
-                                              : ElevatedButton.icon(
-                                                onPressed:
-                                                    () => handleSave(
-                                                      context,
-                                                      state,
-                                                    ),
-                                                icon: const Icon(
-                                                  Icons.save,
-                                                  color: Colors.white,
-                                                ),
-                                                label: const Text(
-                                                  'Save',
-                                                  style: TextStyle(
-                                                    fontWeight: FontWeight.bold,
-                                                    color: Colors.white,
-                                                  ),
-                                                ),
-                                                style: ElevatedButton.styleFrom(
-                                                  backgroundColor: Colors.teal,
-                                                  padding:
-                                                      const EdgeInsets.symmetric(
-                                                        horizontal: 32,
-                                                        vertical: 14,
-                                                      ),
-                                                  shape: RoundedRectangleBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                          8,
-                                                        ),
-                                                  ),
-                                                ),
-                                              ),
-                                    ),
+                                      child: 
+                                      state.status == SaveStatus.update || state.status == SaveStatus.edit ?
+                                      ElevatedButton.icon(
+                                        onPressed: () => handleUpdate(context, state),
+                                        icon: const Icon(Icons.save, color: Colors.white),
+                                        label: const Text(
+                                          'Update',
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                        style: ElevatedButton.styleFrom(
+                                          // backgroundColor: const Color.fromARGB(
+                                          //   212,
+                                          //   5,
+                                          //   8,
+                                          //   205,
+                                          // ),
+                                          backgroundColor: Colors.teal,
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 32,
+                                            vertical: 14,
+                                          ),
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(8),
+                                          ),
+                                        ),
+                                      ) :
+                                      ElevatedButton.icon(
+                                        onPressed: () => handleSave(context, state),
+                                        icon: const Icon(Icons.save, color: Colors.white),
+                                        label: const Text(
+                                          'Save',
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: Colors.teal,
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 32,
+                                            vertical: 14,
+                                          ),
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(8),
+                                          ),
+                                        ),
+                                      ),
+                                    )
                                   ],
                                 ),
                               ),

@@ -11,10 +11,9 @@
 
 part of 'master_update_bloc.dart';
 
-enum MasterUpdateStatus { init, loading, change, success, failure }
 
 final class MasterUpdateState extends Equatable {
-  final MasterUpdateStatus? status;
+  final SaveStatus? status;
   final bool masterDifferent;
   final List<MasterVersion>? listOfMaster;
   final String? errorMessage;
@@ -26,7 +25,7 @@ final class MasterUpdateState extends Equatable {
   });
 
   MasterUpdateState copyWith({
-    MasterUpdateStatus? status,
+    SaveStatus? status,
     bool? masterDifferent,
     List<MasterVersion>? listOfMaster,
     String? errorMessage
@@ -40,7 +39,7 @@ final class MasterUpdateState extends Equatable {
   }
 
    factory MasterUpdateState.init() => MasterUpdateState(
-    status: MasterUpdateStatus.init,
+    status: SaveStatus.init,
     masterDifferent: false,
     listOfMaster: [],
     errorMessage: null

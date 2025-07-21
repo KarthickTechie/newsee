@@ -22,6 +22,7 @@ class PersonalData {
   final String? farmerType;
   final String? religion;
   final String? caste;
+  final String? gender;
   final String? sourceid;
   final String? sourcename;
   final String? subActivity;
@@ -46,6 +47,7 @@ class PersonalData {
     this.farmerType,
     this.religion,
     this.caste,
+    this.gender,
     this.sourceid,
     this.sourcename,
     this.subActivity,
@@ -72,6 +74,7 @@ class PersonalData {
     String? farmerType,
     String? religion,
     String? caste,
+    String? gender,
     String? cityDistrict,
     String? sourceid,
     String? sourcename,
@@ -99,6 +102,7 @@ class PersonalData {
       farmerType: farmerType ?? this.farmerType,
       religion: religion ?? this.religion,
       caste: caste ?? this.caste,
+      gender: gender ?? this.gender,
       sourceid: sourceid ?? this.sourceid,
       sourcename: sourcename ?? this.sourcename,
       subActivity: subActivity ?? this.subActivity,
@@ -127,6 +131,7 @@ class PersonalData {
       'farmerType': farmerType,
       'religion': religion,
       'caste': caste,
+      'gender': gender,
       'sourceid': sourceid,
       'sourcename': sourcename,
       'subActivity': subActivity,
@@ -185,6 +190,7 @@ class PersonalData {
           map['farmerType'] != null ? map['farmerType'] as String : null,
       religion: map['religion'] != null ? map['religion'] as String : null,
       caste: map['caste'] != null ? map['caste'] as String : null,
+      gender: map['gender'] != null ? map['gender'] as String : null,
       sourceid: map['sourceid'] != null ? map['sourceid'] as String : null,
       sourcename:
           map['sourcename'] != null ? map['sourcename'] as String : null,
@@ -227,6 +233,7 @@ class PersonalData {
         other.farmerType == farmerType &&
         other.religion == religion &&
         other.caste == caste &&
+        other.gender == gender &&
         other.sourceid == sourceid &&
         other.sourcename == sourcename &&
         other.subActivity == subActivity;
@@ -254,6 +261,7 @@ class PersonalData {
         farmerType.hashCode ^
         religion.hashCode ^
         caste.hashCode ^
+        gender.hashCode ^
         sourceid.hashCode ^
         sourcename.hashCode ^
         subActivity.hashCode;

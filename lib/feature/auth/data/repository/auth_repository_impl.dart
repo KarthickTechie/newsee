@@ -13,6 +13,8 @@ import 'package:newsee/Model/login_request.dart';
 import 'package:newsee/core/api/AsyncResponseHandler.dart';
 import 'package:newsee/core/api/auth_failure.dart';
 import 'package:newsee/core/api/failure.dart';
+import 'package:newsee/core/api/http_connection_failure.dart';
+import 'package:newsee/core/api/http_exception_parser.dart';
 import 'package:newsee/feature/auth/data/datasource/auth_remote_datasource.dart';
 import 'package:newsee/feature/auth/domain/model/user/auth_response_model.dart';
 import 'package:newsee/feature/auth/domain/model/user/user_model.dart';
@@ -93,18 +95,22 @@ class AuthRepositoryImpl implements AuthRepository {
         print('on Error request.data["ErrorMessage"] => $errorMessage');
         return AsyncResponseHandler.left(AuthFailure(message: errorMessage));
       }
+    // } on DioException catch (e) {
+    //   // exception handler for server down
+    //   if (e.error is SocketException) {
+    //     return AsyncResponseHandler.left(
+    //       AuthFailure(
+    //         message: "Could not reach Server , Please try again in sometimes.",
+    //       ),
+    //     );
+    //   }
+    //   return AsyncResponseHandler.left(
+    //     AuthFailure(message: "Exception Occured"),
+    //   );
     } on DioException catch (e) {
-      // exception handler for server down
-      if (e.error is SocketException) {
-        return AsyncResponseHandler.left(
-          AuthFailure(
-            message: "Could not reach Server , Please try again in sometimes.",
-          ),
-        );
-      }
-      return AsyncResponseHandler.left(
-        AuthFailure(message: "Exception Occured"),
-      );
+      HttpConnectionFailure failure =
+          DioHttpExceptionParser(exception: e).parse();
+      return AsyncResponseHandler.left(failure);
     } on Exception catch (e) {
       return AsyncResponseHandler.left(
         AuthFailure(message: 'Authentication Failure'),

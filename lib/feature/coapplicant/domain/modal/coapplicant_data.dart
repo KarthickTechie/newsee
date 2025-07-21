@@ -46,7 +46,7 @@ class CoapplicantData {
     this.primaryMobileNumber,
     this.secondaryMobileNumber,
     this.panNumber,
-    this.aadharRefNo,
+    this.aadharRefNo='909890900909',
     this.address1,
     this.address2,
     this.address3,

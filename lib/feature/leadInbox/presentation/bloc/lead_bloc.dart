@@ -99,6 +99,9 @@ class LeadBloc extends Bloc<LeadEvent, LeadState> {
       } else {
         emit(state.copyWith(proposalSubmitStatus: SaveStatus.failure));
       }
+
+      Future.delayed(Duration(seconds: 1));
+      emit(state.copyWith(proposalSubmitStatus: SaveStatus.reset));
     } on Exception catch (e) {
       print('Proposal Creation Request Error => $e');
       emit(state.copyWith(proposalSubmitStatus: SaveStatus.failure));

@@ -30,6 +30,7 @@ class IntegerTextField extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(12.0),
       child: ReactiveTextField<String>(
+        autofocus: false,
         formControlName: controlName,
         keyboardType: TextInputType.number,
         maxLength: maxlength,

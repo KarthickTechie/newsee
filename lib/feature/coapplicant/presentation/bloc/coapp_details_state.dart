@@ -27,7 +27,7 @@ class CoappDetailsState extends Equatable {
     required this.stateCityMaster,
     required this.cityMaster,
     required this.districtMaster,
-    this.isApplicantsAdded,
+    this.isApplicantsAdded = 'N',
     this.isCifValid = false,
   });
 
@@ -38,7 +38,7 @@ class CoappDetailsState extends Equatable {
     stateCityMaster: [],
     cityMaster: [],
     districtMaster: [],
-    isApplicantsAdded: null,
+    isApplicantsAdded: 'N',
     isCifValid: false,
   );
 

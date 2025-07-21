@@ -152,7 +152,7 @@ class LoginpageView extends StatelessWidget {
 
                           // this function returns a widget that is a row with icon button
                           // served as quick links to access other apk files for other loans
-                          quickLink(screenHeight, screenWidth),
+                          //quickLink(screenHeight, screenWidth),
                         ],
                       ),
                     ),

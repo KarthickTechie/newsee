@@ -91,8 +91,11 @@ class CicCheckPage extends StatelessWidget {
                                         final localPath = dir.path;
 
                                         await downloadPDF(
-                                          remoteFilePath: AppConstants.remoteUrlCibilReport,
-                                          fileName: 'Applicant CIBIL.pdf',
+                                          remoteFilePath:
+                                              AppConstants.remoteUrlCibilReport,
+                                          fileName:
+                                              AppConstants
+                                                  .applicantCibilReportFileName,
                                           dirPath: localPath,
                                           downloadedFilePath: (String path) {
                                             dismissLoading(context);
@@ -186,8 +189,11 @@ class CicCheckPage extends StatelessWidget {
                                         final localPath = dir.path;
 
                                         await downloadPDF(
-                                          remoteFilePath: AppConstants.remoteUrlCrifReport,
-                                          fileName: 'Applicant CRIF.pdf',
+                                          remoteFilePath:
+                                              AppConstants.remoteUrlCrifReport,
+                                          fileName:
+                                              AppConstants
+                                                  .applicantCrifReportFileName,
                                           dirPath: localPath,
                                           downloadedFilePath: (String path) {
                                             dismissLoading(context);
@@ -329,7 +335,9 @@ class CicCheckPage extends StatelessWidget {
                                         await downloadPDF(
                                           remoteFilePath:
                                               AppConstants.remoteUrlCibilReport,
-                                          fileName: 'Co Applicant CIBIL.pdf',
+                                          fileName:
+                                              AppConstants
+                                                  .coappCibilReportFileName,
                                           dirPath: localPath,
                                           downloadedFilePath: (String path) {
                                             dismissLoading(context);
@@ -424,8 +432,11 @@ class CicCheckPage extends StatelessWidget {
                                         final localPath = dir.path;
 
                                         await downloadPDF(
-                                          remoteFilePath: AppConstants.remoteUrlCrifReport,
-                                          fileName: 'Co Applicant CRIF.pdf',
+                                          remoteFilePath:
+                                              AppConstants.remoteUrlCrifReport,
+                                          fileName:
+                                              AppConstants
+                                                  .coappCrifReportFileName,
                                           dirPath: localPath,
                                           downloadedFilePath: (String path) {
                                             dismissLoading(context);

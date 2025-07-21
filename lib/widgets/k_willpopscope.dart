@@ -39,16 +39,15 @@ class _KwillpopscopeState extends State<Kwillpopscope> {
                       actions: [
                         TextButton(
                           onPressed: () {
-                            Navigator.of(context).pop(false);
-                          },
-                          child: Text('Cancel'),
-                        ),
-
-                        TextButton(
-                          onPressed: () {
                             widget.routeContext.goNamed('home');
                           },
-                          child: Text('Yes'),
+                          child: Text('Go back'),
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(context).pop(false);
+                          },
+                          child: Text('Stay'),
                         ),
                       ],
                     ),
