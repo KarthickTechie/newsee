@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:newsee/AppData/app_constants.dart';
 import 'package:newsee/AppData/globalconfig.dart';
+import 'package:newsee/Utils/customlogutiles.dart';
 import 'package:newsee/Utils/utils.dart';
 import 'package:newsee/feature/loanproductdetails/presentation/bloc/loanproduct_bloc.dart';
 import 'package:newsee/feature/masters/domain/modal/product.dart';
@@ -314,28 +315,28 @@ class Loan extends StatelessWidget {
                               borderRadius: BorderRadius.circular(8),
                             ),
                           ),
-                          onPressed: () {
-                            final blocState =
-                                context.read<LoanproductBloc>().state;
-                            final selectedProduct = blocState.selectedProduct;
-      
-                            if (form.valid) {
-                              if (selectedProduct == null) {
-                                showDialog(
-                                  context: context,
-                                  builder:
-                                      (ctx) => AlertDialog(
-                                        title: Row(
-                                          children: [
-                                            Icon(Icons.info, color: Colors.teal),
-                                            SizedBox(width: 8),
-      
-                                            Text(
-                                              'Alert',
-                                              style: TextStyle(
-                                                fontSize: 20,
-                                                fontWeight: FontWeight.bold,
-                                              ),
+                        ),
+                        onPressed: () {
+                          final blocState =
+                              context.read<LoanproductBloc>().state;
+                          final selectedProduct = blocState.selectedProduct;
+                          if (form.valid) {
+                              CustomLog.log("This will always log");
+                            if (selectedProduct == null) {
+                              showDialog(
+                                context: context,
+                                builder:
+                                    (ctx) => AlertDialog(
+                                      title: Row(
+                                        children: [
+                                          Icon(Icons.info, color: Colors.teal),
+                                          SizedBox(width: 8),
+
+                                          Text(
+                                            'Alert',
+                                            style: TextStyle(
+                                              fontSize: 20,
+                                              fontWeight: FontWeight.bold,
                                             ),
                                           ],
                                         ),
