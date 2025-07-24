@@ -115,22 +115,30 @@ final class CoappDetailsBloc
     Emitter emit,
   ) async {
     try {
-      final updatedList = List<CoapplicantData>.from(state.coAppList);
+// Check if a co-applicant was added
 
-      if (event.index != null && event.index! < updatedList.length) {
-        updatedList[event.index!] = event.coapplicantData;
+      if (event.coappadded!) {
+        final updatedList = List<CoapplicantData>.from(state.coAppList);
+
+        if (event.index != null && event.index! < updatedList.length) {
+          updatedList[event.index!] = event.coapplicantData!;
+        } else {
+          updatedList.add(event.coapplicantData!);
+        }
+
+       
       } else {
-        updatedList.add(event.coapplicantData);
+// If co-applicant is not added clear the list and emit new state
+        emit(
+          state.copyWith(
+            coAppList: [],
+            status: SaveStatus.success,
+            isApplicantsAdded: "N",
+            isCifValid: false,
+          ),
+        );
       }
-
-      emit(
-        state.copyWith(
-          coAppList: updatedList,
-          status: SaveStatus.success,
-          isApplicantsAdded: "Y",
-          isCifValid: false,
-        ),
-      );
+      
     } catch (e) {
       emit(state.copyWith(status: SaveStatus.failure, isCifValid: false));
     }
