@@ -168,3 +168,5 @@ class SysmoAlert extends StatelessWidget {
     );
   }
 }
+
+// sysmoalert(message:'') -> icon default to info icon , ok button

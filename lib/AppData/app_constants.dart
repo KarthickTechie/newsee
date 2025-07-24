@@ -40,6 +40,10 @@ class AppConstants {
   static const String applicantCrifReportFileName = 'ApplicantCRIF.pdf';
   static const String coappCibilReportFileName = 'ApplicantCIBIL.pdf';
   static const String coappCrifReportFileName = 'ApplicantCRIF.pdf';
+  static const String mpinRegistrationSuccess = 'MPIN Registered Successfully';
+  static const String mpinRegistrationFailure = 'MPIN Registeration Failed';
+  static const String mpinLoginSuccess = 'MPIN Login Successfull';
+  static const String mpinLoginFailure = 'MPIN Login Failed';
 }
 
 class BioMetricResult {

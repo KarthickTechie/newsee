@@ -3,23 +3,21 @@
  @author : Akshayaa 
  Description : Drawer at the side for navigation between pages
 */
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:newsee/AppSamples/ReactiveForms/view/loginpage_view.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:newsee/Utils/shared_preference_utils.dart';
 import 'package:newsee/feature/auth/domain/model/user_details.dart';
+import 'package:newsee/feature/auth/presentation/bloc/auth_bloc.dart';
 import 'package:newsee/pages/home_page.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class Sidenavigationbar extends StatelessWidget {
   final Function(int)? onTabSelected;
+  final BuildContext? pageContext;
+  const Sidenavigationbar({this.onTabSelected, this.pageContext, super.key});
 
-  const Sidenavigationbar({this.onTabSelected, super.key});
-
-  
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext sidemenucontext) {
     return Drawer(
       child: ListView(
         padding: EdgeInsets.zero,
@@ -55,7 +53,7 @@ class Sidenavigationbar extends StatelessWidget {
             onTap: () {
               onTabSelected?.call(0);
               Navigator.push(
-                context,
+                sidemenucontext,
                 MaterialPageRoute(builder: (context) => HomePage()),
               );
             },
@@ -65,7 +63,7 @@ class Sidenavigationbar extends StatelessWidget {
             title: Text("Field Visit Inbox"),
             onTap: () {
               Navigator.push(
-                context,
+                sidemenucontext,
                 MaterialPageRoute(builder: (context) => HomePage(tabdata: 1)),
               );
             },
@@ -75,7 +73,7 @@ class Sidenavigationbar extends StatelessWidget {
             title: Text("Query Inbox"),
             onTap: () {
               Navigator.push(
-                context,
+                sidemenucontext,
                 MaterialPageRoute(builder: (context) => HomePage(tabdata: 2)),
               );
             },
@@ -85,7 +83,7 @@ class Sidenavigationbar extends StatelessWidget {
             title: Text("Masters Update"),
             onTap: () {
               Navigator.push(
-                context,
+                sidemenucontext,
                 MaterialPageRoute(builder: (context) => HomePage(tabdata: 3)),
               );
             },
@@ -93,11 +91,33 @@ class Sidenavigationbar extends StatelessWidget {
           ListTile(
             leading: Icon(Icons.logout_rounded, color: Colors.teal),
             title: Text("Logout"),
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => LoginpageView()),
+            onTap: () async {
+              final shouldLogout = await showDialog<bool>(
+                context: sidemenucontext,
+                builder:
+                    (dialogcontext) => AlertDialog(
+                      title: Text('Confirm Logout'),
+                      content: Text('Are you sure you want to logout?'),
+                      actions: [
+                        TextButton(
+                          onPressed:
+                              () => Navigator.of(dialogcontext).pop(false),
+                          child: Text('Cancel'),
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(dialogcontext).pop(true);
+                          },
+                          child: Text('Yes'),
+                        ),
+                      ],
+                    ),
               );
+
+              if (shouldLogout ?? false) {
+                Navigator.of(sidemenucontext).pop();
+                pageContext?.go('/login');
+              }
             },
           ),
         ],

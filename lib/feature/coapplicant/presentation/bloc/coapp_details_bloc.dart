@@ -16,7 +16,10 @@ import 'package:newsee/AppData/app_constants.dart';
 import 'package:newsee/Utils/utils.dart';
 import 'package:newsee/core/api/AsyncResponseHandler.dart';
 import 'package:newsee/core/db/db_config.dart';
+import 'package:newsee/feature/aadharvalidation/data/repository/aadhar_validate_impl.dart';
+import 'package:newsee/feature/aadharvalidation/domain/modal/aadharvalidate_request.dart';
 import 'package:newsee/feature/aadharvalidation/domain/modal/aadharvalidate_response.dart';
+import 'package:newsee/feature/aadharvalidation/domain/repository/aadharvalidate_repo.dart';
 import 'package:newsee/feature/addressdetails/data/repository/citylist_repo_impl.dart';
 import 'package:newsee/feature/addressdetails/domain/model/citydistrictrequest.dart';
 import 'package:newsee/feature/addressdetails/domain/repository/cityrepository.dart';
@@ -48,6 +51,8 @@ final class CoappDetailsBloc
     on<CifEditManuallyEvent>((event, emit) {
       emit(state.copyWith(isCifValid: event.cifButton));
     });
+    on<AadhaarValidateEvent>(validateAadaar);
+    on<ScannerResponseEvent>(onScannerSuccess);
   }
 
   _deleteApplicant(DeleteCoApplicantEvent event, Emitter emit) {
@@ -91,7 +96,17 @@ final class CoappDetailsBloc
 
     print('listOfLov => $listOfLov');
 
-    emit(state.copyWith(lovList: listOfLov, stateCityMaster: stateCityMaster));
+    final customerType =
+        listOfLov.where((lov) {
+          if (lov.Header == 'CustType') {
+            return lov.optvalue == '001' || lov.optvalue == '002';
+          }
+          return true;
+        }).toList();
+
+    emit(
+      state.copyWith(lovList: customerType, stateCityMaster: stateCityMaster),
+    );
   }
 
   Future<void> saveCoAppDetailsPage(
@@ -182,6 +197,60 @@ fetching dedupe for co applicant reusing dedupe page cif search logic here
     }
   }
 
+  Future<void> validateAadaar(AadhaarValidateEvent event, Emitter emit) async {
+    emit(state.copyWith(status: SaveStatus.loading));
+    final AadharvalidateRequest aadharvalidateRequest = event.request;
+    AadharvalidateRepo aadharvalidateRepo = AadharValidateImpl();
+    var responseHandler = await aadharvalidateRepo.validateAadhar(
+      request: aadharvalidateRequest,
+    );
+    if (responseHandler.isRight()) {
+      // emit(
+      //   state.copyWith(
+      //     status: SaveStatus.init,
+      //     aadhaarData: responseHandler.right,
+      //   ),
+      // );
+
+      final coapplicantDataFromDedupe = mapCoappAndGurantorDataFromDedupe(
+        responseHandler.right,
+      );
+
+      emit(
+        state.copyWith(
+          status: SaveStatus.dedupesuccess,
+          selectedCoApp: coapplicantDataFromDedupe,
+          isCifValid: true,
+        ),
+      );
+    } else {
+      emit(state.copyWith(status: SaveStatus.dedupefailure, isCifValid: false));
+    }
+  }
+
+  Future<void> onScannerSuccess(
+    ScannerResponseEvent event,
+    Emitter emit,
+  ) async {
+    String aadhaarId = '';
+    if (event.scannerResponse['aadhaarResponse']['@uid'] != null) {
+      aadhaarId = event.scannerResponse['aadhaarResponse']['@uid'];
+    } else {
+      aadhaarId = event.scannerResponse['aadhaarResponse'];
+    }
+    final coapplicantDataFromDedupe = mapCoappAndGurantorDataFromDedupe(
+      AadharvalidateResponse(referenceId: aadhaarId),
+    );
+
+    emit(
+      state.copyWith(
+        status: SaveStatus.dedupesuccess,
+        selectedCoApp: coapplicantDataFromDedupe,
+        isCifValid: true,
+      ),
+    );
+  }
+
   Future<void> _onDedupeResponse(
     CoAppDetailsDedupeEvent event,
     Emitter emit,
@@ -207,11 +276,38 @@ fetching dedupe for co applicant reusing dedupe page cif search logic here
   // populate dedupe response to coapplicant form
   CoapplicantData mapCoappAndGurantorDataFromDedupe(dynamic response) {
     print('dedupe response: $response');
+    String firstName = '';
+    String middleName = '';
+    String lastName = '';
 
-    return CoapplicantData(
-      firstName: response.name ?? '',
+    List<String> nameParts = (response?.name ?? '').trim().split(
+      RegExp(r'\s+'),
+    );
+
+    if (nameParts.length >= 3) {
+      firstName = nameParts[0];
+      middleName = nameParts[1];
+      lastName = nameParts.sublist(2).join(' ');
+    } else if (nameParts.length == 2) {
+      firstName = nameParts[0];
+      lastName = nameParts[1];
+    } else if (nameParts.length == 1) {
+      firstName = nameParts[0];
+    }
+
+    String mobileno = '';
+    if (response.mobile.length == 12 && response.mobile.startsWith("91")) {
+      mobileno = response.mobile.substring(2);
+    }
+
+    final data = CoapplicantData(
+      firstName: firstName,
+      middleName: middleName,
+      lastName: lastName,
       email: response.email ?? '',
-      primaryMobileNumber: response.mobile ?? '',
+      primaryMobileNumber: mobileno,
+      // aadharRefNo: response.referenceId ?? '',
+      aadharRefNo: response.referenceId ?? '',
       address1:
           (response.careOf?.isNotEmpty ??
                   false || response.street?.isNotEmpty ??
@@ -220,13 +316,12 @@ fetching dedupe for co applicant reusing dedupe page cif search logic here
               : '',
       address2: response.landmark ?? '',
       pincode: response.pincode ?? '',
-      aadharRefNo: response.maskAadhaarNumber ?? '',
+
       dob: getCorrectDateFormat(response.dateOfBirth),
       state: getStateCode(response.state, state.stateCityMaster),
       cityDistrict: getStateCode(response.district, state.districtMaster),
-      // state: '',
-      // cityDistrict: '',
     );
+    return data;
   }
 
   // Search for the matching GeographyMaster based on stateName

@@ -29,6 +29,7 @@ void cifSearch(BuildContext context, FormGroup form, String? applicantType) {
 Future<void> showHideCifField(BuildContext context, FormGroup form) async {
   final customerType = form.control('customertype').value;
   print('customertype: $customerType');
+  context.read<CoappDetailsBloc>().add(CifEditManuallyEvent(false));
   if (customerType != '002') {
     print('customertype: $customerType');
     form.control('cifNumber').clearValidators();
@@ -125,7 +126,7 @@ void showErrorDialog(BuildContext context, message) {
         actions: [
           TextButton(
             onPressed: () {
-              Navigator.of(context).pop(); // Close the dialog
+              Navigator.of(context).pop();
             },
             child: Text('OK'),
           ),

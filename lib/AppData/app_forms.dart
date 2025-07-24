@@ -1,3 +1,4 @@
+import 'package:flutter/widgets.dart';
 import 'package:newsee/AppData/app_constants.dart';
 import 'package:newsee/AppData/globalconfig.dart';
 import 'package:reactive_forms/reactive_forms.dart';
@@ -25,10 +26,17 @@ class AppForms {
     'firstname': FormControl<String>(validators: [Validators.required]),
     'lastname': FormControl<String>(validators: [Validators.required]),
     'mobilenumber': FormControl<String>(
-      validators: [Validators.maxLength(10), Validators.minLength(10)],
+      validators: [
+        Validators.maxLength(10),
+        Validators.minLength(10),
+        Validators.required,
+      ],
     ),
     'pan': FormControl<String>(
-      validators: [Validators.pattern(AppConstants.PAN_PATTERN)],
+      validators: [
+        Validators.pattern(AppConstants.PAN_PATTERN),
+        Validators.required,
+      ],
     ),
     'aadhaar': FormControl<String>(
       validators: [
@@ -122,7 +130,7 @@ class AppForms {
       validators: [Validators.minLength(10)],
     ),
     'email': FormControl<String>(validators: [Validators.email]),
-    'aadhaar': FormControl<String>(validators: []),
+    'aadhaar': FormControl<String>(),
     'panNumber': FormControl<String>(
       validators: [
         Validators.pattern(AppConstants.PAN_PATTERN),
@@ -131,8 +139,8 @@ class AppForms {
     ),
     'aadharRefNo': FormControl<String>(
       validators: [
-        // Validators.pattern(AppConstants.AADHAAR_PATTERN),
-        // Validators.minLength(10),
+        Validators.pattern(AppConstants.AADHAAR_PATTERN),
+        Validators.minLength(10),
       ],
     ),
     'address1': FormControl<String>(validators: [Validators.required]),
@@ -156,7 +164,10 @@ class AppForms {
     return FormGroup({
       'lslLandRowid': FormControl<String>(validators: []),
       'applicantName': FormControl<String>(validators: [Validators.required]),
-      'locationOfFarm': FormControl<String>(validators: [Validators.required]),
+      'locationOfFarm': FormControl<String>(
+        validators: [Validators.required],
+        disabled: true,
+      ),
       'state': FormControl<String>(validators: [Validators.required]),
       'taluk': FormControl<String>(validators: [Validators.required]),
       'firka': FormControl<String>(
@@ -174,6 +185,7 @@ class AppForms {
       ),
       'distanceFromBranch': FormControl<String>(
         validators: [Validators.required, Validators.pattern(r'^\d+$')],
+        disabled: true,
       ),
       'district': FormControl<String>(validators: [Validators.required]),
       'village': FormControl<String>(validators: [Validators.required]),
@@ -189,6 +201,8 @@ class AppForms {
       'villageOfficerCertified': FormControl<bool>(
         validators: [Validators.required],
       ),
+      // 'latitude': FormControl<String>(validators: []),
+      // 'longitude': FormControl<String>(validators: []),
     });
   }
 
@@ -206,54 +220,4 @@ class AppForms {
       'lasPreToCollect': FormControl<String>(validators: [Validators.required]),
     });
   }
-
-  // static FormGroup coAppGurantorDetailsForm() {
-  //   return FormGroup({
-  //     'customertype': FormControl<String>(validators: [Validators.required]),
-  //     'constitution': FormControl<String>(validators: [Validators.required]),
-  //     'cifNumber': FormControl<String>(validators: [Validators.required]),
-  //     'title': FormControl<String>(validators: [Validators.required]),
-  //     'firstName': FormControl<String>(validators: [Validators.required]),
-  //     'middleName': FormControl<String>(validators: [Validators.required]),
-  //     'lastName': FormControl<String>(validators: [Validators.required]),
-  //     'relationshipFirm': FormControl<String>(
-  //       validators: [Validators.required],
-  //     ),
-  //     'dob': FormControl<String>(validators: [Validators.required]),
-  //     'primaryMobileNumber': FormControl<String>(
-  //       validators: [Validators.required, Validators.minLength(10)],
-  //     ),
-  //     'secondaryMobileNumber': FormControl<String>(
-  //       validators: [Validators.required, Validators.minLength(10)],
-  //     ),
-  //     'email': FormControl<String>(validators: [Validators.email]),
-  //     'aadhaar': FormControl<String>(),
-  //     'panNumber': FormControl<String>(
-  //       validators: [
-  //         Validators.pattern(AppConstants.PAN_PATTERN),
-  //         Validators.minLength(10),
-  //       ],
-  //     ),
-  //     'aadharRefNo': FormControl<String>(
-  //       validators: [
-  //         Validators.pattern(AppConstants.AADHAAR_PATTERN),
-  //         Validators.minLength(10),
-  //       ],
-  //     ),
-  //     'address1': FormControl<String>(validators: [Validators.required]),
-  //     'address2': FormControl<String>(validators: [Validators.required]),
-  //     'address3': FormControl<String>(validators: [Validators.required]),
-  //     'state': FormControl<String>(validators: [Validators.required]),
-  //     'cityDistrict': FormControl<String>(validators: [Validators.required]),
-  //     'pincode': FormControl<String>(validators: [Validators.required]),
-  //     'loanLiabilityCount': FormControl<String>(
-  //       validators: [Validators.required],
-  //     ),
-  //     'loanLiabilityAmount': FormControl<String>(
-  //       validators: [Validators.required],
-  //     ),
-  //     'depositCount': FormControl<String>(validators: [Validators.required]),
-  //     'depositAmount': FormControl<String>(validators: [Validators.required]),
-  //   });
-  // }
 }

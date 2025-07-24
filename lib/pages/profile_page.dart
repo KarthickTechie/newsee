@@ -33,7 +33,7 @@ class ProfilePageState extends State<ProfilePage> {
   Future<Uint8List?> onCameraTap(BuildContext context) async {
     final curposition = await getit.getLocation(context);
     setState(() {
-      geoPosition = curposition;
+      geoPosition = curposition.position;
     });
     print("curposition: $curposition");
     final getprofileData = await context.pushNamed<Uint8List>("camera");

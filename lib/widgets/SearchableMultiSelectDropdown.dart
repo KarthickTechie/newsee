@@ -4,15 +4,19 @@ import 'package:newsee/feature/masters/domain/modal/lov.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 
 class SearchableMultiSelectDropdown<T> extends StatelessWidget {
-  final ValueNotifier<List<T>> selectedItemsNotifier = ValueNotifier<List<T>>([]);
+  final ValueNotifier<List<T>> selectedItemsNotifier = ValueNotifier<List<T>>(
+    [],
+  );
   final String controlName;
   final String label;
   final List<T> items;
   final bool? mandatory;
   final List<T> Function() selItems;
   final Function(List<T>?)? onChangeListener;
+  final Key? fieldKey;
 
-SearchableMultiSelectDropdown({
+  SearchableMultiSelectDropdown({
+    this.fieldKey,
     required this.controlName,
     required this.label,
     required this.items,
@@ -31,12 +35,14 @@ SearchableMultiSelectDropdown({
 
   _onChangeListener(List<T> val) {
     selectedItemsNotifier.value = val;
-    if (onChangeListener != null) onChangeListener!(selectedItemsNotifier.value);
+    if (onChangeListener != null)
+      onChangeListener!(selectedItemsNotifier.value);
   }
 
   @override
   Widget build(BuildContext context) {
     return ReactiveFormField<String, T>(
+      key: fieldKey,
       formControlName: controlName,
       validationMessages: {
         ValidationMessage.required: (error) => '$label is required',

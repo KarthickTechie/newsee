@@ -83,7 +83,7 @@ class _CoApplicantPageState extends State<CoApplicantPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Text(
-                  'Whether do you want to add Co-Applicant/Gurantor Details?',
+                  'Whether do you want to add Co-Applicant/Guarantor Details?',
                   style: TextStyle(fontSize: 16),
                 ),
                 Row(

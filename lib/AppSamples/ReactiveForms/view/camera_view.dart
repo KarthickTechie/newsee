@@ -10,8 +10,6 @@ import 'package:newsee/Utils/media_service.dart';
 import 'package:newsee/blocs/camera/camera_bloc.dart';
 import 'package:newsee/blocs/camera/camera_event.dart';
 import 'package:newsee/blocs/camera/camera_state.dart';
-import 'package:newsee/feature/documentupload/presentation/bloc/document_bloc.dart';
-import 'package:newsee/feature/documentupload/presentation/bloc/document_event.dart';
 
 class CameraView extends StatelessWidget {
   final mediaService = MediaService();
@@ -22,31 +20,6 @@ class CameraView extends StatelessWidget {
 
     return BlocConsumer<CameraBloc, CameraState>(
       listener: (context, state) async {
-        // try {
-        //   if (state is CameraConfirmData) {
-        //     // final cropdata = await GetIt.instance<MediaService>().cropper(
-        //     final cropdata = await mediaService.cropper(
-        //       context,
-        //       state.xfiledata.path,
-        //     );
-        //     final imageBytes = cropdata;
-        //     // final String imagePath;
-        //     if (context.mounted) {
-        //       // final imagePath = await mediaService.saveBytesToFile(imageBytes!);
-        //       final result = await context.push<Uint8List>(
-        //         '/imageview',
-        //         extra: imageBytes,
-        //       );
-        //       if (result != null && context.mounted) {
-        //         print('MediaPath: $result');
-        //         context.pop(imageBytes);
-        //       }
-        //     }
-        //   }
-        // } catch (e) {
-        //   print('MediaError: $e');
-        // }
-
         try {
           String? imagePath;
           Uint8List? originalBytes;
@@ -63,29 +36,10 @@ class CameraView extends StatelessWidget {
 
             if (cropdata != null && context.mounted) {
               context.pop(cropdata);
-              // final result = await context.push('/imageview', extra: cropdata);
-              // if (result != null && context.mounted) {
-              //   if (result == 'close') {
-              //     context.pop();
-              //   } else {
-              //     context.pop(result);
-              //   }
-              // }
             }
             // If crop canceled
             else if (context.mounted) {
               context.pop(originalBytes);
-              // final result = await context.push(
-              //   '/imageview',
-              //   extra: originalBytes,
-              // );
-              // if (result != null && context.mounted) {
-              //   if (result == 'close') {
-              //     context.pop();
-              //   } else {
-              //     context.pop(result);
-              //   }
-              // }
             }
           }
         } catch (e) {
@@ -96,122 +50,125 @@ class CameraView extends StatelessWidget {
         if (state is CameraIntialize) {
           return const Center(child: CircularProgressIndicator());
         } else if (state is CameraRun) {
-          return Stack(
-            children: [
-              Container(
-                padding:
-                    kIsWeb
-                        ? EdgeInsets.fromLTRB(0, 0, 0, 0)
-                        : EdgeInsets.fromLTRB(0, 50, 0, 0),
-                child: Center(
-                  child: CameraPreview(
-                    state.controller,
-                    child: Material(
-                      color: Colors.transparent,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            children: <Widget>[
-                              Container(
-                                height: 50,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                child: Center(
-                                  child: Ink(
-                                    decoration: ShapeDecoration(
-                                      color: Colors.lightBlue,
-                                      shape: CircleBorder(),
-                                    ),
-                                    child: IconButton(
-                                      icon: Icon(
-                                        (state.controller.value.flashMode ==
-                                                FlashMode.torch)
-                                            ? Icons.flash_on
-                                            : Icons.flash_off,
+          // added safeArea widget for cropper ui issues
+          return SafeArea(
+            child: Stack(
+              children: [
+                Container(
+                  padding:
+                      kIsWeb
+                          ? EdgeInsets.fromLTRB(0, 0, 0, 0)
+                          : EdgeInsets.fromLTRB(0, 50, 0, 0),
+                  child: Center(
+                    child: CameraPreview(
+                      state.controller,
+                      child: Material(
+                        color: Colors.transparent,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: <Widget>[
+                                Container(
+                                  height: 50,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  child: Center(
+                                    child: Ink(
+                                      decoration: ShapeDecoration(
+                                        color: Colors.lightBlue,
+                                        shape: CircleBorder(),
                                       ),
-                                      onPressed:
-                                          () => {
-                                            context.read<CameraBloc>().add(
-                                              FlashModeChange(),
-                                            ),
-                                          },
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              Container(
-                                height: 50,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                child: Center(
-                                  child: Ink(
-                                    decoration: ShapeDecoration(
-                                      color: Colors.lightBlue,
-                                      shape: CircleBorder(),
-                                    ),
-                                    child: IconButton(
-                                      icon: const Icon(Icons.camera),
-                                      onPressed:
-                                          () => {
-                                            context.read<CameraBloc>().add(
-                                              CaptureImage(),
-                                            ),
-                                          },
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              kIsWeb
-                                  ? const SizedBox.shrink()
-                                  : Container(
-                                    height: 50,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
-                                    child: Center(
-                                      child: Ink(
-                                        decoration: ShapeDecoration(
-                                          color: Colors.lightBlue,
-                                          shape: CircleBorder(),
+                                      child: IconButton(
+                                        icon: Icon(
+                                          (state.controller.value.flashMode ==
+                                                  FlashMode.torch)
+                                              ? Icons.flash_on
+                                              : Icons.flash_off,
                                         ),
-                                        child: IconButton(
-                                          icon: Icon(
-                                            (state
-                                                        .controller
-                                                        .description
-                                                        .lensDirection ==
-                                                    CameraLensDirection.front)
-                                                ? Icons.camera_front
-                                                : Icons.camera_rear,
+                                        onPressed:
+                                            () => {
+                                              context.read<CameraBloc>().add(
+                                                FlashModeChange(),
+                                              ),
+                                            },
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                Container(
+                                  height: 50,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  child: Center(
+                                    child: Ink(
+                                      decoration: ShapeDecoration(
+                                        color: Colors.lightBlue,
+                                        shape: CircleBorder(),
+                                      ),
+                                      child: IconButton(
+                                        icon: const Icon(Icons.camera),
+                                        onPressed:
+                                            () => {
+                                              context.read<CameraBloc>().add(
+                                                CaptureImage(),
+                                              ),
+                                            },
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                kIsWeb
+                                    ? const SizedBox.shrink()
+                                    : Container(
+                                      height: 50,
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                      child: Center(
+                                        child: Ink(
+                                          decoration: ShapeDecoration(
+                                            color: Colors.lightBlue,
+                                            shape: CircleBorder(),
                                           ),
-                                          onPressed:
-                                              () => {
-                                                context.read<CameraBloc>().add(
-                                                  CameraLensChange(),
-                                                ),
-                                              },
-                                          color: Colors.white,
+                                          child: IconButton(
+                                            icon: Icon(
+                                              (state
+                                                          .controller
+                                                          .description
+                                                          .lensDirection ==
+                                                      CameraLensDirection.front)
+                                                  ? Icons.camera_front
+                                                  : Icons.camera_rear,
+                                            ),
+                                            onPressed:
+                                                () => {
+                                                  context
+                                                      .read<CameraBloc>()
+                                                      .add(CameraLensChange()),
+                                                },
+                                            color: Colors.white,
+                                          ),
                                         ),
                                       ),
                                     ),
-                                  ),
-                            ],
-                          ),
-                          SizedBox(height: 20),
-                        ],
+                              ],
+                            ),
+                            SizedBox(height: 20),
+                          ],
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           );
         }
         //  else if (state is CameraCaptureData) {

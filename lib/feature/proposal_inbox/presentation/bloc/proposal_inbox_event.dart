@@ -10,3 +10,8 @@ class SearchProposalInboxEvent extends ProposalInboxEvent {
 
   const SearchProposalInboxEvent({required this.request});
 }
+
+class ApplicationStatusCheckEvent extends ProposalInboxEvent {
+  final Map<String, dynamic> currentApplication;
+  const ApplicationStatusCheckEvent({required this.currentApplication});
+}

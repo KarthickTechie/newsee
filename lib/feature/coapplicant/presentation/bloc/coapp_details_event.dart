@@ -49,16 +49,6 @@ class IsCoAppOrGurantorAdd extends CoappDetailsEvent {
   IsCoAppOrGurantorAdd({required this.addapplicants});
 }
 
-// class AddApplicantEvent extends CoappDetailsEvent {
-//   final CoapplicantData applicant;
-//   AddApplicantEvent({required this.applicant});
-// }
-
-// class RemoveApplicantEvent extends CoappDetailsEvent {
-//   final CoapplicantData applicant;
-//   RemoveApplicantEvent({required this.applicant});
-// }
-
 class DeleteCoApplicantEvent extends CoappDetailsEvent {
   final CoapplicantData coapplicantData;
 
@@ -71,4 +61,14 @@ class DeleteCoApplicantEvent extends CoappDetailsEvent {
 class CifEditManuallyEvent extends CoappDetailsEvent {
   final bool cifButton;
   CifEditManuallyEvent(this.cifButton);
+}
+
+class AadhaarValidateEvent extends CoappDetailsEvent {
+  final AadharvalidateRequest request;
+  AadhaarValidateEvent({required this.request});
+}
+
+class ScannerResponseEvent extends CoappDetailsEvent {
+  final Map<String, dynamic> scannerResponse;
+  ScannerResponseEvent({required this.scannerResponse});
 }

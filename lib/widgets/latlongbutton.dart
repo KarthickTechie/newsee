@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class LatLongButtonWidget extends StatelessWidget {
   final double? latitude;
@@ -39,8 +40,11 @@ class LatLongButtonWidget extends StatelessWidget {
             flex: 2,
             child: Center(
               child: ElevatedButton(
-                onPressed: onpressed,
-                child: isloading == true ? CircularProgressIndicator() : Text('Fetch Location'),
+                onPressed: () {},
+                child:
+                    isloading == true
+                        ? CircularProgressIndicator()
+                        : Text('Fetch Location'),
               ),
             ),
           ),

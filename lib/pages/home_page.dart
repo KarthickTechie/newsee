@@ -60,9 +60,7 @@ class HomePageState extends State<HomePage> {
         );
       case 3:
       default:
-        return Center(
-          child: MasterUpdate(),
-        );
+        return Center(child: MasterUpdate());
     }
   }
 
@@ -70,6 +68,7 @@ class HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       drawer: Sidenavigationbar(
+        pageContext: context,
         onTabSelected: (index) {
           setState(() => selectedIndex = index);
         },

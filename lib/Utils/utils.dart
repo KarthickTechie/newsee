@@ -9,6 +9,7 @@ import 'package:newsee/feature/coapplicant/presentation/bloc/coapp_details_bloc.
 import 'package:newsee/feature/leadInbox/domain/modal/group_lead_inbox.dart';
 import 'package:newsee/feature/masters/domain/modal/geography_master.dart';
 import 'package:newsee/feature/proposal_inbox/domain/modal/group_proposal_inbox.dart';
+import 'package:reactive_forms/reactive_forms.dart';
 
 String formatAmount(String amount) {
   try {
@@ -183,11 +184,17 @@ void closeBottomSheetIfExists(BuildContext context) {
 }
 
 CoapplicantData mapCoapplicantDataFromCif(CifResponse response) {
+  String mobileno = '';
+  if (response.lleadmobno!.length == 12 &&
+      response.lleadmobno!.startsWith("91")) {
+    mobileno = response.lleadmobno!.substring(2);
+  }
+
   CoapplicantData data = CoapplicantData(
     firstName: response.lleadfrstname,
     lastName: response.lleadlastname,
     email: response.lleademailid,
-    primaryMobileNumber: response.lleadmobno,
+    primaryMobileNumber: mobileno != '' ? mobileno : response.lleadmobno,
     panNumber: response.lleadpanno,
     address1: response.lleadaddress,
     address2: response.lleadaddresslane1,
@@ -245,10 +252,12 @@ List<GroupProposalInbox>? onSearchApplicationInbox({
   final filteredLeads =
       items?.where((lead) {
         final name = (lead.finalList['lleadfrstname'] ?? '').toLowerCase();
+        final propNo = (lead.finalList!['propNo'] ?? '').toString();
         final id = (lead.finalList['lleadid'] ?? '').toLowerCase();
         final phone = (lead.finalList['lleadmobno'] ?? '').toLowerCase();
         final loan = (lead.finalList['lldLoanamtRequested'] ?? '').toString();
         return name.contains(searchQuery.toLowerCase()) ||
+            propNo.contains(searchQuery.toLowerCase()) ||
             id.contains(searchQuery.toLowerCase()) ||
             phone.contains(searchQuery.toLowerCase()) ||
             loan.contains(searchQuery.toLowerCase());

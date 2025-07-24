@@ -5,9 +5,9 @@ class ProposalInboxRemoteDatasource {
   final Dio dio;
   ProposalInboxRemoteDatasource({required this.dio});
 
-  Future<Response> searchProposalInbox(Map<String, dynamic> payload) async {
+  Future<Response> searchProposalInbox(Map<String, dynamic> payload, String endpoint) async {
     return await dio.post(
-      ApiConfig.PROPOSAL_INBOX_API_ENDPOINT,
+      endpoint,
       data: payload,
       options: Options(
         headers: {

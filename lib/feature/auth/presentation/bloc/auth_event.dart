@@ -10,3 +10,8 @@ final class LoginWithAccount extends AuthEvent {
 }
 
 final class PasswordSecure extends AuthEvent {}
+
+class LogoutRequested extends AuthEvent {
+  List<Object?> get props => [];
+}
+

@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:newsee/Utils/utils.dart';
@@ -7,11 +5,9 @@ import 'package:newsee/feature/cif/domain/model/user/cif_request.dart';
 import 'package:newsee/feature/cif/presentation/bloc/cif_bloc.dart';
 import 'package:newsee/feature/dedupe/presentation/bloc/dedupe_bloc.dart';
 import 'package:newsee/widgets/sysmo_alert.dart';
-import 'package:newsee/widgets/build_in_row.dart';
 import 'package:newsee/widgets/integer_text_field.dart';
 import 'package:newsee/widgets/response_widget.dart';
 import 'package:reactive_forms/reactive_forms.dart';
-import 'package:intl/intl.dart';
 
 class CIFSearch extends StatelessWidget {
   final FormGroup cifForm;
@@ -92,7 +88,7 @@ class CIFSearch extends StatelessWidget {
                   },
                   {
                     "icon": Icons.format_list_numbered_rtl_rounded,
-                    "label": "Pinocode",
+                    "label": "Pincode",
                     "value": state.cifResponse?.lleadpinno,
                   },
                 ],

@@ -17,5 +17,25 @@
     </style>
 
     <!-- Adding style for cropper-->
-    <style name="Ucrop.CropTheme" parent="Theme.AppCompat.Light.NoActionBar"/>
+    <!-- <style name="Ucrop.CropTheme" parent="Theme.AppCompat.Light.NoActionBar"/> -->
+
+    <style name="Ucrop.CropTheme" parent="Theme.AppCompat.Light.NoActionBar">
+    <!-- Remove default actionBar to avoid conflict -->
+    <item name="windowActionBar">false</item>
+    <item name="windowNoTitle">true</item>
+
+    <!-- Ensure status bar space is respected -->
+    <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+    <item name="android:statusBarColor">#D84315</item>
+
+    <item name="android:windowLightStatusBar">false</item> 
+    
+    <item name="android:fitsSystemWindows">true</item>
+
+    <!-- Set toolbar and accent colors -->
+    <item name="colorPrimary">#D84315</item>
+    <item name="colorPrimaryDark">#BF360C</item>
+    <item name="colorAccent">#120101</item>
+    </style>
+
 </resources>

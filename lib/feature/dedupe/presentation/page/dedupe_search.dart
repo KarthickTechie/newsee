@@ -188,14 +188,14 @@ class DedupeSearch extends StatelessWidget {
                         IntegerTextField(
                           controlName: 'mobilenumber',
                           label: 'Mobile Number',
-                          mantatory: false,
+                          mantatory: true,
                           maxlength: 10,
                           minlength: 10,
                         ),
                         CustomTextField(
                           controlName: 'pan',
                           label: 'PAN Number',
-                          mantatory: false,
+                          mantatory: true,
                           maxlength: 10,
                           autoCapitalize: true,
                         ),

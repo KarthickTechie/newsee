@@ -5,7 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:newsee/feature/documentupload/presentation/bloc/document_bloc.dart';
 import 'package:newsee/feature/documentupload/presentation/bloc/document_event.dart';
 import 'package:newsee/feature/documentupload/presentation/bloc/document_state.dart';
-import 'package:newsee/feature/documentupload/presentation/widget/show_Image_delete_alert.dart';
+import 'package:newsee/widgets/confirmation_delete_alert.dart';
 
 class ImageView extends StatefulWidget {
   final Uint8List imageBytes;
@@ -91,16 +91,21 @@ class _ImageViewState extends State<ImageView> {
       appBar: AppBar(title: const Text("View Image")),
       body: Stack(
         children: [
-          SizedBox.expand(
-            child: Image.memory(_imageBytes, fit: BoxFit.contain),
+          /* @modifiedBy    :  Lathamani   10/07/2025
+     @desc          :  added padding all sided on image 
+  */
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: SizedBox.expand(
+              child: Image.memory(_imageBytes, fit: BoxFit.contain),
+            ),
           ),
-
           if (_isUploading) const Center(child: CircularProgressIndicator()),
 
           // Show Delete if uploaded
           if (_isUploaded && !_isUploading)
             Positioned(
-              bottom: 30,
+              bottom: 60,
               left: screenWidth * 0.1,
               child: ElevatedButton.icon(
                 onPressed: _deleteImage,
@@ -112,7 +117,7 @@ class _ImageViewState extends State<ImageView> {
           // Show Upload and Capture if NOT uploaded
           if (!_isUploaded && !_isUploading)
             Positioned(
-              bottom: 30,
+              bottom: 60,
               left: screenWidth * 0.0,
               child: ElevatedButton.icon(
                 onPressed: _captureImage,
@@ -123,7 +128,7 @@ class _ImageViewState extends State<ImageView> {
 
           if (!_isUploaded && !_isUploading)
             Positioned(
-              bottom: 30,
+              bottom: 60,
               left: screenWidth * 0.4,
               child: ElevatedButton.icon(
                 onPressed: _uploadImage,
@@ -135,7 +140,7 @@ class _ImageViewState extends State<ImageView> {
           // Always show close
           if (!_isUploading)
             Positioned(
-              bottom: 30,
+              bottom: 60,
               left: screenWidth * 0.7,
               child: ElevatedButton.icon(
                 onPressed: () => context.pop(),

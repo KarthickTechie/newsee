@@ -10,7 +10,8 @@ import 'package:newsee/feature/auth/domain/repository/auth_repository.dart';
 import 'package:newsee/feature/auth/presentation/bloc/auth_bloc.dart';
 
 class LoginBlocProvide extends StatelessWidget {
-  const LoginBlocProvide({super.key});
+  final bool? createPIN;
+  const LoginBlocProvide(this.createPIN, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +25,7 @@ class LoginBlocProvide extends StatelessWidget {
                 ),
               ),
             ),
-        child: LoginpageWithAC(),
+        child: LoginpageWithAC(createPIN),
       ),
     );
   }

@@ -104,7 +104,8 @@ final class LeadSubmitBloc extends Bloc<LeadSubmitEvent, LeadSubmitState> {
         // "coapplicantRequired": event.coapplicantData != null ? 'Y' : 'N',
         // "guarantorRequired": 'N',
         "coapplicantRequired": event.isAddCoappGurantor,
-        "guarantorRequired": event.isAddCoappGurantor,
+        "guarantorRequired":
+            guarantors.isNotEmpty ? event.isAddCoappGurantor : 'N',
         "token": ApiConstants.api_qa_token,
         "leadDetails": event.loanType.toMap(),
         "chooseProduct": event.loanProduct.toMap(),

@@ -12,11 +12,15 @@ import 'package:go_router/go_router.dart';
 import 'package:newsee/AppData/app_constants.dart';
 import 'package:newsee/Utils/utils.dart';
 import 'package:newsee/feature/leadInbox/domain/modal/lead_request.dart';
+import 'package:newsee/feature/loader/presentation/bloc/global_loading_bloc.dart';
+import 'package:newsee/feature/loader/presentation/bloc/global_loading_event.dart';
+import 'package:newsee/feature/proposal_inbox/domain/modal/application_status_response.dart';
 import 'package:newsee/feature/proposal_inbox/domain/modal/group_proposal_inbox.dart';
 import 'package:newsee/feature/proposal_inbox/presentation/bloc/proposal_inbox_bloc.dart';
 import 'package:newsee/feature/cic_check/cic_check_page.dart';
 import 'package:newsee/widgets/bottom_sheet.dart';
 import 'package:newsee/widgets/options_sheet.dart';
+import 'package:newsee/widgets/sysmo_alert.dart';
 import 'package:number_paginator/number_paginator.dart';
 import 'package:newsee/feature/leadInbox/presentation/bloc/lead_bloc.dart';
 import 'package:newsee/widgets/lead_tile_card-shimmer.dart';
@@ -26,6 +30,20 @@ class ProposalInbox extends StatelessWidget {
   final String searchQuery;
   var currentPage = 1;
   ProposalInbox({super.key, required this.searchQuery});
+
+  showAlert(context, message) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder:
+        (_) => SysmoAlert.failure(
+          message: message.toString(),
+          onButtonPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -37,8 +55,16 @@ class ProposalInbox extends StatelessWidget {
                   request: LeadInboxRequest(userid: '', token: ''),
                 ),
               ),
-      child: BlocBuilder<ProposalInboxBloc, ProposalInboxState>(
+      child: BlocConsumer<ProposalInboxBloc, ProposalInboxState>(
+        listener: (context, state) {
+          if (state.applicationStatus == SaveStatus.success) {
+            _showBottomSheet(context, state.currentApplication!, state.applicationStatusResponse!);
+          } else if(state.applicationStatus == SaveStatus.failure) {
+            showAlert(context, state.errorMessage);
+          }
+        },
         builder: (context, state) {
+          final globalLoadingBloc = context.read<GlobalLoadingBloc>();
           Future<void> onRefresh() async {
             context.read<ProposalInboxBloc>().add(
               SearchProposalInboxEvent(
@@ -64,6 +90,12 @@ class ProposalInbox extends StatelessWidget {
 
           if (state.status == ProposalInboxStatus.failure) {
             return renderWhenNoItems(onRefresh, state);
+          }
+
+          if (state.applicationStatus == SaveStatus.loading) {
+            globalLoadingBloc.add(ShowLoading(message: 'Fetching Status...'));
+          } else {
+            globalLoadingBloc.add(HideLoading());
           }
 
           // final allLeads =
@@ -136,7 +168,11 @@ class ProposalInbox extends StatelessWidget {
                   createdon: proposal['createdOn'] ?? 'N/A',
                   location: proposal['branchName'] ?? 'N/A',
                   loanamount: proposal['loanAmount']?.toString() ?? '',
-                  onTap: () => _showBottomSheet(context, proposal),
+                  onTap: () {
+                    context.read<ProposalInboxBloc>().add(
+                      ApplicationStatusCheckEvent(currentApplication: proposal)
+                    );
+                  },
                 );
               },
             ),
@@ -196,7 +232,7 @@ class ProposalInbox extends StatelessWidget {
     );
   }
 
-  void _showBottomSheet(BuildContext context, Map<String, dynamic> proposal) {
+  void _showBottomSheet(BuildContext context, Map<String, dynamic> proposal, ApplicationStatusResponse status) {
     openBottomSheet(context, 0.6, 0.4, 0.9, (context, scrollController) {
       return SingleChildScrollView(
         controller: scrollController,
@@ -207,7 +243,7 @@ class ProposalInbox extends StatelessWidget {
               icon: Icons.document_scanner,
               title: "CIC Check",
               subtitle: "View your CIC here",
-              status: 'Completed',
+              status: status.cibilDetails ? 'completed' : 'pending',
               onTap: () {
                 Navigator.push(
                   context,
@@ -219,7 +255,7 @@ class ProposalInbox extends StatelessWidget {
               icon: Icons.landscape,
               title: "Land Details",
               subtitle: "View your Land Details here",
-              status: 'Completed',
+              status: status.landHoldingDetails ? 'completed' : 'pending',
               onTap: () {
                 context.pushNamed(
                   'landholdings',
@@ -234,7 +270,7 @@ class ProposalInbox extends StatelessWidget {
               icon: Icons.grass,
               title: "Crop Details",
               subtitle: "View your Crop Details here",
-              status: 'Pending',
+              status: status.ProposedCropDetails ? 'completed' : 'pending',
               onTap: () {
                 context.pushNamed('cropdetails', extra: proposal['propNo']);
               },
@@ -243,7 +279,7 @@ class ProposalInbox extends StatelessWidget {
               icon: Icons.description,
               title: "Document Upload",
               subtitle: "Pre-Sanctioned Documents Upload",
-              status: 'Pending',
+              status: status.documentDetails ? 'completed' : 'pending',
               onTap: () {
                 context.pushNamed('document', extra: proposal['propNo']);
               },

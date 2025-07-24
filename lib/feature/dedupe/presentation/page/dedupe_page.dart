@@ -198,19 +198,25 @@ class DedupeView extends StatelessWidget {
                                 padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
                                 child: Divider(),
                               ),
-                              ReactiveRadioListTile<bool>(
-                                title: const Text('Existing Customer'),
-                                value: false,
-                                formControlName: 'isNewCustomer',
-                                onChanged: (control) {
-                                  if (customerTypeForm.valid) {
-                                    context.read<DedupeBloc>().add(
-                                      OpenSheetEvent(
-                                        request: customerTypeForm.value,
-                                      ),
-                                    );
-                                  }
+                              GestureDetector(
+                                onTap: () {
+                                  print('clicked Existing Customer');
                                 },
+                                child: ReactiveRadioListTile<bool>(
+                                  title: const Text('Existing Customer'),
+                                  value: false,
+                                  formControlName: 'isNewCustomer',
+
+                                  onChanged: (control) {
+                                    if (customerTypeForm.valid) {
+                                      context.read<DedupeBloc>().add(
+                                        OpenSheetEvent(
+                                          request: customerTypeForm.value,
+                                        ),
+                                      );
+                                    }
+                                  },
+                                ),
                               ),
                             ],
                           ),

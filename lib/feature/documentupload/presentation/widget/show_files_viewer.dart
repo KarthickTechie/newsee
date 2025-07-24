@@ -2,11 +2,12 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:newsee/Utils/pdf_viewer.dart';
 import 'package:newsee/feature/documentupload/presentation/bloc/document_bloc.dart';
 import 'package:newsee/feature/documentupload/presentation/bloc/document_event.dart';
 import 'package:newsee/feature/documentupload/presentation/bloc/document_state.dart';
 import 'package:newsee/feature/documentupload/presentation/widget/image_view.dart';
-import 'package:newsee/feature/documentupload/presentation/widget/show_Image_delete_alert.dart';
+import 'package:newsee/widgets/confirmation_delete_alert.dart';
 
 class ShowFilesViewer extends StatelessWidget {
   final int docIndex;
@@ -36,6 +37,7 @@ class ShowFilesViewer extends StatelessWidget {
         }
 
         return ListView.builder(
+          padding: const EdgeInsets.all(12.0),
           itemCount: doc.imgs.length,
           itemBuilder: (context, imgIndex) {
             final image = doc.imgs[imgIndex];
@@ -90,25 +92,36 @@ class ShowFilesViewer extends StatelessWidget {
                         })
                         .map((state) => state.documentsList[docIndex])
                         .first;
-
+                print('$updatedDoc');
                 final filePath = updatedDoc.imgs[imgIndex].fileLocation;
-                final imageBytes = await File(filePath).readAsBytes();
-
+                final extension = filePath.split('.').last.toLowerCase();
+                print('$filePath, $extension');
                 if (context.mounted) {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder:
-                          (_) => BlocProvider.value(
-                            value: bloc,
-                            child: ImageView(
-                              imageBytes: imageBytes,
-                              docIndex: docIndex,
-                              isUploaded: true,
-                              imgIndex: imgIndex,
+                  if (extension == 'pdf') {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        // builder: (_) => PdfView(filePath: filePath),
+                        builder:
+                            (context) => PDFViewerFromBytes(filePath: filePath),
+                      ),
+                    );
+                  } else {
+                    final imageBytes = await File(filePath).readAsBytes();
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder:
+                            (_) => BlocProvider.value(
+                              value: bloc,
+                              child: ImageView(
+                                imageBytes: imageBytes,
+                                docIndex: docIndex,
+                                isUploaded: true,
+                                imgIndex: imgIndex,
+                              ),
                             ),
-                          ),
-                    ),
-                  );
+                      ),
+                    );
+                  }
                 }
               },
             );

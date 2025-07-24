@@ -11,6 +11,9 @@ class ProposalInboxState extends Equatable {
   final String? errorMessage;
   final int currentPage;
   final int? totalProposalApplication;
+  final SaveStatus applicationStatus;
+  final ApplicationStatusResponse? applicationStatusResponse;
+  final Map<String, dynamic>? currentApplication;
 
   const ProposalInboxState({
     this.status = ProposalInboxStatus.init,
@@ -18,6 +21,9 @@ class ProposalInboxState extends Equatable {
     this.errorMessage,
     this.currentPage = 1,
     this.totalProposalApplication,
+    this.applicationStatus = SaveStatus.init,
+    this.applicationStatusResponse,
+    this.currentApplication
   });
 
   factory ProposalInboxState.init() => const ProposalInboxState();
@@ -28,6 +34,9 @@ class ProposalInboxState extends Equatable {
     String? errorMessage,
     int? currentPage,
     int? totalProposalApplication,
+    SaveStatus? applicationStatus,
+    ApplicationStatusResponse? applicationStatusResponse,
+    Map<String, dynamic>? currentApplication
   }) {
     return ProposalInboxState(
       status: status ?? this.status,
@@ -35,6 +44,9 @@ class ProposalInboxState extends Equatable {
       errorMessage: errorMessage ?? this.errorMessage,
       currentPage: currentPage ?? this.currentPage,
       totalProposalApplication: totalProposalApplication ?? this.totalProposalApplication,
+      applicationStatus: applicationStatus ?? this.applicationStatus,
+      applicationStatusResponse: applicationStatusResponse ?? this.applicationStatusResponse,
+      currentApplication: currentApplication ?? this.currentApplication
     );
   }
 
@@ -46,6 +58,9 @@ class ProposalInboxState extends Equatable {
       errorMessage,
       currentPage,
       totalProposalApplication,
+      applicationStatus,
+      applicationStatusResponse,
+      currentApplication
     ];
   }
 }

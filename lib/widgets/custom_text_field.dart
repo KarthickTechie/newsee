@@ -13,9 +13,9 @@ class CustomTextField extends StatelessWidget {
   final bool mantatory;
   bool? autoCapitalize;
   int? maxlength;
-
+  final Key? fieldKey;
   CustomTextField({
-    super.key,
+    this.fieldKey,
     required this.controlName,
     required this.label,
     required this.mantatory,
@@ -28,6 +28,7 @@ class CustomTextField extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(16),
       child: ReactiveTextField<String>(
+        key: fieldKey,
         autofocus: false,
         formControlName: controlName,
         maxLength: maxlength,

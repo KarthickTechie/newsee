@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:newsee/feature/personaldetails/presentation/bloc/personal_details_bloc.dart';
 import 'package:newsee/feature/qrscanner/presentation/page/qr_scanner_page.dart';
+import 'package:newsee/widgets/sysmo_alert.dart';
 import 'package:xml2json/xml2json.dart';
 
 void showScannerOptions(BuildContext context) {
@@ -66,39 +67,50 @@ void _navigateToQRScanner(BuildContext context) {
 
 // Show AlertDialog with QR scan result
 void _showResultDialog(BuildContext context, String result, String source) {
-  BuildContext ctx = context;
+  try {
+    BuildContext ctx = context;
 
-  Navigator.pop(context);
-  final xml2json = Xml2Json();
-  xml2json.parse(result);
-  final jsonString = xml2json.toBadgerfish();
-  final jsonObject = jsonDecode(jsonString);
-  final aadharResp =
-      jsonObject['PrintLetterBarcodeData'] as Map<String, dynamic>;
-  aadharResp.entries.forEach((v) => print(v));
-  final aadhaarId = aadharResp['@uid'];
-  print("jsonObject => $aadhaarId");
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return AlertDialog(
-        title: Text('QR Scan Result'),
-        content: Text(aadhaarId),
+    Navigator.pop(context);
+    final xml2json = Xml2Json();
+    xml2json.parse(result);
+    final jsonString = xml2json.toBadgerfish();
+    final jsonObject = jsonDecode(jsonString);
+    final aadharResp =
+        jsonObject['PrintLetterBarcodeData'] as Map<String, dynamic>;
+    aadharResp.entries.forEach((v) => print(v));
+    final aadhaarId = aadharResp['@uid'];
+    print("jsonObject => $aadhaarId");
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('QR Scan Result'),
+          content: Text(aadhaarId),
 
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-              ctx.read<PersonalDetailsBloc>().add(
-                ScannerResponseEvent(
-                  scannerResponse: {'aadhaarResponse': aadharResp},
-                ),
-              );
-            },
-            child: Text('OK'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+                ctx.read<PersonalDetailsBloc>().add(
+                  ScannerResponseEvent(
+                    scannerResponse: {'aadhaarResponse': aadharResp},
+                  ),
+                );
+              },
+              child: Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
+  } catch (e) {
+    showDialog(
+      context: context,
+      builder:
+          (_) => SysmoAlert.failure(
+            message: 'Error : $e',
+            onButtonPressed: () => Navigator.pop(context),
           ),
-        ],
-      );
-    },
-  );
+    );
+  }
 }

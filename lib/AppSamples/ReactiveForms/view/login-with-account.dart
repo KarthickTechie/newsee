@@ -28,12 +28,12 @@ import 'package:shared_preferences/shared_preferences.dart';
   - BuildContext context : The context in which the bottom sheet is presented.
  */
 
-void loginActionSheet(BuildContext context) {
+void loginActionSheet(BuildContext context, {bool createMPIN = false}) {
   //dynamically adapts its size based on  screen width and height.
 
   final double screenwidth = MediaQuery.of(context).size.width;
   final double screenheight = MediaQuery.of(context).size.height;
-
+  final bool isCreateMpin = createMPIN;
   showCupertinoModalPopup(
     context: context,
 
@@ -53,14 +53,19 @@ void loginActionSheet(BuildContext context) {
             padding: EdgeInsets.all(10),
             width: screenwidth * 1.0,
             height: screenheight * 0.75,
-            child: LoginBlocProvide(),
+            child: LoginBlocProvide(isCreateMpin),
           ),
         ),
   );
 }
 
 class LoginpageWithAC extends StatelessWidget {
-  const LoginpageWithAC({super.key});
+  // createPIN is true then after successful attempt of loginwithaccount ,
+  // createMPIN bottomsheet will be called
+
+  final bool? createPIN;
+
+  const LoginpageWithAC(this.createPIN, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -110,6 +115,11 @@ class LoginpageWithAC extends StatelessWidget {
                           otherwise null will be returned in left
 
              */
+            if (createPIN!) {
+              context.pop(loginActionSheet);
+              createMpin(context, masterVersionCheckResponseHandler);
+              return;
+            }
             if (masterVersionCheckResponseHandler.isLeft()) {
               context.goNamed('masters');
             } else if (masterVersionCheckResponseHandler.isRight()) {
@@ -121,8 +131,7 @@ class LoginpageWithAC extends StatelessWidget {
                 );
                 context.goNamed('masters');
               } else {
-                context.pop(loginActionSheet);
-                createMpin(context);
+                context.goNamed('home');
               }
             }
           case AuthStatus.loading:
@@ -132,7 +141,7 @@ class LoginpageWithAC extends StatelessWidget {
             print('LoginStatus.init...');
 
           case AuthStatus.failure:
-            // context.goNamed('home');
+            //context.goNamed('home');
             print('LoginStatus.error...');
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text(state.errorMessage ?? 'Login Failed...')),

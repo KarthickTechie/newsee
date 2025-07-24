@@ -15,8 +15,9 @@ class IntegerTextField extends StatelessWidget {
   final int? maxlength;
   final int? minlength;
   final bool isRupeeFormat;
-
+  final Key? fieldKey;
   IntegerTextField({
+    this.fieldKey,
     required this.controlName,
     required this.label,
     required this.mantatory,
@@ -30,6 +31,7 @@ class IntegerTextField extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(12.0),
       child: ReactiveTextField<String>(
+        key: fieldKey,
         autofocus: false,
         formControlName: controlName,
         keyboardType: TextInputType.number,

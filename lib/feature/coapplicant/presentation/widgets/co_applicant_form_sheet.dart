@@ -2,10 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:newsee/AppData/app_constants.dart';
 import 'package:newsee/AppData/app_forms.dart';
+import 'package:newsee/Utils/qr_nav_utils.dart';
 import 'package:newsee/Utils/utils.dart';
+import 'package:newsee/feature/aadharvalidation/domain/modal/aadharvalidate_request.dart';
 import 'package:newsee/feature/coapplicant/applicants_utility_service.dart';
 import 'package:newsee/feature/coapplicant/domain/modal/coapplicant_data.dart';
 import 'package:newsee/feature/coapplicant/presentation/bloc/coapp_details_bloc.dart';
+import 'package:newsee/feature/dedupe/presentation/bloc/dedupe_bloc.dart';
 import 'package:newsee/feature/loader/presentation/bloc/global_loading_bloc.dart';
 import 'package:newsee/feature/loader/presentation/bloc/global_loading_event.dart';
 import 'package:newsee/feature/masters/domain/modal/geography_master.dart';
@@ -38,9 +41,8 @@ class CoApplicantFormBottomSheet extends StatefulWidget {
 class _CoApplicantFormBottomSheetState
     extends State<CoApplicantFormBottomSheet> {
   final FormGroup coAppAndGurantorForm = AppForms.COAPPLICANT_DETAILS_FORM;
-  final dedupeForm = AppForms.DEDUPE_DETAILS_FORM;
   late final String title;
-
+  bool refAadhaar = false;
   @override
   void initState() {
     super.initState();
@@ -48,6 +50,9 @@ class _CoApplicantFormBottomSheetState
     title = widget.applicantType == 'C' ? 'Co-Applicant' : 'Gurantor';
     if (widget.existingData != null) {
       coAppAndGurantorForm.patchValue(widget.existingData!.toMap());
+      if (widget.existingData!.aadharRefNo != null) {
+        refAadhaar = true;
+      }
     }
   }
 
@@ -66,11 +71,14 @@ class _CoApplicantFormBottomSheetState
                 'coapplicantdetail::BlocConsumer:listen => ${state.lovList} ${state.coAppList} ${state.status?.name}',
               );
               if (state.status == SaveStatus.success) {
-                showSnack(context, message: '$title Details Saved Successfully');
+                showSnack(
+                  context,
+                  message: '$title Details Saved Successfully',
+                );
                 goToNextTab(context: context);
               } else if (state.status == SaveStatus.failure) {
                 globalLoadingBloc.add(HideLoading());
-      
+
                 showSnack(context, message: 'Failed to Save $title Details');
               }
               if (state.status == SaveStatus.mastersucess ||
@@ -78,41 +86,73 @@ class _CoApplicantFormBottomSheetState
                 if (state.status == SaveStatus.masterfailure) {
                   showSnack(context, message: 'Failed to Fetch Masters...');
                 }
-      
+
                 print('city list => ${state.cityMaster}');
                 globalLoadingBloc.add(HideLoading());
               }
-      
+
               if (state.status == SaveStatus.dedupesuccess) {
                 final controls = coAppAndGurantorForm.controls.entries;
                 final cifresponse = state.selectedCoApp?.toMap();
+                print(cifresponse);
+                if (cifresponse?['aadharRefNo'] != null) {
+                  refAadhaar = true;
+                }
                 for (final ctrl in controls) {
-                  if (cifresponse?[ctrl.key] != null) {
-                    if (ctrl.key == 'dob') {
+                  final key = ctrl.key;
+                  final value = cifresponse?[key];
+
+                  if (value != null) {
+                    if (key == 'dob') {
                       final formattedDate = getDateFormatedByProvided(
-                        cifresponse?[ctrl.key],
+                        value,
                         from: AppConstants.Format_dd_MM_yyyy,
                         to: AppConstants.Format_yyyy_MM_dd,
                       );
-                      print('formattedDate in coapppage => $formattedDate');
-                      coAppAndGurantorForm.controls[ctrl.key]?.updateValue(
-                        formattedDate,
-                      );
+                      coAppAndGurantorForm
+                          .control(key)
+                          .updateValue(formattedDate);
+                    } else if (key == 'state' || key == 'cityDistrict') {
+                      coAppAndGurantorForm.control(key).updateValue("");
+                    } else {
+                      coAppAndGurantorForm.control(key).updateValue(value);
                     }
-                    if (ctrl.key == 'state' || ctrl.key == 'cityDistrict') {
-                      coAppAndGurantorForm.controls[ctrl.key]?.updateValue("");
-                    }
-                    coAppAndGurantorForm.controls[ctrl.key]?.updateValue(
-                      cifresponse?[ctrl.key],
-                    );
                   }
                 }
+
+                // for (final ctrl in controls) {
+                //   if (cifresponse?[ctrl.key] != null) {
+                //     if (ctrl.key == 'dob') {
+                //       final formattedDate = getDateFormatedByProvided(
+                //         cifresponse?[ctrl.key],
+                //         from: AppConstants.Format_dd_MM_yyyy,
+                //         to: AppConstants.Format_yyyy_MM_dd,
+                //       );
+                //       print('formattedDate in coapppage => $formattedDate');
+                //       coAppAndGurantorForm.controls[ctrl.key]?.updateValue(
+                //         formattedDate,
+                //       );
+                //     }
+                //     if (ctrl.key == 'state' || ctrl.key == 'cityDistrict') {
+                //       coAppAndGurantorForm.controls[ctrl.key]?.updateValue("");
+                //     }
+                //     coAppAndGurantorForm.controls[ctrl.key]?.updateValue(
+                //       cifresponse?[ctrl.key],
+                //     );
+                //   }
+                // }
               } else if (state.status == SaveStatus.dedupefailure) {
                 // showSnack(context, message: 'Cif pulling failed...');
-                showErrorDialog(context, 'Cif pulling failed...');
+                showErrorDialog(
+                  context,
+                  'Dedupe/CIF/Aadhar Validation failed...',
+                );
               }
             },
             builder: (context, state) {
+              DedupeState? dedupeState;
+              dedupeState = context.watch<DedupeBloc>().state;
+              print(dedupeState);
               return ReactiveForm(
                 formGroup: coAppAndGurantorForm,
                 child: Padding(
@@ -155,7 +195,8 @@ class _CoApplicantFormBottomSheetState
                                       coAppAndGurantorForm
                                           .control('customertype')
                                           .value;
-                                  if (value == null || value.toString().isEmpty) {
+                                  if (value == null ||
+                                      value.toString().isEmpty) {
                                     return null;
                                   }
                                   return state.lovList!
@@ -185,6 +226,7 @@ class _CoApplicantFormBottomSheetState
                                       removeFocus: true,
                                     );
                                   });
+                                  refAadhaar = false;
                                   showHideCifField(
                                     context,
                                     coAppAndGurantorForm,
@@ -224,7 +266,7 @@ class _CoApplicantFormBottomSheetState
                                             context,
                                             widget.tabController,
                                           ),
-      
+
                                   child: const Text("Dedupe"),
                                 ),
                               ),
@@ -263,7 +305,9 @@ class _CoApplicantFormBottomSheetState
                                   .controls['constitution']
                                   ?.updateValue(val.optvalue),
                         ),
-                        if (coAppAndGurantorForm.control('customertype').value ==
+                        if (coAppAndGurantorForm
+                                .control('customertype')
+                                .value ==
                             '002')
                           Row(
                             crossAxisAlignment: CrossAxisAlignment.center,
@@ -315,7 +359,7 @@ class _CoApplicantFormBottomSheetState
                               ),
                             ],
                           ),
-      
+
                         SearchableDropdown(
                           controlName: 'title',
                           label: 'Title',
@@ -343,7 +387,8 @@ class _CoApplicantFormBottomSheetState
                                 );
                           },
                           onChangeListener:
-                              (Lov val) => coAppAndGurantorForm.controls['title']
+                              (Lov val) => coAppAndGurantorForm
+                                  .controls['title']
                                   ?.updateValue(val.optvalue),
                         ), // title
                         CustomTextField(
@@ -351,7 +396,7 @@ class _CoApplicantFormBottomSheetState
                           label: 'First Name',
                           mantatory: true,
                         ),
-      
+
                         CustomTextField(
                           controlName: 'middleName',
                           label: 'Middle Name',
@@ -362,9 +407,13 @@ class _CoApplicantFormBottomSheetState
                           label: 'Last Name',
                           mantatory: true,
                         ), // lastName
+
                         SearchableDropdown(
                           controlName: 'relationshipFirm',
-                          label: 'Relationship With Firm',
+                          label:
+                              dedupeState.constitution == 'NI'
+                                  ? 'Relationship With Firm'
+                                  : 'Relationship With Applicant',
                           items:
                               state.lovList!
                                   .where((v) => v.Header == 'CoAppRelationship')
@@ -395,7 +444,7 @@ class _CoApplicantFormBottomSheetState
                                   .controls['relationshipFirm']
                                   ?.updateValue(val.optvalue),
                         ), // relationshipwithfirm
-      
+
                         Padding(
                           padding: const EdgeInsets.all(12.0),
                           child: ReactiveTextField<String>(
@@ -427,7 +476,7 @@ class _CoApplicantFormBottomSheetState
                             },
                           ),
                         ),
-      
+
                         IntegerTextField(
                           controlName: 'primaryMobileNumber',
                           label: 'Primary Mobile Number',
@@ -453,6 +502,87 @@ class _CoApplicantFormBottomSheetState
                           mantatory: true,
                           autoCapitalize: true,
                         ),
+
+                        Row(
+                          children: [
+                            Expanded(
+                              child: IntegerTextField(
+                                controlName: 'aadharRefNo',
+                                label: 'Aadhaar No',
+                                mantatory: true,
+                                maxlength: 12,
+                                minlength: 12,
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            ElevatedButton.icon(
+                              icon: Icon(Icons.qr_code_scanner),
+                              label: Text('Scan'),
+                              onPressed: () => showScannerOptions(context),
+                            ),
+                          ],
+                        ),
+
+                        // if ((coAppAndGurantorForm
+                        //                 .control('customertype')
+                        //                 .value !=
+                        //             '002' &&
+                        //         coAppAndGurantorForm
+                        //                 .control('customertype')
+                        //                 .value !=
+                        //             '001') ||
+                        //     refAadhaar == false)
+                        //   Row(
+                        //     crossAxisAlignment: CrossAxisAlignment.center,
+                        //     children: [
+                        //       Expanded(
+                        //         child: IntegerTextField(
+                        //           controlName: 'aadhaar',
+                        //           label: 'Aadhaar Number',
+                        //           mantatory: true,
+                        //           maxlength: 12,
+                        //           minlength: 12,
+                        //         ),
+                        //       ),
+                        //       const SizedBox(width: 8),
+                        //       ElevatedButton(
+                        //         style: ElevatedButton.styleFrom(
+                        //           backgroundColor: const Color.fromARGB(
+                        //             255,
+                        //             3,
+                        //             9,
+                        //             110,
+                        //           ),
+                        //           foregroundColor: Colors.white,
+                        //           padding: const EdgeInsets.symmetric(
+                        //             horizontal: 16,
+                        //             vertical: 10,
+                        //           ),
+                        //           shape: RoundedRectangleBorder(
+                        //             borderRadius: BorderRadius.circular(8),
+                        //           ),
+                        //         ),
+                        //         onPressed: () {
+                        //           final aadharvalidateRequest =
+                        //               AadharvalidateRequest(
+                        //                 aadhaarNumber:
+                        //                     coAppAndGurantorForm
+                        //                         .control('aadhaar')
+                        //                         .value,
+                        //               );
+                        //           context.read<CoappDetailsBloc>().add(
+                        //             AadhaarValidateEvent(
+                        //               request: aadharvalidateRequest,
+                        //             ),
+                        //           );
+                        //         },
+                        //         child:
+                        //             state.status == SaveStatus.loading
+                        //                 ? CircularProgressIndicator()
+                        //                 : const Text("Validate"),
+                        //       ),
+                        //     ],
+                        //   ),
                         CustomTextField(
                           controlName: 'address1',
                           label: 'Address 1',
@@ -479,7 +609,7 @@ class _CoApplicantFormBottomSheetState
                             globalLoadingBloc.add(
                               ShowLoading(message: "Fetching city..."),
                             );
-      
+
                             context.read<CoappDetailsBloc>().add(
                               OnStateCityChangeEvent(stateCode: val.code),
                             );
@@ -492,7 +622,7 @@ class _CoApplicantFormBottomSheetState
                             }
                             if (state.selectedCoApp?.state != null) {
                               String? stateCode = state.selectedCoApp?.state;
-      
+
                               GeographyMaster? geographyMaster = state
                                   .stateCityMaster
                                   ?.firstWhere((val) => val.code == stateCode);
@@ -505,9 +635,8 @@ class _CoApplicantFormBottomSheetState
                                 return <GeographyMaster>[];
                               }
                             } else if (state.stateCityMaster!.isEmpty) {
-                              coAppAndGurantorForm.controls['state']?.updateValue(
-                                "",
-                              );
+                              coAppAndGurantorForm.controls['state']
+                                  ?.updateValue("");
                               return <GeographyMaster>[];
                             }
                           },
@@ -528,7 +657,8 @@ class _CoApplicantFormBottomSheetState
                             if (value == null || value.toString().isEmpty) {
                               return null;
                             } else {
-                              GeographyMaster? geographyMaster = state.cityMaster
+                              GeographyMaster? geographyMaster = state
+                                  .cityMaster
                                   ?.firstWhere((val) => val.code == value);
                               print(geographyMaster);
                               if (geographyMaster != null) {
@@ -568,7 +698,7 @@ class _CoApplicantFormBottomSheetState
                           maxlength: 2,
                           minlength: 1,
                         ),
-      
+
                         IntegerTextField(
                           controlName: 'depositAmount',
                           label: 'Deposit Amount',
@@ -576,7 +706,7 @@ class _CoApplicantFormBottomSheetState
                           isRupeeFormat: true,
                         ),
                         SizedBox(height: 20),
-      
+
                         Center(
                           child: ElevatedButton(
                             style: ElevatedButton.styleFrom(
