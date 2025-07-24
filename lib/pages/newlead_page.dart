@@ -31,41 +31,50 @@ class NewLeadPage extends StatelessWidget {
           create:
               (context) =>
                   LoanproductBloc()..add(
-                      fullLeadData == null ? 
-                      LoanproductInit(loanproductState: LoanproductState.init())
-                        :
-                      LoanproductFetchEvent(leadDetails: fullLeadData?.LeadDetails)
+                    fullLeadData == null
+                        ? LoanproductInit(
+                          loanproductState: LoanproductState.init(),
+                        )
+                        : LoanproductFetchEvent(
+                          leadDetails: fullLeadData?.LeadDetails,
+                        ),
                   ),
         ),
         BlocProvider(create: (context) => DedupeBloc()),
         BlocProvider(
           create:
               (context) =>
-                  PersonalDetailsBloc()
-                    ..add(
-                      fullLeadData == null ? 
-                       PersonalDetailsInitEvent(cifResponseModel: null) : 
-                       PersonalDetailsFetchEvent(leadDetails: fullLeadData?.LeadDetails)
-                    ),
+                  PersonalDetailsBloc()..add(
+                    fullLeadData == null
+                        ? PersonalDetailsInitEvent(cifResponseModel: null)
+                        : PersonalDetailsFetchEvent(
+                          leadDetails: fullLeadData?.LeadDetails,
+                        ),
+                  ),
           lazy: false,
         ),
         BlocProvider(
           create:
               (context) =>
-                  AddressDetailsBloc()
-                    ..add(
-                      fullLeadData == null ? 
-                      AddressDetailsInitEvent(cifResponseModel: null) :
-                      AddressDetailsFetchEvent(leadAddressDetails: fullLeadData?.LeadAddressDetails)
-                    ),
+                  AddressDetailsBloc()..add(
+                    fullLeadData == null
+                        ? AddressDetailsInitEvent(cifResponseModel: null)
+                        : AddressDetailsFetchEvent(
+                          leadAddressDetails: fullLeadData?.LeadAddressDetails,
+                        ),
+                  ),
           lazy: false,
         ),
         BlocProvider(
-          create: (context) => CoappDetailsBloc()..add(
-            fullLeadData == null ? 
-            CoAppDetailsInitEvent() :
-            CoApplicantandGurantorFetchEvent(leadDetails: fullLeadData?.LeadDetails)
-          ),
+          create:
+              (context) =>
+                  CoappDetailsBloc()..add(
+                    fullLeadData == null
+                        ? CoAppDetailsInitEvent()
+                        : CoApplicantandGurantorFetchEvent(
+                          leadDetails: fullLeadData?.LeadDetails,
+                        ),
+                  ),
           lazy: false,
         ),
         BlocProvider(create: (context) => LeadSubmitBloc()),
@@ -122,7 +131,10 @@ class NewLeadPage extends StatelessWidget {
                                 addressState.status,
                               ];
 
-                              final statusList = fullLeadData == null ?  firstStatusList : getstatusList;
+                              final statusList =
+                                  fullLeadData == null
+                                      ? firstStatusList
+                                      : getstatusList;
 
                               bool canNavigate = true;
                               for (int i = 0; i < index; i++) {
@@ -136,18 +148,21 @@ class NewLeadPage extends StatelessWidget {
                               if (!canNavigate) {
                                 showDialog(
                                   context: context,
-                                  builder: (_) => SysmoAlert.warning(
-                                    message: "Please complete the previous step before processing.",
-                                    onButtonPressed: () {
-                                      Navigator.pop(context);
-                                    },
-                                  ),
+                                  builder:
+                                      (_) => SysmoAlert.warning(
+                                        message:
+                                            "Please complete the previous step before processing.",
+                                        onButtonPressed: () {
+                                          Navigator.pop(context);
+                                        },
+                                      ),
                                 );
 
                                 Future.microtask(() {
-                                  tabController.index = tabController.previousIndex;
+                                  tabController.index =
+                                      tabController.previousIndex;
                                 });
-                               
+
                                 // ScaffoldMessenger.of(context).showSnackBar(
                                 //   SnackBar(
                                 //     content: Row(
@@ -188,85 +203,98 @@ class NewLeadPage extends StatelessWidget {
                                 // );
                               }
                             },
-                            tabs: fullLeadData == null ? <Widget>[
-                              statusTabBar(
-                                icon: Icons.badge,
-                                isComplete:
-                                    loanState.status == SaveStatus.success,
-                              ),
-                              statusTabBar(
-                                icon: Icons.file_copy,
-                                isComplete:
-                                    dedupeState.status ==
-                                    DedupeFetchStatus.success,
-                              ),
-                              statusTabBar(
-                                icon: Icons.face,
-                                isComplete:
-                                    personalState.status == SaveStatus.success,
-                              ),
-                              statusTabBar(
-                                icon: Icons.location_city,
-                                isComplete:
-                                    addressState.status == SaveStatus.success,
-                              ),
-                              statusTabBar(
-                                icon: Icons.add_reaction,
-                                isComplete:
-                                    coappState.status == SaveStatus.success,
-                              ),
-                              Tab(
-                                icon: Icon(
-                                  Icons.done_all,
-                                  color: Colors.white70,
-                                ),
-                              ),
-                            ] 
-                              :
-                            <Widget>[
-                              statusTabBar(
-                                icon: Icons.badge,
-                                isComplete:
-                                    loanState.status == SaveStatus.success,
-                              ),
-                              statusTabBar(
-                                icon: Icons.face,
-                                isComplete:
-                                    personalState.status == SaveStatus.success,
-                              ),
-                              statusTabBar(
-                                icon: Icons.location_city,
-                                isComplete:
-                                    addressState.status == SaveStatus.success,
-                              ),
-                              statusTabBar(
-                                icon: Icons.add_reaction,
-                                isComplete:
-                                    coappState.status == SaveStatus.success,
-                              ),
-                            ],
+                            tabs:
+                                fullLeadData == null
+                                    ? <Widget>[
+                                      statusTabBar(
+                                        icon: Icons.badge,
+                                        isComplete:
+                                            loanState.status ==
+                                            SaveStatus.success,
+                                      ),
+                                      statusTabBar(
+                                        icon: Icons.file_copy,
+                                        isComplete:
+                                            dedupeState.status ==
+                                            DedupeFetchStatus.success,
+                                      ),
+                                      statusTabBar(
+                                        icon: Icons.face,
+                                        isComplete:
+                                            personalState.status ==
+                                            SaveStatus.success,
+                                      ),
+                                      statusTabBar(
+                                        icon: Icons.location_city,
+                                        isComplete:
+                                            addressState.status ==
+                                            SaveStatus.success,
+                                      ),
+                                      statusTabBar(
+                                        icon: Icons.add_reaction,
+                                        isComplete:
+                                            coappState.status ==
+                                            SaveStatus.success,
+                                      ),
+                                      Tab(
+                                        icon: Icon(
+                                          Icons.done_all,
+                                          color: Colors.white70,
+                                        ),
+                                      ),
+                                    ]
+                                    : <Widget>[
+                                      statusTabBar(
+                                        icon: Icons.badge,
+                                        isComplete:
+                                            loanState.status ==
+                                            SaveStatus.success,
+                                      ),
+                                      statusTabBar(
+                                        icon: Icons.face,
+                                        isComplete:
+                                            personalState.status ==
+                                            SaveStatus.success,
+                                      ),
+                                      statusTabBar(
+                                        icon: Icons.location_city,
+                                        isComplete:
+                                            addressState.status ==
+                                            SaveStatus.success,
+                                      ),
+                                      statusTabBar(
+                                        icon: Icons.add_reaction,
+                                        isComplete:
+                                            coappState.status ==
+                                            SaveStatus.success,
+                                      ),
+                                    ],
                           );
                         },
                       ),
                     ),
                   ),
-          drawer: Globalconfig.isInitialRoute ? null : Sidenavigationbar(),
+          drawer:
+              Globalconfig.isInitialRoute
+                  ? null
+                  : Sidenavigationbar(pageContext: context),
           body: TabBarView(
-            children: fullLeadData == null ? [
-              Loan(title: 'loan'),
-              DedupeView(title: 'dedupe'),
-              Personal(title: 'personal'),
-              Address(title: 'address'),
-              CoApplicantPage(title: 'Co Applicant Details'),
-              LeadSubmitPage(title: 'Lead Details'),
-            ] 
-              : 
-            [
-              Loan(title: 'loan'),
-              Personal(title: 'personal'),
-              Address(title: 'address'),
-              CoApplicantPage(title: 'Co Applicant Details'),
-            ],
+            children:
+                fullLeadData == null
+                    ? [
+                      Loan(title: 'loan'),
+                      DedupeView(title: 'dedupe'),
+                      Personal(title: 'personal'),
+                      Address(title: 'address'),
+                      CoApplicantPage(title: 'Co Applicant Details'),
+                      LeadSubmitPage(title: 'Lead Details'),
+                    ]
+                    : [
+                      Loan(title: 'loan'),
+                      Personal(title: 'personal'),
+                      Address(title: 'address'),
+                      CoApplicantPage(title: 'Co Applicant Details'),
+                    ],
           ),
         ),
       ),

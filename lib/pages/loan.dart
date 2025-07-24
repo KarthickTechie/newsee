@@ -68,7 +68,7 @@ class Loan extends StatelessWidget {
     final _context = context;
     return Kwillpopscope(
       routeContext: context,
-      form:form,
+      form: form,
       widget: Scaffold(
         appBar: AppBar(
           title: Text("Loan Details"),
@@ -78,7 +78,7 @@ class Loan extends StatelessWidget {
           listener: (context, state) {
             BuildContext ctxt = context;
             print('LoanProductBlocListener:: log =>  ${state.showBottomSheet}');
-      
+
             if (state.showBottomSheet == true) {
               openBottomSheet(
                 context,
@@ -116,7 +116,7 @@ class Loan extends StatelessWidget {
                 // ),
               );
             }
-      
+
             if (state.selectedProduct != null &&
                 state.showBottomSheet == false &&
                 state.status != SaveStatus.success) {
@@ -124,7 +124,7 @@ class Loan extends StatelessWidget {
               LoanproductState.init();
               Navigator.of(_context).pop();
             }
-      
+
             if (state.status == SaveStatus.success && state.getLead == false) {
               Globalconfig.loanAmountMaximum = int.parse(
                 state.selectedProduct?.prdamtToRange ?? '0',
@@ -160,15 +160,17 @@ class Loan extends StatelessWidget {
           builder: (context, state) {
             if (state.getLead!) {
               form.controls['typeofloan']?.updateValue(
-                state.selectedProductScheme?.optionValue.toString()
+                state.selectedProductScheme?.optionValue.toString(),
               );
               form.controls['maincategory']?.updateValue(
-                state.selectedMainCategory?.lsfFacId.toString()
+                state.selectedMainCategory?.lsfFacId.toString(),
               );
               form.controls['subcategory']?.updateValue(
-                state.selectedSubCategoryList?.lsfFacId.toString()
+                state.selectedSubCategoryList?.lsfFacId.toString(),
               );
               form.markAsDisabled();
+            } else {
+              form.markAsEnabled();
             }
             return ReactiveForm(
               formGroup: form,
@@ -184,7 +186,7 @@ class Loan extends StatelessWidget {
                           form.controls['typeofloan']?.updateValue(
                             val.optionValue,
                           );
-      
+
                           context.read<LoanproductBloc>().add(
                             LoanProductDropdownChange(field: val),
                           );
@@ -203,7 +205,7 @@ class Loan extends StatelessWidget {
                                   optionValue: '',
                                 ),
                           );
-      
+
                           // if (state.selectedProductScheme != null) {
                           //   form.controls['typeofloan']?.updateValue(
                           //     state.selectedProductScheme?.optionValue,
@@ -222,7 +224,7 @@ class Loan extends StatelessWidget {
                           form.controls['maincategory']?.updateValue(
                             val.lsfFacId,
                           );
-      
+
                           context.read<LoanproductBloc>().add(
                             LoanProductDropdownChange(field: val),
                           );
@@ -243,7 +245,7 @@ class Loan extends StatelessWidget {
                                   lsfBizVertical: '',
                                 ),
                           );
-      
+
                           // if (state.selectedMainCategory != null) {
                           //   form.controls['maincategory']?.updateValue(
                           //     state.selectedMainCategory?.lsfFacId,
@@ -259,8 +261,10 @@ class Loan extends StatelessWidget {
                         label: 'Sub Category',
                         items: state.subCategoryList,
                         onChangeListener: (Product val) {
-                          form.controls['subcategory']?.updateValue(val.lsfFacId);
-      
+                          form.controls['subcategory']?.updateValue(
+                            val.lsfFacId,
+                          );
+
                           context.read<LoanproductBloc>().add(
                             LoanProductDropdownChange(field: val),
                           );
@@ -281,7 +285,7 @@ class Loan extends StatelessWidget {
                                   lsfBizVertical: '',
                                 ),
                           );
-      
+
                           // if (state.selectedSubCategoryList != null) {
                           //   form.controls['subcategory']?.updateValue(
                           //     state.selectedSubCategoryList?.lsfFacId,
@@ -292,7 +296,7 @@ class Loan extends StatelessWidget {
                           // }
                         },
                       ),
-      
+
                       Column(
                         children:
                             state.selectedProduct != null
@@ -325,11 +329,12 @@ class Loan extends StatelessWidget {
                             ),
                           ),
                           onPressed: () {
-                            if (state.getLead == null || state.getLead == false) {
+                            if (state.getLead == null ||
+                                state.getLead == false) {
                               final blocState =
-                                context.read<LoanproductBloc>().state;
+                                  context.read<LoanproductBloc>().state;
                               final selectedProduct = blocState.selectedProduct;
-        
+
                               if (form.valid) {
                                 if (selectedProduct == null) {
                                   showDialog(
@@ -338,9 +343,12 @@ class Loan extends StatelessWidget {
                                         (ctx) => AlertDialog(
                                           title: Row(
                                             children: [
-                                              Icon(Icons.info, color: Colors.teal),
+                                              Icon(
+                                                Icons.info,
+                                                color: Colors.teal,
+                                              ),
                                               SizedBox(width: 8),
-        
+
                                               Text(
                                                 'Alert',
                                                 style: TextStyle(
@@ -365,7 +373,9 @@ class Loan extends StatelessWidget {
                                   );
                                   return;
                                 }
-                                print('loan product form value => ${form.value}');
+                                print(
+                                  'loan product form value => ${form.value}',
+                                );
                                 context.read<LoanproductBloc>().add(
                                   SaveLoanProduct(choosenProduct: form.value),
                                 );
@@ -373,7 +383,6 @@ class Loan extends StatelessWidget {
                                 form.markAllAsTouched();
                               }
                             }
-                            
                           },
                           child: Text('Next'),
                         ),

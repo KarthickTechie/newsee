@@ -81,6 +81,7 @@ dependencies:
   internet_connection_checker: ^3.0.1
   flutter_pdfview: 1.3.2
   encrypt: ^5.0.3
+  flutter_dotenv: ^5.2.1
 
 dev_dependencies:
   flutter_test:
@@ -119,7 +120,7 @@ flutter:
     - assets/MSME.svg
     - assets/Vehicle_Loan.svg
     - assets/Retail_loan.svg
-
+    - .env
     # - assets/logo1.jpg
 
   # An image asset can refer to one or more resolution-specific "variants", see

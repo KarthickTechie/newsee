@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:newsee/AppSamples/RouterApp/routerapp.dart';
 import 'package:newsee/Utils/injectiondependency.dart';
+import 'package:newsee/Utils/key_utils.dart';
 import 'package:newsee/core/db/db_config.dart';
 
-void main() {
+void main() async {
   // runApp(MyApp()) // Default MyApp()
   // runApp(Counter()); // load CounterApp
   // runApp(App()); // timerApp
@@ -11,6 +12,8 @@ void main() {
   //runApp(LoginApp()); // Login Form App
   // dependencyInjection();
   // setupLocator();
+  WidgetsFlutterBinding.ensureInitialized();
+  await ApiKeyProvider.initApiKey();
   runApp(RouterApp()); // GoRouter Sample App
 }
 
