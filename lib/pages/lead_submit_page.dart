@@ -211,7 +211,10 @@ class LeadSubmitPage extends StatelessWidget {
           List<CoapplicantData>? coguappData = coguappState?.coAppList;
           String? isWhetherAddCoappGurantor = coguappState?.isApplicantsAdded;
 
+          print('dedupe-------------->$dedupeData');
+          print('personalData-------------->$personalData');
           print('addressData-------------->$addressData');
+          print('coguappData-------------->${state.leadId}, $coguappData');
           return state.leadId == null
               ? ListView(
                 padding: const EdgeInsets.all(16),
@@ -237,7 +240,7 @@ class LeadSubmitPage extends StatelessWidget {
                         : showNoDataCard(context),
               )
               : ApplicationCard(
-                leadId: state.leadId != null ? state.leadId! : '',
+                leadId: state.leadId ?? '',
                 status: state.proposalSubmitStatus,
                 onProceedPressed: () {
                   createProposal(context, state);
@@ -349,8 +352,7 @@ class LeadSubmitPage extends StatelessWidget {
                 icon: Icons.person,
                 label: "Type",
                 value:
-                    dedupeData.cifNumber != null ||
-                            dedupeData.cifNumber!.isNotEmpty
+                    dedupeData.cifNumber != null || dedupeData.cifNumber == ''
                         ? "Applicant | Existing Customer"
                         : "Applicant | New Customer",
               ),
@@ -362,7 +364,11 @@ class LeadSubmitPage extends StatelessWidget {
               SysmoTitle(
                 icon: Icons.details,
                 label: "CIF ID",
-                value: dedupeData.cifNumber!,
+                // value: dedupeData.cifNumber!,
+                value:
+                    dedupeData.cifNumber != null || dedupeData.cifNumber != ''
+                        ? dedupeData.cifNumber!
+                        : '',
               ),
               SysmoTitle(
                 icon: Icons.currency_rupee,

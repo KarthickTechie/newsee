@@ -234,9 +234,8 @@ final routes = GoRouter(
             }
           },
           child: BlocProvider(
-            create:
-                (_) => DocumentBloc(mediaService: MediaService())
-                  ..add(FetchDocumentsEvent(proposalNumber: proposalNumber)),
+            create: (_) => DocumentBloc(mediaService: MediaService()),
+            // ..add(FetchDocumentsEvent(proposalNumber: proposalNumber)),
             lazy: false,
             child: DocumentPage(proposalnumber: proposalNumber),
           ),
