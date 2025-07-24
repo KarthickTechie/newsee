@@ -790,47 +790,61 @@ class Personal extends StatelessWidget {
                       SizedBox(height: 20),
 
                       Center(
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Color.fromARGB(255, 3, 9, 110),
-                            foregroundColor: Colors.white,
-                            padding: EdgeInsets.symmetric(
-                              horizontal: 24,
-                              vertical: 12,
-                            ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
-                            ),
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Color.fromARGB(255, 3, 9, 110),
+                          foregroundColor: Colors.white,
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 24,
+                            vertical: 12,
                           ),
-                          onPressed: () {
-                            if (state.getLead == null ||
-                                state.getLead == false) {
-                              if (form.valid) {
-                                PersonalData personalData =
-                                    PersonalData.fromMap(form.value);
-                                PersonalData personalDataFormatted =
-                                    personalData.copyWith(
-                                      dob: getDateFormatedByProvided(
-                                        personalData.dob,
-                                        from: AppConstants.Format_dd_MM_yyyy,
-                                        to: AppConstants.Format_yyyy_MM_dd,
-                                      ),
-                                    );
-
-                                context.read<PersonalDetailsBloc>().add(
-                                  PersonalDetailsSaveEvent(
-                                    personalData: personalDataFormatted,
+                        ),
+                        onPressed: () {
+                          print("personal Details value ${form.value}");
+    
+                          if (form.valid) {
+                            PersonalData personalData = PersonalData.fromMap(
+                              form.value,
+                            );
+                            PersonalData personalDataFormatted = personalData
+                                .copyWith(
+                                  dob: getDateFormatedByProvided(
+                                    personalData.dob,
+                                    from: AppConstants.Format_dd_MM_yyyy,
+                                    to: AppConstants.Format_yyyy_MM_dd,
                                   ),
                                 );
-                              } else {
-                                form.markAllAsTouched();
-                                scrollToErrorField();
-                              }
-                            }
-                          },
-                          child: Text('Next'),
-                        ),
+    
+                            context.read<PersonalDetailsBloc>().add(
+                              PersonalDetailsSaveEvent(
+                                personalData: personalDataFormatted,
+                              ),
+                            );
+                          } else {
+                            form.markAllAsTouched();
+                            showDialog(
+                              context: context,
+                              barrierDismissible: false,
+                              builder:
+                                  (_) => SysmoAlert.warning(
+                                    message:
+                                        "Please check error message and Enter valid data",
+                                    onButtonPressed:
+                                        () => Navigator.pop(context),
+                                  ),
+                            );
+                            // ScaffoldMessenger.of(context).showSnackBar(
+                            //   SnackBar(
+                            //     content: Text(
+                            //       'Please Check Error Message and Enter Valid Data ',
+                            //     ),
+                            //   ),
+                            // );
+                          }
+                        },
+                        child: Text('Next'),
                       ),
+                    ),
                     ],
                   ),
                 ),

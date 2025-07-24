@@ -14,6 +14,7 @@ import 'package:newsee/core/api/AsyncResponseHandler.dart';
 import 'package:newsee/core/api/api_client.dart';
 import 'package:newsee/core/api/api_config.dart';
 import 'package:newsee/feature/auth/domain/model/user_details.dart';
+import 'package:newsee/widgets/loader.dart';
 import 'package:newsee/widgets/sysmo_alert.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 
@@ -176,8 +177,8 @@ createMpin(BuildContext context, AsyncResponseHandler? asyncResponseHandler) {
                         "token": ApiConfig.AUTH_TOKEN,
                       },
                     );
-
                     if (response.data[ApiConstants.api_response_success]) {
+                      isloading.value = false;
                       showDialog(
                         context: context,
                         builder:
@@ -191,6 +192,7 @@ createMpin(BuildContext context, AsyncResponseHandler? asyncResponseHandler) {
                             ),
                       );
                     } else {
+                      isloading.value = false;
                       showDialog(
                         context: context,
                         builder:

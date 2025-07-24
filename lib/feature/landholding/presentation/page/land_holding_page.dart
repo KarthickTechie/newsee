@@ -267,7 +267,16 @@ class LandHoldingPage extends StatelessWidget {
               if (state.status == SaveStatus.mastersucess ||
                   state.status == SaveStatus.masterfailure) {
                 if (state.status == SaveStatus.masterfailure) {
-                  showSnack(context, message: 'Failed to Fetch Masters...');
+                   showDialog(
+                context: context,
+                builder:
+                    (_) => SysmoAlert.failure(
+                      message: "Failed to Fetch Masters...",
+                      onButtonPressed: () {
+                        Navigator.pop(context);
+                      },
+                    ),
+              );
                 }
 
                 print('city list => ${state.cityMaster}');

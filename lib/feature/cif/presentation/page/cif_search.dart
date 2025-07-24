@@ -128,7 +128,7 @@ class CIFSearch extends StatelessWidget {
                   Container(
                     padding: EdgeInsets.fromLTRB(20, 0, 0, 0),
                     child: Text(
-                      "Cif Search",
+                      "CIF Search",
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 24,

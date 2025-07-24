@@ -23,12 +23,12 @@ class CoAppDetailsDedupeEvent extends CoappDetailsEvent {
 // this event will save coapp details from form
 
 class CoAppDetailsSaveEvent extends CoappDetailsEvent {
-  final CoapplicantData coapplicantData;
-  // final bool isEdit;
+  final CoapplicantData? coapplicantData;
+  final bool? coappadded;
   final int? index;
   CoAppDetailsSaveEvent({
-    required this.coapplicantData,
-    // this.isEdit = false,
+    this.coapplicantData,
+    this.coappadded,
     this.index,
   });
 }

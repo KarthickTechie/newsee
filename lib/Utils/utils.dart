@@ -107,9 +107,10 @@ void showSnack(BuildContext context, {required String message}) {
 
 void goToNextTab({required BuildContext context}) {
   final tabController = DefaultTabController.of(context);
-  if (tabController.index < tabController.length - 1) {
+  if (tabController.index < tabController.length - 1)  {
     tabController.animateTo(tabController.index + 1);
   }
+
 }
 
 CoappDetailsState mapGeographyMasterResponseForCoAppPage(
