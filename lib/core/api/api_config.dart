@@ -1,6 +1,8 @@
 class ApiConfig {
   static const String BASE_URL = "http://192.168.0.19:19084/lendperfect/";
 
+  // static const String BASE_URL = "http://172.30.1.112:9080/lendperfect/";
+
   static const String AUTH_TOKEN =
       'U2FsdGVkX1/Wa6+JeCIOVLl8LTr8WUocMz8kIGXVbEI9Q32v7zRLrnnvAIeJIVV3';
   static const String DEVICE_ID =
@@ -19,6 +21,7 @@ class ApiConfig {
       "MasterDetails/getDistrictCode";
 
   static const String API_RESPONSE_SUCCESS_KEY = 'Success';
+
   static const String API_RESPONSE_ERRORMESSAGE_KEY = 'ErrorMessage';
 
   static const String API_RESPONSE_RESPONSE_KEY = 'responseData';
@@ -41,6 +44,7 @@ class ApiConfig {
       'MobileService/saveProposedCrops';
 
   static const String CROP_GET_API_ENDPOINT = 'MobileService/getProposedCrops';
+
   static const String CROP_DELETE_API_ENDPOINT =
       'MobileService/deleteProposedCrops';
 
@@ -55,7 +59,8 @@ class ApiConfig {
   static const String UPLOAD_DOCUMENT = 'MobileService/getDocumentUpload';
   static const String FETCH_UPLOAD_DOCUMENT = 'MobileService/getUploadDocument';
   static const String DELETE_UPLOAD_DOCUMENT = 'MobileService/deleteUploadFile';
-  static const String GET_LAND_CROP_STATUS = 'MobileService/getLandAndCropStatus';
+  static const String GET_LAND_CROP_STATUS =
+      'MobileService/getLandAndCropStatus';
   static const String mpinRegisterEndpoint = 'MobileService/registerMPIN';
   static const String mpinValidateEndPoint = 'MobileService/validateMPINLogin';
   static const String module = 'AGRI';

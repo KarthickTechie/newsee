@@ -17,7 +17,7 @@ class GetDocumentRepoImpl extends GetDocumentsRepo {
 
     var response = await documentdatasource.getDocuments(request);
     if (response.data[ApiConstants.api_response_success]) {
-      print(response.data['responseData']);
+      print('docResponse: ${response.data['responseData']}');
       return AsyncResponseHandler.right(
         response.data[ApiConstants.api_response_data],
       );
