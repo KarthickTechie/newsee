@@ -69,9 +69,11 @@ class Sidenavigationbar extends StatelessWidget {
               );
             },
           ),
-             ListTile(
-            leading: Icon(Icons.home_filled, color: Colors.teal),
-            title: Text("HomePage"),
+          buildGradientTile(
+            context: sidemenucontext,
+
+            icon: Icons.home_filled,
+            title: "Home",
             onTap: () {
               onTabSelected?.call(0);
               Navigator.push(
