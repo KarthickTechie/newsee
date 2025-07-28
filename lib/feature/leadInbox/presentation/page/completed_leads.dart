@@ -102,7 +102,11 @@ class CompletedLeads extends StatelessWidget {
         },
         builder: (context, state) {
           Future<void> onRefresh() async {
-            context.read<LeadBloc>().add(SearchLeadEvent());
+            context.read<LeadBloc>().add(
+              SearchLeadEvent(
+                pageNo: state.currentPage 
+              )
+            );
           }
 
           if (state.status == LeadStatus.loading) {
@@ -121,7 +125,7 @@ class CompletedLeads extends StatelessWidget {
           }
 
           if (state.status == LeadStatus.failure) {
-            return renderWhenNoItems(onRefresh, state);
+            return renderWhenNoItems(onRefresh, state, context);
           }
 
           final List<GroupLeadInbox>? allLeads = state.leadResponseModel;
@@ -133,7 +137,7 @@ class CompletedLeads extends StatelessWidget {
             searchQuery: searchQuery,
           );
           if (filteredLeads == null || filteredLeads.isEmpty) {
-            return renderWhenNoItems(onRefresh, state);
+            return renderWhenNoItems(onRefresh, state, context);
           } else {
             // final totalPages = (filteredLeads.length / itemsPerPage).ceil();
             return renderItems(state, filteredLeads, onRefresh, context);
@@ -151,19 +155,12 @@ class CompletedLeads extends StatelessWidget {
     Future<void> Function() onRefresh,
     BuildContext context,
   ) {
-    final currentPage = state.currentPage - 1;
+    final currentPage = state.currentPage;
     print("currentPage: $currentPage");
     final int pageCount = 20;
-    final int totalNumberOfApplication = state.totApplication!.toInt();
+    final int totalNumberOfApplication = state.totApplication.toInt();
     final int numberOfpages = (totalNumberOfApplication / pageCount).ceil();
-    // final startIndex = currentPage * AppConstants.PAGINATION_ITEM_PER_PAGE;
-    // final endIndex = ((currentPage + 1) * AppConstants.PAGINATION_ITEM_PER_PAGE)
-    //     .clamp(0, filteredLeads.length);
-    // // this is the selected index
 
-    // final paginatedLeads = filteredLeads.sublist(startIndex, endIndex);
-
-    //
     return RefreshIndicator(
       onRefresh: onRefresh,
       child: Column(
@@ -238,15 +235,48 @@ class CompletedLeads extends StatelessWidget {
   RefreshIndicator renderWhenNoItems(
     Future<void> Function() onRefresh,
     LeadState state,
+    BuildContext context,
   ) {
+    final currentPage = state.currentPage;
+    print("currentPage: $currentPage");
+    final int pageCount = 20;
+    final int totalNumberOfApplication = state.totApplication.toInt();
+    final int numberOfpages = (totalNumberOfApplication / pageCount).ceil();
     return RefreshIndicator(
       onRefresh: onRefresh,
-      child: ListView(
+      child: Column(
         children: [
-          const SizedBox(height: 200),
-          Center(
-            child: Text(
-              state.errorMessage ?? AppConstants.GLOBAL_NO_DATA_FOUND,
+          Expanded(
+            child: ListView(
+              children: [
+                const SizedBox(height: 200),
+                Center(
+                  child: Text(
+                    state.errorMessage ?? AppConstants.GLOBAL_NO_DATA_FOUND,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(5),
+            child: NumberPaginator(
+              numberPages: numberOfpages,
+              initialPage: currentPage,
+              onPageChange: (int index) {
+                context.read<LeadBloc>().add(SearchLeadEvent(pageNo: index));
+              },
+              child: const SizedBox(
+                width: 250,
+                height: 35,
+                child: Row(
+                  children: [
+                    PrevButton(),
+                    Expanded(child: NumberContent()),
+                    NextButton(),
+                  ],
+                ),
+              ),
             ),
           ),
         ],

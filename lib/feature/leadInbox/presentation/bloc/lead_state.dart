@@ -16,7 +16,7 @@ class LeadState extends Equatable {
   final List<GroupLeadInbox>? leadResponseModel;
   final String? errorMessage;
   final int currentPage;
-  final int? totApplication;
+  final int totApplication;
   final String? proposalNo;
   final SaveStatus? proposalSubmitStatus;
   final SaveStatus? getLeaStatus;
@@ -26,8 +26,8 @@ class LeadState extends Equatable {
     this.status = LeadStatus.initial,
     this.leadResponseModel,
     this.errorMessage,
-    this.currentPage = 1,
-    this.totApplication,
+    this.currentPage = 0,
+    this.totApplication = 1,
     this.proposalNo,
     this.proposalSubmitStatus,
     this.getLeaStatus,

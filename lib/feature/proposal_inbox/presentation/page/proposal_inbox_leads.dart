@@ -68,7 +68,7 @@ class ProposalInbox extends StatelessWidget {
           Future<void> onRefresh() async {
             context.read<ProposalInboxBloc>().add(
               SearchProposalInboxEvent(
-                request: LeadInboxRequest(userid: '', token: ''),
+                request: LeadInboxRequest(userid: '', token: '', pageNo: state.currentPage),
               ),
             );
           }
@@ -89,7 +89,7 @@ class ProposalInbox extends StatelessWidget {
           }
 
           if (state.status == ProposalInboxStatus.failure) {
-            return renderWhenNoItems(onRefresh, state);
+            return renderWhenNoItems(onRefresh, state, context);
           }
 
           if (state.applicationStatus == SaveStatus.loading) {
@@ -120,7 +120,7 @@ class ProposalInbox extends StatelessWidget {
             searchQuery: searchQuery,
           );
           if (filteredLeads == null || filteredLeads.isEmpty) {
-            return renderWhenNoItems(onRefresh, state);
+            return renderWhenNoItems(onRefresh, state, context);
           } else {
             // final totalPages = (filteredLeads.length / itemsPerPage).ceil();
             return renderItems(state, filteredLeads, onRefresh, context);
@@ -141,10 +141,8 @@ class ProposalInbox extends StatelessWidget {
     final currentPage = state.currentPage;
     print("currentPage: $currentPage");
     final int pageCount = 20;
-    final int totalNumberOfApplication =
-        state.totalProposalApplication!.toInt();
+    final int totalNumberOfApplication = state.totalProposalApplication.toInt();
     final int numberOfpages = (totalNumberOfApplication / pageCount).ceil();
-
     return RefreshIndicator(
       onRefresh: onRefresh,
       child: Column(
@@ -216,15 +214,58 @@ class ProposalInbox extends StatelessWidget {
   RefreshIndicator renderWhenNoItems(
     Future<void> Function() onRefresh,
     ProposalInboxState state,
+    BuildContext context,
   ) {
+    final currentPage = state.currentPage;
+    print("currentPage: $currentPage");
+    final int pageCount = 20;
+    final int totalNumberOfApplication = state.totalProposalApplication.toInt();
+    final int numberOfpages = (totalNumberOfApplication / pageCount).ceil();
     return RefreshIndicator(
       onRefresh: onRefresh,
-      child: ListView(
+      child: Column(
         children: [
-          const SizedBox(height: 200),
-          Center(
-            child: Text(
-              state.errorMessage ?? AppConstants.GLOBAL_NO_DATA_FOUND,
+          Expanded(
+            child: ListView(
+              children: [
+                const SizedBox(height: 200),
+                Center(
+                  child: Text(
+                    state.errorMessage ?? AppConstants.GLOBAL_NO_DATA_FOUND,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(5),
+            child: NumberPaginator(
+              numberPages: numberOfpages,
+              initialPage: currentPage,
+              onPageChange: (int index) {
+                context.read<ProposalInboxBloc>().add(
+                  SearchProposalInboxEvent(
+                    request: LeadInboxRequest(
+                      userid: '',
+                      token: '',
+                      pageNo: index,
+                      pageCount: 20,
+                    ),
+                  ),
+                );
+              },
+
+              child: const SizedBox(
+                width: 250,
+                height: 35,
+                child: Row(
+                  children: [
+                    PrevButton(),
+                    Expanded(child: NumberContent()),
+                    NextButton(),
+                  ],
+                ),
+              ),
             ),
           ),
         ],
@@ -245,6 +286,7 @@ class ProposalInbox extends StatelessWidget {
               subtitle: "View your CIC here",
               status: status.cibilDetails ? 'completed' : 'pending',
               onTap: () {
+                context.pop();
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => CicCheckPage()),
@@ -257,6 +299,7 @@ class ProposalInbox extends StatelessWidget {
               subtitle: "View your Land Details here",
               status: status.landHoldingDetails ? 'completed' : 'pending',
               onTap: () {
+                context.pop();
                 context.pushNamed(
                   'landholdings',
                   extra: {
@@ -272,6 +315,7 @@ class ProposalInbox extends StatelessWidget {
               subtitle: "View your Crop Details here",
               status: status.ProposedCropDetails ? 'completed' : 'pending',
               onTap: () {
+                context.pop();
                 context.pushNamed('cropdetails', extra: proposal['propNo']);
               },
             ),
@@ -281,6 +325,7 @@ class ProposalInbox extends StatelessWidget {
               subtitle: "Pre-Sanctioned Documents Upload",
               status: status.documentDetails ? 'completed' : 'pending',
               onTap: () {
+                context.pop();
                 context.pushNamed('document', extra: proposal['propNo']);
               },
             ),

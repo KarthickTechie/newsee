@@ -10,7 +10,7 @@ class ProposalInboxState extends Equatable {
   final List<GroupProposalInbox>? proposalResponseModel;
   final String? errorMessage;
   final int currentPage;
-  final int? totalProposalApplication;
+  final int totalProposalApplication;
   final SaveStatus applicationStatus;
   final ApplicationStatusResponse? applicationStatusResponse;
   final Map<String, dynamic>? currentApplication;
@@ -19,8 +19,8 @@ class ProposalInboxState extends Equatable {
     this.status = ProposalInboxStatus.init,
     this.proposalResponseModel,
     this.errorMessage,
-    this.currentPage = 1,
-    this.totalProposalApplication,
+    this.currentPage = 0,
+    this.totalProposalApplication = 1,
     this.applicationStatus = SaveStatus.init,
     this.applicationStatusResponse,
     this.currentApplication
