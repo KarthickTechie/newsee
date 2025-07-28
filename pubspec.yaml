@@ -72,6 +72,7 @@ dependencies:
   mobile_scanner: ^7.0.1
   permission_handler: ^11.3.1
   xml2json: ^6.2.7
+  google_ml_kit: ^0.20.0
   shared_preferences: ^2.5.3
   number_paginator: ^1.1.0
   flutter_slidable: ^3.1.0
