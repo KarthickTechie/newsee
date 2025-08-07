@@ -23,6 +23,7 @@ import 'package:newsee/feature/leadsubmit/presentation/bloc/lead_submit_bloc.dar
 import 'package:newsee/feature/loanproductdetails/presentation/bloc/loanproduct_bloc.dart';
 import 'package:newsee/feature/masters/domain/modal/product_master.dart';
 import 'package:newsee/feature/personaldetails/presentation/bloc/personal_details_bloc.dart';
+import 'package:newsee/feature/speechtotext/presentation/remarks_text_field.dart';
 import 'package:newsee/widgets/application_card.dart';
 import 'package:newsee/widgets/bottom_sheet.dart';
 import 'package:newsee/widgets/productcard.dart';
@@ -385,6 +386,9 @@ class LeadSubmitPage extends StatelessWidget {
         ),
       ),
       SizedBox(height: 20),
+      RemarksTextField(),
+      SizedBox(height: 20),
+
       status == SubmitStatus.loading
           ? ElevatedButton(
             onPressed: () {},

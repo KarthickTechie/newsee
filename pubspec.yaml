@@ -84,6 +84,7 @@ dependencies:
   encrypt: ^5.0.3
   flutter_charts: ^0.5.2
   fl_chart: ^0.64.0
+  speech_to_text: 7.0.0
 
 dev_dependencies:
   flutter_test:

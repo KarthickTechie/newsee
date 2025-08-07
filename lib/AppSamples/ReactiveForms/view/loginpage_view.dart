@@ -3,9 +3,12 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:get_it/get_it.dart';
 import 'package:newsee/AppData/app_constants.dart';
 import 'package:newsee/AppSamples/ReactiveForms/view/login-with-account.dart';
 import 'package:flutter_pdfview/flutter_pdfview.dart';
+import 'package:newsee/Utils/local_biometric.dart';
+import 'package:newsee/Utils/shared_preference_utils.dart';
 import 'package:newsee/core/api/api_client.dart';
 import 'package:newsee/feature/pdf_viewer/presentation/pages/pdf_viewer_page.dart';
 import 'package:newsee/widgets/sysmo_alert.dart';
@@ -30,7 +33,16 @@ description : A stateless widget that serves as the main login screen for the ap
  */
 
 class LoginpageView extends StatelessWidget {
-  Future fingerPrintScanner(context) async {}
+  Future fingerPrintScanner(context) async {
+    final result =
+        await GetIt.instance
+            .get<BioMetricLogin>()
+            .biometricAuthenticationWithKey();
+    final user = await loadUser();
+    print(
+      ' biometric auth response => ${result.message} :: ${result.status} user :: ${user?.LPuserID}',
+    );
+  }
 
   @override
   Widget build(BuildContext context) {

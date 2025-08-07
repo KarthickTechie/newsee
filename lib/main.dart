@@ -13,8 +13,8 @@ void main() async {
   // runApp(App()); // timerApp
   // runApp(ToolBarSample()); // Toolbar App
   //runApp(LoginApp()); // Login Form App
-  // dependencyInjection();
-  // setupLocator();
+
+  dependencyInjection();
   runApp(RouterApp()); // GoRouter Sample App
   // final cameras = await availableCameras();
   // runApp(LivelinessApp(cameras: cameras));

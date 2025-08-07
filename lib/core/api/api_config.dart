@@ -1,6 +1,9 @@
 class ApiConfig {
+  // local dev /qa url
   static const String BASE_URL = "http://192.168.0.19:19084/lendperfect/";
 
+  // demo routed url - federal
+  // static const String BASE_URL = "http://180.151.63.116:2083/lendperfect/";
   // static const String BASE_URL = "http://172.30.1.112:9080/lendperfect/";
 
   static const String AUTH_TOKEN =

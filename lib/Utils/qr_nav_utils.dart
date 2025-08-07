@@ -88,11 +88,11 @@ void _navigateToOCRScanner(BuildContext context) {
           (context) => OCRScannerPage(
             onTextDetected: (result) {
               print('OCR Result => $result');
-              Navigator.pop(context);
+              // Navigator.pop(context);
 
               showDialog(
                 context: context,
-                builder: (BuildContext context) {
+                builder: (BuildContext dialogContext) {
                   return AlertDialog(
                     title: Text('OCR Scan Result'),
                     content: Text(result),
@@ -100,7 +100,7 @@ void _navigateToOCRScanner(BuildContext context) {
                     actions: [
                       TextButton(
                         onPressed: () {
-                          Navigator.pop(context);
+                          Navigator.pop(dialogContext);
                           // ctx.read<PersonalDetailsBloc>().add(
                           //   ScannerResponseEvent(
                           //     scannerResponse: {'aadhaarResponse': result},
