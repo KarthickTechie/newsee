@@ -220,4 +220,11 @@ class AppForms {
       'lasPreToCollect': FormControl<String>(validators: [Validators.required]),
     });
   }
+
+  static FormGroup fieldInspectionForm() {
+    return FormGroup({
+      'remarks': FormControl<String>(),
+      'comment': FormControl<String>(),
+    });
+  }
 }

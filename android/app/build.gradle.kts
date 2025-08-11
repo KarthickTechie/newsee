@@ -8,7 +8,8 @@ plugins {
 android {
     namespace = "com.example.newsee"
     compileSdk = 35
-    ndkVersion = flutter.ndkVersion
+    // ndkVersion = flutter.ndkVersion
+    ndkVersion = "27.0.12077973"
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
@@ -16,7 +17,7 @@ android {
     }
 
     kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_11.toString()
+       jvmTarget = JavaVersion.VERSION_11.toString()
     }
 
     defaultConfig {

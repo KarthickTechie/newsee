@@ -25,10 +25,13 @@ import 'package:newsee/feature/masters/domain/repository/master_repo.dart';
 import 'package:newsee/feature/masters/presentation/bloc/masters_bloc.dart';
 import 'package:newsee/feature/masters/presentation/page/masters_page.dart';
 import 'package:newsee/feature/cic_check/cic_check_page.dart';
+import 'package:newsee/feature/speech_text/bloc/speech.bloc.dart';
+import 'package:newsee/pages/field_inspection_page.dart';
 import 'package:newsee/pages/home_page.dart';
 import 'package:newsee/pages/newlead_page.dart';
 import 'package:newsee/pages/not_found_error.page.dart';
 import 'package:newsee/pages/profile_page.dart';
+import 'package:speech_to_text/speech_to_text.dart' as stt;
 
 import '../feature/documentupload/presentation/bloc/document_event.dart';
 
@@ -127,10 +130,11 @@ final routes = GoRouter(
     GoRoute(
       path: AppRouteConstants.NEWLEAD_PAGE['path']!,
       name: AppRouteConstants.NEWLEAD_PAGE['name'],
-      builder: (context, state)  {
-        final GetLeadResponse? leadData = (state.extra as Map<String,dynamic>?)?['leadData']!;
+      builder: (context, state) {
+        final GetLeadResponse? leadData =
+            (state.extra as Map<String, dynamic>?)?['leadData']!;
         return NewLeadPage(fullLeadData: leadData);
-      } 
+      },
     ),
     GoRoute(
       path: AppRouteConstants.MASTERS_PAGE['path']!,
@@ -299,6 +303,15 @@ final routes = GoRouter(
           ),
         );
       },
+    ),
+    GoRoute(
+      path: AppRouteConstants.FieldInspect_Page['path']!,
+      name: AppRouteConstants.FieldInspect_Page['name'],
+      builder:
+          (context, state) => BlocProvider(
+            create: (context) => SpeechBloc(stt.SpeechToText()),
+            child: FieldInspectionPage(),
+          ),
     ),
   ],
   redirect: (context, state) {

@@ -43,4 +43,8 @@ class AppRouteConstants {
     'name': '  imageview',
     'path': '/imageview',
   };
+  static const RouteProps FieldInspect_Page = {
+    'name': 'fieldinspection',
+    'path': '/fieldinspection',
+  };
 }
