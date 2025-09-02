@@ -8,6 +8,7 @@ import 'package:newsee/feature/masters/domain/modal/product.dart';
 import 'package:newsee/feature/masters/domain/modal/product_master.dart';
 import 'package:newsee/feature/masters/domain/modal/productschema.dart';
 import 'package:newsee/widgets/k_willpopscope.dart';
+import 'package:newsee/widgets/lead_tile_card.dart';
 import 'package:newsee/widgets/sysmo_alert.dart';
 import 'package:newsee/widgets/bottom_sheet.dart';
 import 'package:newsee/widgets/productcard.dart';
@@ -103,11 +104,25 @@ class Loan extends StatelessWidget {
                             ),
                           );
                         },
-                        child: ProductCard(
-                          productId: product.prdCode,
-                          productDescription: product.prdDesc,
-                          amountFrom: formatAmount(product.prdamtFromRange),
-                          amountTo: formatAmount(product.prdamtToRange),
+                        // child: LeadTileCard(
+                        //   title : '',
+                        //   productId: product.prdCode,
+                        //   productDescription: product.prdDesc,
+                        //   amountFrom: formatAmount(product.prdamtFromRange),
+                        //   amountTo: formatAmount(product.prdamtToRange),
+                        // ),
+                        child: LeadTileCard(
+                          title: product.prdDesc,
+                          subtitle: product.prdCode,
+                          icon: Icons.card_giftcard,
+                          color: Colors.teal,
+                          type: '',
+                          product: '',
+                          phone: 'N/A',
+                          ennablePhoneTap: false,
+                          createdon: 'N/A',
+                          location: 'N/A',
+                          loanamount: formatAmount(product.prdamtFromRange),
                         ),
                       ),
                     );
@@ -301,14 +316,31 @@ class Loan extends StatelessWidget {
                         children:
                             state.selectedProduct != null
                                 ? [
-                                  ProductCard(
-                                    productId: state.selectedProduct!.prdCode,
-                                    productDescription:
-                                        state.selectedProduct!.prdDesc,
-                                    amountFrom: formatAmount(
+                                  // ProductCard(
+                                  //   productId: state.selectedProduct!.prdCode,
+                                  //   productDescription:
+                                  //       state.selectedProduct!.prdDesc,
+                                  //   amountFrom: formatAmount(
+                                  //     state.selectedProduct!.prdamtFromRange,
+                                  //   ),
+                                  //   amountTo: formatAmount(
+                                  //     state.selectedProduct!.prdamtToRange,
+                                  //   ),
+                                  // ),
+                                  LeadTileCard(
+                                    title: state.selectedProduct!.prdDesc,
+                                    subtitle: state.selectedProduct!.prdCode,
+                                    icon: Icons.card_giftcard,
+                                    color: Colors.teal,
+                                    type: '',
+                                    product: '',
+                                    phone: 'Loan Lower Limit',
+                                    ennablePhoneTap: false,
+                                    createdon: formatAmount(
                                       state.selectedProduct!.prdamtFromRange,
                                     ),
-                                    amountTo: formatAmount(
+                                    location: 'Loan Upper Limit',
+                                    loanamount: formatAmount(
                                       state.selectedProduct!.prdamtToRange,
                                     ),
                                   ),
