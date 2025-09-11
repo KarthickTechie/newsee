@@ -10,6 +10,7 @@ import 'package:flutter_pdfview/flutter_pdfview.dart';
 import 'package:newsee/Utils/local_biometric.dart';
 import 'package:newsee/Utils/shared_preference_utils.dart';
 import 'package:newsee/core/api/api_client.dart';
+import 'package:newsee/feature/facedetection/presentation/page/face_detection.dart';
 import 'package:newsee/feature/pdf_viewer/presentation/pages/pdf_viewer_page.dart';
 import 'package:newsee/widgets/sysmo_alert.dart';
 import 'package:path/path.dart';

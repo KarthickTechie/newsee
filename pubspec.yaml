@@ -85,6 +85,8 @@ dependencies:
   flutter_charts: ^0.5.2
   fl_chart: ^0.64.0
   speech_to_text: 7.0.0
+  image: ^4.5.4
+  tflite_flutter: ^0.11.0
 
 dev_dependencies:
   flutter_test:
@@ -123,7 +125,7 @@ flutter:
     - assets/MSME.svg
     - assets/Vehicle_Loan.svg
     - assets/Retail_loan.svg
-
+    - assets/ml_models/
     # - assets/logo1.jpg
 
   # An image asset can refer to one or more resolution-specific "variants", see

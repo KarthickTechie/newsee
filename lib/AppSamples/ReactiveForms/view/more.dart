@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:newsee/feature/facedetection/presentation/page/face_detection.dart';
 
 /*
 
@@ -55,7 +56,15 @@ void moreActionSheet(BuildContext context, String action) {
                       screenHeight,
                       'Retail Loan',
                       'assets/Retail_loan.svg',
-                      onTap: () {},
+                      onTap: () {
+                        print('retail loan');
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => FaceDetectionPage(),
+                          ),
+                        );
+                      },
                     ),
                     LoanOption(
                       context,
