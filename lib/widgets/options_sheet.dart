@@ -10,6 +10,7 @@
 */
 
 import 'package:flutter/material.dart';
+import 'package:newsee/AppData/globalconfig.dart';
 
 class OptionsSheet extends StatelessWidget {
   final IconData icon;
@@ -45,7 +46,7 @@ class OptionsSheet extends StatelessWidget {
         margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         decoration: BoxDecoration(
-          color: Colors.grey.withOpacity(0.05),
+          color: Colors.white,
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
@@ -64,7 +65,7 @@ class OptionsSheet extends StatelessWidget {
               height: 48,
               decoration: BoxDecoration(
                 gradient: LinearGradient(
-                  colors: [Colors.teal.shade200, Colors.teal.shade700],
+                  colors: [Colors.teal, Colors.tealAccent],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),
@@ -114,7 +115,7 @@ class OptionsSheet extends StatelessWidget {
                           text: TextSpan(
                             text: label.isNotEmpty ? '$label: ' : '',
                             style: const TextStyle(
-                              fontSize: 12,
+                              fontSize: 16,
                               color: Colors.black87,
                               fontWeight: FontWeight.w500,
                             ),
@@ -122,9 +123,9 @@ class OptionsSheet extends StatelessWidget {
                               TextSpan(
                                 text: detail,
                                 style: const TextStyle(
-                                  fontSize: 12,
+                                  fontSize: 15,
                                   color: Colors.black54,
-                                  fontWeight: FontWeight.normal,
+                                  fontWeight: FontWeight.w700,
                                 ),
                               ),
                             ],

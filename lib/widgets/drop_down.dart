@@ -15,10 +15,14 @@ Widget Dropdown({
   required List<String> items,
   bool? mantatory,
   Function? onchange,
+  Key? fieldKey,
+
+
 }) {
   return Padding(
     padding: EdgeInsets.all(16),
     child: ReactiveDropdownField<String>(
+      key: fieldKey,
       formControlName: controlName,
       validationMessages: {
         ValidationMessage.required: (error) => '$label is required',

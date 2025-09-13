@@ -134,7 +134,7 @@ class LoginpageView extends StatelessWidget {
                     height: screenHeight * 0.31,
                     child: SvgPicture.asset(
                       'assets/app_background_2.svg',
-                      fit: BoxFit.cover,
+                      fit: BoxFit.fill,
                     ),
                   ),
                   SizedBox(height: screenHeight * 0.01),
@@ -147,20 +147,20 @@ class LoginpageView extends StatelessWidget {
                             child: Container(
                               width: double.infinity,
 
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.only(
-                                  topLeft: Radius.circular(0),
-                                  topRight: Radius.circular(0),
-                                ),
-                                gradient: LinearGradient(
-                                  colors: [
-                                    const Color(0xC5F1ECF1),
-                                    Colors.white,
-                                  ],
-                                  begin: Alignment.topCenter,
-                                  end: Alignment.bottomCenter,
-                                ),
-                              ),
+                              // decoration: BoxDecoration(
+                              //   borderRadius: BorderRadius.only(
+                              //     topLeft: Radius.circular(0),
+                              //     topRight: Radius.circular(0),
+                              //   ),
+                              //   gradient: LinearGradient(
+                              //     colors: [
+                              //       const Color(0xC5F1ECF1),
+                              //       Colors.white,
+                              //     ],
+                              //     begin: Alignment.topCenter,
+                              //     end: Alignment.bottomCenter,
+                              //   ),
+                              // ),
                               child: Column(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [

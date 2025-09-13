@@ -5,6 +5,7 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:go_router/go_router.dart';
 import 'package:newsee/AppData/app_constants.dart';
 import 'package:newsee/AppData/app_forms.dart';
+import 'package:newsee/AppData/globalconfig.dart';
 import 'package:newsee/Utils/media_service.dart';
 import 'package:newsee/Utils/utils.dart';
 import 'package:newsee/feature/landholding/domain/modal/LandData.dart';
@@ -327,27 +328,41 @@ class LandHoldingPage extends StatelessWidget {
                                         );
                                       },
                                       selItem: () {
-                                        final value = form.control('state').value;
-                                        if (value == null || value.toString().isEmpty) {
+                                        final value =
+                                            form.control('state').value;
+                                        if (value == null ||
+                                            value.toString().isEmpty) {
                                           return null;
                                         }
-                                        if (state.status == SaveStatus.update && state.selectedLandData?.lslLandState != null) {
-                                          String? stateCode = state.selectedLandData?.lslLandState;
+                                        if (state.status == SaveStatus.update &&
+                                            state
+                                                    .selectedLandData
+                                                    ?.lslLandState !=
+                                                null) {
+                                          String? stateCode =
+                                              state
+                                                  .selectedLandData
+                                                  ?.lslLandState;
 
-                                          GeographyMaster? geographyMaster = state
-                                              .stateCityMaster
-                                              ?.firstWhere((val) => val.code == stateCode);
+                                          GeographyMaster? geographyMaster =
+                                              state.stateCityMaster?.firstWhere(
+                                                (val) => val.code == stateCode,
+                                              );
                                           print(geographyMaster);
                                           if (geographyMaster != null) {
-                                            form.controls['state']
-                                                ?.updateValue(geographyMaster.code);
+                                            form.controls['state']?.updateValue(
+                                              geographyMaster.code,
+                                            );
                                             return geographyMaster;
                                           } else {
                                             return <GeographyMaster>[];
                                           }
-                                        } else if (state.stateCityMaster!.isEmpty) {
-                                          form.controls['state']
-                                              ?.updateValue("");
+                                        } else if (state
+                                            .stateCityMaster!
+                                            .isEmpty) {
+                                          form.controls['state']?.updateValue(
+                                            "",
+                                          );
                                           return <GeographyMaster>[];
                                         }
                                       },
@@ -362,25 +377,39 @@ class LandHoldingPage extends StatelessWidget {
                                         );
                                       },
                                       selItem: () {
-                                        final value = form.control('district').value;
-                                        if (value == null || value.toString().isEmpty) {
+                                        final value =
+                                            form.control('district').value;
+                                        if (value == null ||
+                                            value.toString().isEmpty) {
                                           return null;
                                         }
-                                        if (state.status == SaveStatus.update && state.selectedLandData?.lslLandState != null) {
-                                          String? cityCode = state.selectedLandData?.lslLandDistrict;
+                                        if (state.status == SaveStatus.update &&
+                                            state
+                                                    .selectedLandData
+                                                    ?.lslLandState !=
+                                                null) {
+                                          String? cityCode =
+                                              state
+                                                  .selectedLandData
+                                                  ?.lslLandDistrict;
 
-                                          GeographyMaster? geographyMaster = state
-                                              .cityMaster
-                                              ?.firstWhere((val) => val.code == cityCode);
+                                          GeographyMaster? geographyMaster =
+                                              state.cityMaster?.firstWhere(
+                                                (val) => val.code == cityCode,
+                                              );
                                           print(geographyMaster);
                                           if (geographyMaster != null) {
                                             form.controls['district']
-                                                ?.updateValue(geographyMaster.code);
+                                                ?.updateValue(
+                                                  geographyMaster.code,
+                                                );
                                             return geographyMaster;
                                           } else {
                                             return <GeographyMaster>[];
                                           }
-                                        } else if (state.stateCityMaster!.isEmpty) {
+                                        } else if (state
+                                            .stateCityMaster!
+                                            .isEmpty) {
                                           form.controls['district']
                                               ?.updateValue("");
                                           return <GeographyMaster>[];
@@ -541,7 +570,7 @@ class LandHoldingPage extends StatelessWidget {
                                       label: 'Distance from Branch (in Kms)',
                                       mantatory: true,
                                       minlength: 1,
-                                      maxlength: 3
+                                      maxlength: 3,
                                     ),
 
                                     IntegerTextField(
@@ -703,8 +732,22 @@ class LandHoldingPage extends StatelessWidget {
                                       optionTwo: 'No',
                                     ),
                                     ElevatedButton.icon(
-                                      onPressed:
-                                          () => handleSubmit(context, state),
+                                      onPressed: () {
+                                        if (form.valid) {
+                                handleSubmit(context, state);
+
+                                     
+                                           
+                                        } else {
+                                          form.markAllAsTouched();
+                                          SysmoAlert.warning(
+                                            message:
+                                                "Please fill all mandatory fields",
+                                            onButtonPressed:
+                                                () => Navigator.pop(context),
+                                          );
+                                        }
+                                      },
                                       icon: const Icon(
                                         Icons.save,
                                         color: Colors.white,

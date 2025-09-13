@@ -3,6 +3,7 @@ import 'package:equatable/equatable.dart';
 import 'package:newsee/AppData/DBConstants/table_key_geographymaster.dart';
 import 'package:newsee/AppData/app_api_constants.dart';
 import 'package:newsee/AppData/app_constants.dart';
+import 'package:newsee/AppData/globalconfig.dart';
 import 'package:newsee/Utils/geographymaster_response_mapper.dart';
 import 'package:newsee/core/api/AsyncResponseHandler.dart';
 import 'package:newsee/core/db/db_config.dart';
@@ -49,7 +50,16 @@ final class LandHoldingBloc extends Bloc<LandHoldingEvent, LandHoldingState> {
       columnValues: ['0', '0'],
     );
 
-    final LandHoldingRepository landHoldingRepository =
+    if (Globalconfig.isOffline) {
+      emit(
+        state.copyWith(
+          lovlist: listOfLov,
+          status: SaveStatus.init,
+          stateCityMaster: stateCityMaster,
+        ),
+      );
+    } else {
+      final LandHoldingRepository landHoldingRepository =
           LandHoldingRespositoryImpl();
 
     final response = await landHoldingRepository.getLandholding(event.proposalNumber);
@@ -88,7 +98,7 @@ final class LandHoldingBloc extends Bloc<LandHoldingEvent, LandHoldingState> {
         ),
       );
     }
-    
+    }
   }
 
   // Save new land data
@@ -104,60 +114,96 @@ final class LandHoldingBloc extends Bloc<LandHoldingEvent, LandHoldingState> {
       final proposalNo = event.proposalNumber;
       print("event.landData => $landdata");
 
-      LandHoldingRequest req = LandHoldingRequest(
-        proposalNumber: event.proposalNumber,
-        applicantName: event.landData['applicantName'] ?? '',
-        LandOwnedByApplicant: event.landData['landOwnedByApplicant'] ? 'Y' : 'N',
-        LocationOfFarm: event.landData['locationOfFarm'] ?? '',
-        DistanceFromBranch: event.landData['distanceFromBranch'] ?? '',
-        State: event.landData['state'] ?? '',
-        District: event.landData['district'] ?? '',
-        Taluk: event.landData['taluk'] ?? '',
-        Village: event.landData['village'] ?? '',
-        Firka: event.landData['firka'] ?? '',
-        SurveyNo: event.landData['surveyNo'] ?? '',
-        TotalAcreage: event.landData['totalAcreage'] ?? '',
-        NatureOfRight: event.landData['natureOfRight'] ?? '',
-        OutOfTotalAcreage: event.landData['irrigatedLand'] ?? '',
-        NatureOfIrrigation: event.landData['irrigationFacilities'] ?? '',
-        LandsSituatedCompactBlocks: event.landData['compactBlocks'] ? '1' : '2',
-        landCeilingEnactments: event.landData['affectedByCeiling'] ? '1' : '2',
-        villageOfficersCertificate: event.landData['villageOfficerCertified'] ? '1' : '2',
-        LandAgriculturellyActive: event.landData['landAgriActive'] ? '1' : '2',
-        rowId: event.landData['lslLandRowid'] != null ? int.parse(event.landData['lslLandRowid']) : null,
-        token: ApiConstants.api_qa_token,
-      );
-
-      final landReq = req;
-      print('final request for land holding => $landReq');
-
-      final LandHoldingRepository landHoldingRepository =
-          LandHoldingRespositoryImpl();
-      final response = await landHoldingRepository.submitLandHolding(landReq);
-
-      if (response.isRight()) {
-        List<LandData> landData =
-          response.right.agriLandHoldingsList
-              .map((e) => LandData.fromMap(e))
-              .toList();
-
-        print("LandData from response => $landData");
-        emit(
-          state.copyWith(
-            status: SaveStatus.success,
-            landData: landData,
-            selectedLandData: null,
-            errorMessage: null
-          ),
+      if (Globalconfig.isOffline) {
+        final updatedList = List<LandData>.from(state.landData ?? []);
+        LandData landData = LandData(
+          lslPropNo: int.parse(event.proposalNumber),
+          lslLandApplicantName: event.landData['applicantName'] ?? '',
+          lslLandApplicant: event.landData['landOwnedByApplicant'].toString(),
+          lslLandFarmLoc: event.landData['locationOfFarm'] ?? '', 
+          lslLandFarmDistance: int.parse(event.landData['distanceFromBranch']) ?? 0, 
+          lslLandState: event.landData['state'] ?? '',
+          lslLandDistrict: event.landData['district'] ?? '',
+          lslLandTaluk: event.landData['taluk'] ?? '',
+          lslLandVillage: event.landData['village'] ?? '',
+          lslLandFirka: event.landData['firka'] ?? '',   
+          lslLandSurveyNo: event.landData['surveyNo'] ?? '',
+          lslLandTotAcre: int.parse(event.landData['totalAcreage']) ?? 0,
+          lslLandNature: event.landData['natureOfRight'] ?? '',
+          lslLandIrriFaci: event.landData['irrigationFacilities'] ?? '',
+          lslLandIrriLand: int.parse(event.landData['irrigatedLand']) ?? 0,
+          lslLandCompact: event.landData['compactBlocks'].toString(),
+          lslLandCeilingEnact: event.landData['affectedByCeiling'].toString(),
+          lslLandOfficeCerti: event.landData['villageOfficerCertified'].toString(),
+          lslAgriActive: event.landData['landAgriActive'].toString()
         );
+        updatedList.add(landData);
+        emit(
+            state.copyWith(
+              status: SaveStatus.success,
+              landData: updatedList,
+              selectedLandData: null,
+              errorMessage: null
+            ),
+          );
       } else {
-        emit(
-          state.copyWith(
-            status: SaveStatus.failure,
-            errorMessage: response.left.message
-          ),
+        LandHoldingRequest req = LandHoldingRequest(
+          proposalNumber: event.proposalNumber,
+          applicantName: event.landData['applicantName'] ?? '',
+          LandOwnedByApplicant: event.landData['landOwnedByApplicant'] ? 'Y' : 'N',
+          LocationOfFarm: event.landData['locationOfFarm'] ?? '',
+          DistanceFromBranch: event.landData['distanceFromBranch'] ?? '',
+          State: event.landData['state'] ?? '',
+          District: event.landData['district'] ?? '',
+          Taluk: event.landData['taluk'] ?? '',
+          Village: event.landData['village'] ?? '',
+          Firka: event.landData['firka'] ?? '',
+          SurveyNo: event.landData['surveyNo'] ?? '',
+          TotalAcreage: event.landData['totalAcreage'] ?? '',
+          NatureOfRight: event.landData['natureOfRight'] ?? '',
+          OutOfTotalAcreage: event.landData['irrigatedLand'] ?? '',
+          NatureOfIrrigation: event.landData['irrigationFacilities'] ?? '',
+          LandsSituatedCompactBlocks: event.landData['compactBlocks'] ? '1' : '2',
+          landCeilingEnactments: event.landData['affectedByCeiling'] ? '1' : '2',
+          villageOfficersCertificate: event.landData['villageOfficerCertified'] ? '1' : '2',
+          LandAgriculturellyActive: event.landData['landAgriActive'] ? '1' : '2',
+          rowId: event.landData['lslLandRowid'] != null ? int.parse(event.landData['lslLandRowid']) : null,
+          token: ApiConstants.api_qa_token,
         );
+
+        final landReq = req;
+        print('final request for land holding => $landReq');
+
+        final LandHoldingRepository landHoldingRepository =
+            LandHoldingRespositoryImpl();
+        final response = await landHoldingRepository.submitLandHolding(landReq);
+
+        if (response.isRight()) {
+          List<LandData> landData =
+            response.right.agriLandHoldingsList
+                .map((e) => LandData.fromMap(e))
+                .toList();
+
+          print("LandData from response => $landData");
+          emit(
+            state.copyWith(
+              status: SaveStatus.success,
+              landData: landData,
+              selectedLandData: null,
+              errorMessage: null
+            ),
+          );
+        } else {
+          emit(
+            state.copyWith(
+              status: SaveStatus.failure,
+              errorMessage: response.left.message
+            ),
+          );
+        }
       }
+
+      
       
     } catch (e) {
       print("Error in LandDetailsSaveEvent: $e");

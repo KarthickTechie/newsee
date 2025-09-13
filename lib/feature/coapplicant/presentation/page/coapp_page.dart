@@ -73,6 +73,7 @@ class _CoApplicantPageState extends State<CoApplicantPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        // title: const Text("Members"),
         title: const Text("Co-Applicants/Gurantors"),
         automaticallyImplyLeading: false,
       ),
@@ -84,6 +85,7 @@ class _CoApplicantPageState extends State<CoApplicantPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Text(
+                  // 'Whether do you want to add member Details?',
                   'Whether do you want to add Co-Applicant/Guarantor Details?',
                   style: TextStyle(fontSize: 16),
                 ),
@@ -121,6 +123,7 @@ class _CoApplicantPageState extends State<CoApplicantPage> {
                   // ...state.coAppList.map((app) {
                   //   final CoapplicantData data = app;
                   //   final type = app.applicantType;
+
                   ...state.coAppList.asMap().entries.map((entry) {
                     final int index = entry.key;
                     final CoapplicantData data = entry.value;
@@ -203,6 +206,7 @@ class _CoApplicantPageState extends State<CoApplicantPage> {
                           value: 'C',
                           child: ListTile(
                             leading: Icon(Icons.person_add),
+                            // title: Text('Members'),
                             title: Text('Co-Applicant'),
                           ),
                         ),

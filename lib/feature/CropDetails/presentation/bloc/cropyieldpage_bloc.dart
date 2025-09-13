@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:newsee/AppData/app_constants.dart';
+import 'package:newsee/AppData/globalconfig.dart';
 import 'package:newsee/core/api/AsyncResponseHandler.dart';
 import 'package:newsee/core/api/api_config.dart';
 import 'package:newsee/core/api/failure.dart';
@@ -120,7 +121,15 @@ class CropyieldpageBloc extends Bloc<CropyieldpageEvent, CropyieldpageState> {
       List<Lov> listOfLov = await LovCrudRepo(_db).getAll();
       print('listOfLov => $listOfLov');
 
-      //Get Crop Details
+      if(Globalconfig.isOffline) {
+        emit(
+          state.copyWith(
+            lovlist: listOfLov,
+            status: SaveStatus.init,
+          )
+        );
+      } else {
+        //Get Crop Details
       CropDetailsRepository cropRepository = CropDetailsRepositoryImpl();
       AsyncResponseHandler<Failure, CropGetResponse> cropResponse = await cropRepository.getCrop(
         event.proposalNumber
@@ -165,7 +174,8 @@ class CropyieldpageBloc extends Bloc<CropyieldpageEvent, CropyieldpageState> {
           )
         );
       }
-      
+      }
+
     } catch(error) {
       print("onSaveCropYieldPage-error $error");
       emit(state.copyWith(status: SaveStatus.failure));

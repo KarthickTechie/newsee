@@ -26,9 +26,26 @@ class AppRouteConstants {
     'name': 'landholdings',
     'path': '/landholdings',
   };
+    static const RouteProps POULTRY = {
+    'name': 'poulty',
+    'path': '/poulty',
+  };
+  static const RouteProps DAIRY_DETAILS = {
+    'name': 'dairydetails',
+    'path': '/dairydetails',
+  };
+  static const RouteProps POULTRY_DETAILS = {
+    'name': 'poultrydetails',
+    'path': '/poultrydetails',
+  };
   static const RouteProps DOCUMENT_PAGE = {
     'name': 'document',
     'path': '/document',
+  };
+
+  static const RouteProps FIELD_INVESTIGATION_PAGE = {
+    'name': 'fieldinvestigation',
+    'path': '/fieldinvestigation',
   };
 
   static const RouteProps CROP_DETAILS_PAGE = {
