@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:go_router/go_router.dart';
 
 /*
 
@@ -63,7 +64,9 @@ void moreActionSheet(BuildContext context, String action) {
                       screenHeight,
                       'Agri Loan',
                       'assets/Agri_Loan.svg',
-                      onTap: () {},
+                      onTap: () {
+                        context.goNamed('salarypage');
+                      },
                     ),
                     LoanOption(
                       context,
