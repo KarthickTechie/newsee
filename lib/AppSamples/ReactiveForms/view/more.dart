@@ -2,6 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:newsee/feature/rbih_land_crop/page/rbih_land_crop.dart';
+import 'package:newsee/feature/salary_slip.dart/page/salary_slip_page.dart';
 
 /*
 
@@ -65,7 +67,14 @@ void moreActionSheet(BuildContext context, String action) {
                       'Agri Loan',
                       'assets/Agri_Loan.svg',
                       onTap: () {
-                        context.goNamed('salarypage');
+                        // context.goNamed('salarypage');
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder:
+                                (_) => SalarySlipPage()
+                          ),
+                        );
                       },
                     ),
                     LoanOption(
@@ -74,7 +83,16 @@ void moreActionSheet(BuildContext context, String action) {
                       screenHeight,
                       'MSME Loan',
                       'assets/MSME.svg',
-                      onTap: () {},
+                      onTap: () {
+                        // context.goNamed('landownerdetails');
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder:
+                                (_) => RbIHLandCrop()
+                          ),
+                        );
+                      },
                     ),
                     LoanOption(
                       context,

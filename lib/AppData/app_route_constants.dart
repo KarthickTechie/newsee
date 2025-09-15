@@ -47,5 +47,8 @@ class AppRouteConstants {
     'name': 'salarypage',
     'path': '/salarypage',
   };
-  
+  static const RouteProps LAND_OWNER_DETAILS = {
+    'name': 'landownerdetails',
+    'path': '/landownerdetails',
+  };
 }

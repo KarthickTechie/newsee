@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_ml_kit/google_ml_kit.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:dotted_line/dotted_line.dart';
 
 class SalarySlipPage extends StatefulWidget {
   const SalarySlipPage({Key? key}) : super(key: key);
@@ -11,9 +12,31 @@ class SalarySlipPage extends StatefulWidget {
   SalarySlipState createState() => SalarySlipState();
 }
 
-class SalarySlipState extends State<SalarySlipPage> {
+class SalarySlipState extends State<SalarySlipPage> with SingleTickerProviderStateMixin {
   Map<String, dynamic>? payslipData;
   String errorMessage = '';
+  late AnimationController _animationController;
+  late Animation<double> _opacityAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _animationController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1200),
+    )..repeat(reverse: true);
+
+    _opacityAnimation = Tween<double>(begin: 0.9, end: 1.1)
+        .chain(CurveTween(curve: Curves.bounceIn))
+        .animate(_animationController);
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
 
   List<double> findSumCombination(List<double> numbers, double target) {
     for (int i = 1; i < (1 << numbers.length); i++) {
@@ -40,9 +63,9 @@ class SalarySlipState extends State<SalarySlipPage> {
         final getBasicAmount = (grosspay * 0.5);
         return getBasicAmount;
       }
-    } catch(error) {
+    } catch (error) {
       final baiscpay = 0.00;
-      return baiscpay; 
+      return baiscpay;
     }
   }
 
@@ -87,9 +110,7 @@ class SalarySlipState extends State<SalarySlipPage> {
         amounts.add(amount);
       }
 
-      // Remove duplicates from amounts
       amounts = amounts.toSet().toList();
-
       amounts.sort((a, b) => b.compareTo(a));
 
       final NumberFormat inrFormat = NumberFormat.currency(
@@ -111,9 +132,8 @@ class SalarySlipState extends State<SalarySlipPage> {
       );
 
       final getBasicAmount = await setBaicValue(basicmatch, grossPay);
-
       earnings['Basic Pay'] = inrFormat.format(getBasicAmount);
- 
+
       final hramatch = amounts.firstWhere(
         (val) => val >= (getBasicAmount * 0.5) && val <= (getBasicAmount * 0.8),
         orElse: () => -1,
@@ -149,26 +169,6 @@ class SalarySlipState extends State<SalarySlipPage> {
       }
 
       deductions['Net Amount'] = inrFormat.format(amounts[1]);
-
-      // deductions['PF'] = inrFormat.format(1800.00);
-
-      // final otherDeduction = totDeductions - 1800.00;
-
-      // List<double> sumOfDeduction = findSumCombination(amounts, totDeductions);
-
-      // print("exists $sumOfDeduction");
-
-      // double otherDeduction = 0;
-      // for (int k = 0; k < sumOfDeduction.length; k++) {
-      //   if (sumOfDeduction[k] == 1800.00) {
-      //     deductions['PF'] = inrFormat.format(sumOfDeduction[k]);
-      //   } else {
-      //     otherDeduction = otherDeduction + sumOfDeduction[k];
-      //   }
-      // }
-
-      
-
       data['earnings'] = earnings;
       data['deductions'] = deductions;
 
@@ -189,69 +189,258 @@ class SalarySlipState extends State<SalarySlipPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Payslip Extractor'),
+        title: Text('Salary Slip Extraction'),
+        centerTitle: true,
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            ElevatedButton(
-              onPressed: captureAndExtractPayslipData,
-              child: const Text('Capture Payslip Photo'),
+            Text(
+              'Upload your payslip as a PDF, or scan a physical document to extract salary data.',
+              style: TextStyle(fontSize: 16.0, color: Colors.grey[700]),
+              textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: 30.0),
+            Row(
+              children: [
+                Expanded(
+                  child: Card(
+                    elevation: 4.0,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
+                    child: InkWell(
+                      onTap: () {
+                        print('Upload PDF tapped');
+                      },
+                      borderRadius: BorderRadius.circular(12.0),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 24.0, horizontal: 8.0),
+                        child: Column(
+                          children: [
+                            Icon(Icons.upload_file, size: 40, color: Colors.blue),
+                            SizedBox(height: 10.0),
+                            Text(
+                              'Upload PDF',
+                              style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold, color: Colors.blue),
+                              textAlign: TextAlign.center,
+                            ),
+                            SizedBox(height: 4.0),
+                            Text(
+                              'Supports PDF',
+                              style: TextStyle(fontSize: 12.0, color: Colors.grey[600]),
+                              textAlign: TextAlign.center,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(width: 16.0),
+                Expanded(
+                  child: Card(
+                    elevation: 4.0,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
+                    child: InkWell(
+                      onTap: () {
+                        captureAndExtractPayslipData();
+                      },
+                      borderRadius: BorderRadius.circular(12.0),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 24.0, horizontal: 8.0),
+                        child: Column(
+                          children: [
+                            Icon(Icons.camera_alt, size: 40, color: Colors.green),
+                            SizedBox(height: 10.0),
+                            Text(
+                              'Scan Document',
+                              style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold, color: Colors.green),
+                              textAlign: TextAlign.center,
+                            ),
+                            SizedBox(height: 4.0),
+                            Text(
+                              'Use your camera',
+                              style: TextStyle(fontSize: 12.0, color: Colors.grey[600]),
+                              textAlign: TextAlign.center,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: 30.0),
             if (errorMessage.isNotEmpty)
               Text(
                 errorMessage,
                 style: const TextStyle(color: Colors.red),
               ),
             if (payslipData != null) ...[
-              Text(
-                'Payslip for: ${payslipData!['salary_month'] ?? 'Unknown'}',
-                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              Container(
+                padding: EdgeInsets.all(16.0),
+                decoration: BoxDecoration(
+                  color: Colors.blue.withOpacity(0.05),
+                  borderRadius: BorderRadius.circular(10.0),
+                  border: Border.all(color: Colors.blueAccent, width: 0.5),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Status:',
+                      style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
+                    ),
+                    SizedBox(height: 8.0),
+                    Row(
+                      children: [
+                        Icon(Icons.description, size: 24, color: Colors.blue),
+                        SizedBox(width: 8.0),
+                        Expanded(
+                          child: Text(
+                            'payslip_${payslipData!['salary_month']?.toLowerCase().replaceAll(' ', '_') ?? 'jan_2024'}.pdf',
+                            style: TextStyle(fontSize: 16.0),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        SizedBox(width: 8.0),
+                        Icon(Icons.check_circle, color: Colors.green, size: 24),
+                      ],
+                    ),
+                    SizedBox(height: 10.0),
+                    Text(
+                      'Extraction Complete!',
+                      style: TextStyle(fontSize: 14.0, color: Colors.green[700]),
+                    ),
+                  ],
+                ),
               ),
-              const SizedBox(height: 16),
-              Table(
-                border: TableBorder.all(),
-                columnWidths: const {
-                  0: FlexColumnWidth(3),
-                  1: FlexColumnWidth(3),
-                  2: FlexColumnWidth(3),
-                  3: FlexColumnWidth(3),
-                },
-                children: [
-                  TableRow(
-                    decoration: BoxDecoration(color: Colors.grey[300]),
-                    children: const [
-                      TableCell(
-                        child: Padding(
-                          padding: EdgeInsets.all(8.0),
-                          child: Text('Earnings', style: TextStyle(fontWeight: FontWeight.bold)),
-                        ),
+              SizedBox(height: 30.0),
+              Card(
+                elevation: 4.0,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
+                child: Padding(
+                  padding: const EdgeInsets.all(6.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Payslip for: ${payslipData!['salary_month'] ?? 'Unknown'}',
+                        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                       ),
-                      TableCell(
-                        child: Padding(
-                          padding: EdgeInsets.all(8.0),
-                          child: Text('Amount', style: TextStyle(fontWeight: FontWeight.bold)),
+                      const SizedBox(height: 16),
+                      Container(
+                        padding: const EdgeInsets.all(16.0),
+                        decoration: BoxDecoration(
+                          color: Colors.blue[50],
+                          borderRadius: BorderRadius.circular(12.0),
                         ),
-                      ),
-                      TableCell(
-                        child: Padding(
-                          padding: EdgeInsets.all(8.0),
-                          child: Text('Deductions', style: TextStyle(fontWeight: FontWeight.bold)),
-                        ),
-                      ),
-                      TableCell(
-                        child: Padding(
-                          padding: EdgeInsets.all(8.0),
-                          child: Text('Amount', style: TextStyle(fontWeight: FontWeight.bold)),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  'EARNINGS',
+                                  style: TextStyle(
+                                    fontSize: 16.0,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.blue,
+                                  ),
+                                ),
+                                Text(
+                                  'DEDUCTIONS',
+                                  style: TextStyle(
+                                    fontSize: 16.0,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.red,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 8.0),
+                            DottedLine(
+                              direction: Axis.horizontal,
+                              lineLength: double.infinity,
+                              lineThickness: 1.0,
+                              dashLength: 4.0,
+                              dashGapLength: 2.0,
+                              dashColor: Colors.grey,
+                            ),
+                            const SizedBox(height: 8.0),
+                            _buildItemRow('Basic Pay:', payslipData!['earnings']['Basic Pay'] ?? '₹0.00', 'PF:', payslipData!['deductions']['PF'] ?? '₹0.00'),
+                            _buildItemRow('HRA:', payslipData!['earnings']['HRA'] ?? '₹0.00', 'Insurance:', payslipData!['deductions']['Insurance'] ?? '₹0.00'),
+                            _buildItemRow('Allowances:', payslipData!['earnings']['Other Allowances'] ?? '₹0.00', 'Deductions:', payslipData!['deductions']['Other Deduction'] ?? '₹0.00'),
+                            const SizedBox(height: 8.0),
+                            const Divider(color: Colors.grey),
+                            const SizedBox(height: 8.0),
+                            Row(
+                              // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text('Gross pay:'),
+                                SizedBox(width: 20),
+                                Flexible(
+                                  child: Text(
+                                    payslipData!['earnings']['Total Earnings'] ?? '₹0.00',
+                                    style: TextStyle(fontWeight: FontWeight.bold),
+                                    textAlign: TextAlign.right,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ]
+                            ),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            Row(
+                              children: [
+                                Text('TOTAL DEDUCTION:'),
+                                SizedBox(width: 20),
+                                Flexible(
+                                  child: Text(
+                                    payslipData!['deductions']['Total Deductions'] ?? '₹0.00',
+                                    style: TextStyle(fontWeight: FontWeight.bold),
+                                    textAlign: TextAlign.right,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 16.0),
+                            Container(
+                              padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
+                              decoration: BoxDecoration(
+                                color: Colors.blue,
+                                borderRadius: BorderRadius.circular(8.0),
+                              ),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    'NET AMOUNT: ${payslipData!['deductions']['Net Amount'] ?? '₹0.00'}',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 16.0,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                  Icon(
+                                    Icons.check_circle,
+                                    color: Colors.white,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ],
                   ),
-                  ..._buildTableRows(),
-                ],
+                ),
               ),
             ],
           ],
@@ -260,88 +449,44 @@ class SalarySlipState extends State<SalarySlipPage> {
     );
   }
 
-  List<TableRow> _buildTableRows() {
-    final earnings = payslipData!['earnings'] as Map<String, String>;
-    final deductions = payslipData!['deductions'] as Map<String, String>;
-
-    List<String> earningsFields = [
-      'Basic Pay',
-      'HRA',
-      'Other Allowances',
-      'Total Earnings',
-    ];
-    List<String> deductionsFields = [
-      'PF',
-      'Insurance',
-      'Other Deduction',
-      'Total Deductions',
-      'Net Amount',
-    ];
-
-    List<TableRow> rows = [];
-    int maxRows = earningsFields.length > deductionsFields.length ? earningsFields.length : deductionsFields.length;
-
-    for (int i = 0; i < maxRows; i++) {
-      String earningLabel = i < earningsFields.length ? earningsFields[i] : '';
-      String earningValue = i < earningsFields.length ? earnings[earningsFields[i]] ?? '0.00' : '';
-      String deductionLabel = i < deductionsFields.length ? deductionsFields[i] : '';
-      String deductionValue = i < deductionsFields.length ? deductions[deductionsFields[i]] ?? '0.00' : '';
-
-      // Apply light grey background only to the Net Amount value cell
-      Widget valueWidget = Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Text(
-          deductionValue,
-          textAlign: TextAlign.right,
-        ),
-      );
-
-      if (deductionLabel == 'Net Amount') {
-        valueWidget = Container(
-          color: Colors.grey, // Light grey background for Net Amount cell
-          padding: const EdgeInsets.all(8.0),
-          child: Text(
-            deductionValue,
-            textAlign: TextAlign.right,
-            style: const TextStyle(
-              fontWeight: FontWeight.bold
+  Widget _buildItemRow(String earningsLabel, String earningsAmount, String deductionsLabel, String deductionsAmount) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4.0),
+      child: Row(
+        children: [
+          Expanded(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(earningsLabel),
+                Flexible(
+                  child: Text(
+                    earningsAmount,
+                    textAlign: TextAlign.right,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
             ),
           ),
-        );
-      }
-
-      rows.add(
-        TableRow(
-          children: [
-            TableCell(
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(earningLabel),
-              ),
-            ),
-            TableCell(
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(
-                  earningValue,
-                  textAlign: TextAlign.right,
+          const SizedBox(width: 8.0),
+          Expanded(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(deductionsLabel),
+                Flexible(
+                  child: Text(
+                    deductionsAmount,
+                    textAlign: TextAlign.right,
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ),
-              ),
+              ],
             ),
-            TableCell(
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(deductionLabel),
-              ),
-            ),
-            TableCell(
-              child: valueWidget,
-            ),
-          ],
-        ),
-      );
-    }
-
-    return rows;
+          ),
+        ],
+      ),
+    );
   }
 }

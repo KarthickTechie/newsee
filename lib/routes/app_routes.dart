@@ -25,6 +25,7 @@ import 'package:newsee/feature/masters/domain/repository/master_repo.dart';
 import 'package:newsee/feature/masters/presentation/bloc/masters_bloc.dart';
 import 'package:newsee/feature/masters/presentation/page/masters_page.dart';
 import 'package:newsee/feature/cic_check/cic_check_page.dart';
+import 'package:newsee/feature/rbih_land_crop/page/rbih_land_crop.dart';
 import 'package:newsee/feature/salary_slip.dart/page/salary_slip_page.dart';
 import 'package:newsee/pages/home_page.dart';
 import 'package:newsee/pages/newlead_page.dart';
@@ -158,6 +159,11 @@ final routes = GoRouter(
       path: AppRouteConstants.SALARY_PAGE['path']!,
       name: AppRouteConstants.SALARY_PAGE['name'],
       builder: (context, state) => SalarySlipPage(),
+    ),
+    GoRoute(
+      path: AppRouteConstants.LAND_OWNER_DETAILS['path']!,
+      name: AppRouteConstants.LAND_OWNER_DETAILS['name'],
+      builder: (context, state) => RbIHLandCrop(),
     ),
     GoRoute(
       path: AppRouteConstants.CAMERA_PAGE['path']!,
