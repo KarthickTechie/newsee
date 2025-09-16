@@ -14,6 +14,7 @@ class RbIHLandCropState extends State<RbIHLandCrop> with SingleTickerProviderSta
   List<Map<String, dynamic>>? ownerData;
   List<Map<String, dynamic>>? mortgageDetailsList;
   List<Map<String, dynamic>>? cropYieldDetailsList;
+  String status = 'Not Submit';
 
   final TextEditingController _field1Controller = TextEditingController();
   final TextEditingController _field2Controller = TextEditingController();
@@ -36,53 +37,110 @@ class RbIHLandCropState extends State<RbIHLandCrop> with SingleTickerProviderSta
         borderRadius: BorderRadius.vertical(top: Radius.circular(20.0)),
       ),
       builder: (context) {
-        return Padding(
-          padding: EdgeInsets.only(
-            bottom: MediaQuery.of(context).viewInsets.bottom,
-            left: 16.0,
-            right: 16.0,
-            top: 16.0,
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Text(
-                'Enter Details',
-                style: TextStyle(
-                  fontSize: 20.0,
-                  fontWeight: FontWeight.bold,
-                ),
+        return StatefulBuilder(
+          builder: (BuildContext context, StateSetter bottomSheetSetState) {
+            return Padding(
+              padding: EdgeInsets.only(
+                bottom: MediaQuery.of(context).viewInsets.bottom,
+                left: 16.0,
+                right: 16.0,
+                top: 16.0,
               ),
-              const SizedBox(height: 16.0),
-              TextField(
-                controller: _field1Controller,
-                decoration: const InputDecoration(
-                  labelText: 'Village code',
-                  border: OutlineInputBorder(),
-                ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Text(
+                    'Enter Details',
+                    style: TextStyle(
+                      fontSize: 20.0,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 16.0),
+                  TextField(
+                    controller: _field1Controller,
+                    decoration: const InputDecoration(
+                      labelText: 'Village code',
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                  const SizedBox(height: 12.0),
+                  TextField(
+                    controller: _field2Controller,
+                    decoration: const InputDecoration(
+                      labelText: 'ulpin',
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                  const SizedBox(height: 16.0),
+                  status == 'loading'
+                      ? ElevatedButton(
+                          onPressed: () {},
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.teal[600],
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            minimumSize: Size(
+                              MediaQuery.of(context).size.width * 0.8, // 80% of screen width
+                              50, // Fixed height
+                            ),
+                          ),
+                          child: CircularProgressIndicator(
+                            color: Colors.white,
+                            strokeWidth: 2
+                          )
+                        )
+                      : Center(
+                          child: ElevatedButton(
+                            onPressed: () {
+                              setState(() {
+                                status = 'loading'; // Update status in parent state
+                              });
+                              bottomSheetSetState(() {
+                                // Ensure bottom sheet rebuilds to show loading
+                              });
+                              Future.delayed(const Duration(seconds: 3), () async {
+                                await _loadData(); // Call _loadData
+                                setState(() {
+                                  status = 'loaded'; // Update status after loading
+                                });
+                                bottomSheetSetState(() {
+                                  // Ensure bottom sheet rebuilds after loading
+                                });
+                                if (mounted) {
+                                  Navigator.pop(context); // Close the bottom sheet
+                                }
+                              });
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.teal[600],
+                              foregroundColor: Colors.white,
+                              padding: const EdgeInsets.symmetric(vertical: 16),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              minimumSize: Size(
+                                MediaQuery.of(context).size.width * 0.8, // 80% of screen width
+                                50, // Fixed height
+                              ),
+                            ),
+                            child:  Text(
+                              'Search',
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ),
+                  const SizedBox(height: 16.0),
+                ],
               ),
-              const SizedBox(height: 12.0),
-              TextField(
-                controller: _field2Controller,
-                decoration: const InputDecoration(
-                  labelText: 'ulpin',
-                  border: OutlineInputBorder(),
-                ),
-              ),
-              const SizedBox(height: 16.0),
-              ElevatedButton(
-                onPressed: () {
-                  _loadData();
-                  Navigator.pop(context); // Close the bottom sheet
-                },
-                style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(horizontal: 32.0, vertical: 12.0),
-                ),
-                child: const Text('Submit'),
-              ),
-              const SizedBox(height: 16.0),
-            ],
-          ),
+            );
+          },
         );
       },
     );
