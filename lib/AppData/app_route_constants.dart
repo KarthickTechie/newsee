@@ -40,7 +40,15 @@ class AppRouteConstants {
     'path': '/ciccheck',
   };
   static const RouteProps IMAGE_VIEW_PAGE = {
-    'name': '  imageview',
+    'name': 'imageview',
     'path': '/imageview',
+  };
+  static const RouteProps SALARY_PAGE = {
+    'name': 'salarypage',
+    'path': '/salarypage',
+  };
+  static const RouteProps LAND_OWNER_DETAILS = {
+    'name': 'landownerdetails',
+    'path': '/landownerdetails',
   };
 }
