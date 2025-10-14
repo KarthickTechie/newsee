@@ -44,6 +44,8 @@ class AppConstants {
   static const String mpinRegistrationFailure = 'MPIN Registeration Failed';
   static const String mpinLoginSuccess = 'MPIN Login Successfull';
   static const String mpinLoginFailure = 'MPIN Login Failed';
+  static const String rhIHLandCropResponse =
+      'assets/data/RBIH_LAND_CROP_RESP.json';
 }
 
 class BioMetricResult {

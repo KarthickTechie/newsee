@@ -1,7 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:newsee/feature/balancesheet/balance_sheet_parser.dart';
 import 'package:newsee/feature/facedetection/presentation/page/face_detection.dart';
+import 'package:newsee/feature/rbih_land_crop/page/rbih_land_crop.dart';
+import 'package:newsee/feature/salary_slip/page/salary_slip_page.dart';
 
 /*
 
@@ -54,8 +57,8 @@ void moreActionSheet(BuildContext context, String action) {
                       context,
                       screenWidth,
                       screenHeight,
-                      'Retail Loan',
-                      'assets/Retail_loan.svg',
+                      'Liveliness Check',
+                      'assets/face.svg',
                       onTap: () {
                         print('retail loan');
                         Navigator.push(
@@ -70,9 +73,16 @@ void moreActionSheet(BuildContext context, String action) {
                       context,
                       screenWidth,
                       screenHeight,
-                      'Agri Loan',
-                      'assets/Agri_Loan.svg',
-                      onTap: () {},
+                      'OCR Service',
+                      'assets/doc_scanner.svg',
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => SalarySlipPage(),
+                          ),
+                        );
+                      },
                     ),
                     LoanOption(
                       context,
@@ -80,7 +90,13 @@ void moreActionSheet(BuildContext context, String action) {
                       screenHeight,
                       'MSME Loan',
                       'assets/MSME.svg',
-                      onTap: () {},
+                      onTap: () {
+                        // context.goNamed('landownerdetails');
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (_) => RbIHLandCrop()),
+                        );
+                      },
                     ),
                     LoanOption(
                       context,
@@ -88,7 +104,14 @@ void moreActionSheet(BuildContext context, String action) {
                       screenHeight,
                       'Home Loan',
                       'assets/Home_Loan.svg',
-                      onTap: () {},
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => BalanceSheetParser(),
+                          ),
+                        );
+                      },
                     ),
                     LoanOption(
                       context,
