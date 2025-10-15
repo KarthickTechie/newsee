@@ -8,7 +8,7 @@ class LivenessDetector {
   final double spoofThreshold;
 
   LivenessDetector({this.spoofThreshold = 0.5}) {
-    loadModel('assets/ml_models//model.tflite');
+    loadModel('assets/ml_models/model.tflite');
   }
 
   /// Load the TFLite model.

@@ -33,7 +33,7 @@ class _FaceDetectionPageState extends State<FaceDetectionPage> {
   ui.Image? image;
   img.Image? croppedImage;
   late Recognizer recognizer;
-  late LivenessDetector livenessDetector;
+  LivenessDetector livenessDetector = LivenessDetector();
   late FaceDetector faceDetector = FaceDetector(
     options: FaceDetectorOptions(
       enableClassification: true,
@@ -55,7 +55,6 @@ class _FaceDetectionPageState extends State<FaceDetectionPage> {
     // TODO: implement initState
     super.initState();
     recognizer = Recognizer();
-    livenessDetector = LivenessDetector();
     // recognizer.loadRegisteredFaces();
   }
 
@@ -210,7 +209,8 @@ class _FaceDetectionPageState extends State<FaceDetectionPage> {
           height: 224,
         );
         bool isLive = await livenessDetector.isLive(face224);
-        if (isLive == false) {
+        print('isLive => $isLive');
+        if (isLive == true) {
           print('name : ${faceRecognition.name.toString()}');
           if (faceRecognition.name.isNotEmpty) {
             showAlertDialog(
