@@ -1,12 +1,21 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_ml_kit/google_ml_kit.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:dotted_line/dotted_line.dart';
+import 'package:newsee/AppData/app_constants.dart';
+import 'package:newsee/feature/ocrservice/page/income_expance_page.dart';
+import 'package:newsee/feature/ocrservice/page/modal/salaryslip_details.dart';
+import 'package:newsee/feature/salary_slip/bloc/payslip_bloc.dart';
+import 'package:newsee/feature/salary_slip/bloc/payslip_event.dart';
+import 'package:newsee/feature/salary_slip/bloc/payslip_state.dart';
+import 'package:path/path.dart';
 
 class SalarySlipPage extends StatefulWidget {
-  const SalarySlipPage({Key? key}) : super(key: key);
+  final  Function(SalaryslipDetails? salaryData) onDataReceived;
+  const SalarySlipPage({Key? key , required this.onDataReceived }) : super(key: key);
 
   @override
   SalarySlipState createState() => SalarySlipState();
@@ -15,6 +24,7 @@ class SalarySlipPage extends StatefulWidget {
 class SalarySlipState extends State<SalarySlipPage>
     with SingleTickerProviderStateMixin {
   Map<String, dynamic>? payslipData;
+  SalaryslipDetails? salaryDetails;
   String errorMessage = '';
   late AnimationController _animationController;
   late Animation<double> _opacityAnimation;
@@ -157,7 +167,7 @@ class SalarySlipState extends State<SalarySlipPage>
 
       final otherAllowances = grossPay - getBasicAmount - hramatch;
       if (otherAllowances > 0) {
-        earnings['Other Allowances'] = inrFormat.format(otherAllowances);
+        earnings['OtherAllowances'] = inrFormat.format(otherAllowances);
       }
 
       final totDeductions = grossPay - netPay;
@@ -175,9 +185,9 @@ class SalarySlipState extends State<SalarySlipPage>
         deductions['PF'] = inrFormat.format(1800.00);
         final otherDeduction = totDeductions - 1800.00;
         deductions['Insurance'] = inrFormat.format(0.00);
-        deductions['Other Deduction'] = inrFormat.format(otherDeduction);
+        deductions['OtherDeduction'] = inrFormat.format(otherDeduction);
       } else {
-        deductions['Other Deduction'] = inrFormat.format(totDeductions);
+        deductions['OtherDeduction'] = inrFormat.format(totDeductions);
       }
 
       deductions['Net Amount'] = inrFormat.format(amounts[1]);
@@ -187,6 +197,8 @@ class SalarySlipState extends State<SalarySlipPage>
       print("final payslip => $data");
 
       setState(() {
+        salaryDetails = SalaryslipDetails.salaryMap(data);
+        print("salary details full map details => $salaryDetails");
         payslipData = data;
         errorMessage = '';
       });
@@ -199,326 +211,345 @@ class SalarySlipState extends State<SalarySlipPage>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text('Salary Slip Extraction'), centerTitle: true),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Text(
-              'Upload your payslip as a PDF, or scan a physical document to extract salary data.',
-              style: TextStyle(fontSize: 16.0, color: Colors.grey[700]),
-              textAlign: TextAlign.center,
-            ),
-            SizedBox(height: 30.0),
-            Row(
-              children: [
-                Expanded(
-                  child: Card(
-                    elevation: 4.0,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12.0),
-                    ),
-                    child: InkWell(
-                      onTap: () {
-                        print('Upload PDF tapped');
-                      },
-                      borderRadius: BorderRadius.circular(12.0),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                          vertical: 24.0,
-                          horizontal: 8.0,
-                        ),
-                        child: Column(
-                          children: [
-                            Icon(
-                              Icons.upload_file,
-                              size: 40,
-                              color: Colors.blue,
-                            ),
-                            SizedBox(height: 10.0),
-                            Text(
-                              'Upload PDF',
-                              style: TextStyle(
-                                fontSize: 16.0,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.blue,
-                              ),
-                              textAlign: TextAlign.center,
-                            ),
-                            SizedBox(height: 4.0),
-                            Text(
-                              'Supports PDF',
-                              style: TextStyle(
-                                fontSize: 12.0,
-                                color: Colors.grey[600],
-                              ),
-                              textAlign: TextAlign.center,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
+    // return BlocConsumer<PayslipBloc,PayslipState>(
+      // listener: (context, state) {
+      //   if(state.saveStatus == SaveStatus.success){
+      //     payslipData = state.payslipData;
+      //     Navigator.pop(context);
+
+      //   }
+      // },
+      return Scaffold(
+        body: SingleChildScrollView(
+            padding: const EdgeInsets.all(20.0),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 30),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Text(
+                    'Upload your payslip as a PDF, or scan a physical document to extract salary data.',
+                    style: TextStyle(fontSize: 16.0, color: Colors.grey[700]),
+                    textAlign: TextAlign.center,
                   ),
-                ),
-                SizedBox(width: 16.0),
-                Expanded(
-                  child: Card(
-                    elevation: 4.0,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12.0),
-                    ),
-                    child: InkWell(
-                      onTap: () {
-                        captureAndExtractPayslipData();
-                      },
-                      borderRadius: BorderRadius.circular(12.0),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                          vertical: 24.0,
-                          horizontal: 8.0,
-                        ),
-                        child: Column(
-                          children: [
-                            Icon(
-                              Icons.camera_alt,
-                              size: 40,
-                              color: Colors.green,
-                            ),
-                            SizedBox(height: 10.0),
-                            Text(
-                              'Scan Document',
-                              style: TextStyle(
-                                fontSize: 16.0,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.green,
-                              ),
-                              textAlign: TextAlign.center,
-                            ),
-                            SizedBox(height: 4.0),
-                            Text(
-                              'Use your camera',
-                              style: TextStyle(
-                                fontSize: 12.0,
-                                color: Colors.grey[600],
-                              ),
-                              textAlign: TextAlign.center,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            SizedBox(height: 30.0),
-            if (errorMessage.isNotEmpty)
-              Text(errorMessage, style: const TextStyle(color: Colors.red)),
-            if (payslipData != null) ...[
-              Container(
-                padding: EdgeInsets.all(16.0),
-                decoration: BoxDecoration(
-                  color: Colors.blue.withOpacity(0.05),
-                  borderRadius: BorderRadius.circular(10.0),
-                  border: Border.all(color: Colors.blueAccent, width: 0.5),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Status:',
-                      style: TextStyle(
-                        fontSize: 16.0,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    SizedBox(height: 8.0),
-                    Row(
-                      children: [
-                        Icon(Icons.description, size: 24, color: Colors.blue),
-                        SizedBox(width: 8.0),
-                        Expanded(
-                          child: Text(
-                            'payslip_${payslipData!['salary_month']?.toLowerCase().replaceAll(' ', '_') ?? 'jan_2024'}.pdf',
-                            style: TextStyle(fontSize: 16.0),
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                        SizedBox(width: 8.0),
-                        Icon(Icons.check_circle, color: Colors.green, size: 24),
-                      ],
-                    ),
-                    SizedBox(height: 10.0),
-                    Text(
-                      'Extraction Complete!',
-                      style: TextStyle(
-                        fontSize: 14.0,
-                        color: Colors.green[700],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              SizedBox(height: 30.0),
-              Card(
-                elevation: 4.0,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12.0),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(6.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                  SizedBox(height: 30.0),
+                  Row(
                     children: [
-                      Text(
-                        'Payslip for: ${payslipData!['salary_month'] ?? 'Unknown'}',
-                        style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      Container(
-                        padding: const EdgeInsets.all(16.0),
-                        decoration: BoxDecoration(
-                          color: Colors.blue[50],
-                          borderRadius: BorderRadius.circular(12.0),
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  'EARNINGS',
-                                  style: TextStyle(
-                                    fontSize: 16.0,
-                                    fontWeight: FontWeight.bold,
+                      Expanded(
+                        child: Card(
+                          elevation: 4.0,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12.0),
+                          ),
+                          child: InkWell(
+                            onTap: () {
+                              print('Upload PDF tapped');
+                            },
+                            borderRadius: BorderRadius.circular(12.0),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                vertical: 24.0,
+                                horizontal: 8.0,
+                              ),
+                              child: Column(
+                                children: [
+                                  Icon(
+                                    Icons.upload_file,
+                                    size: 40,
                                     color: Colors.blue,
                                   ),
-                                ),
-                                Text(
-                                  'DEDUCTIONS',
-                                  style: TextStyle(
-                                    fontSize: 16.0,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.red,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 8.0),
-                            DottedLine(
-                              direction: Axis.horizontal,
-                              lineLength: double.infinity,
-                              lineThickness: 1.0,
-                              dashLength: 4.0,
-                              dashGapLength: 2.0,
-                              dashColor: Colors.grey,
-                            ),
-                            const SizedBox(height: 8.0),
-                            _buildItemRow(
-                              'Basic Pay:',
-                              payslipData!['earnings']['Basic Pay'] ?? '₹0.00',
-                              'PF:',
-                              payslipData!['deductions']['PF'] ?? '₹0.00',
-                            ),
-                            _buildItemRow(
-                              'HRA:',
-                              payslipData!['earnings']['HRA'] ?? '₹0.00',
-                              'Insurance:',
-                              payslipData!['deductions']['Insurance'] ??
-                                  '₹0.00',
-                            ),
-                            _buildItemRow(
-                              'Allowances:',
-                              payslipData!['earnings']['Other Allowances'] ??
-                                  '₹0.00',
-                              'Deductions:',
-                              payslipData!['deductions']['Other Deduction'] ??
-                                  '₹0.00',
-                            ),
-                            const SizedBox(height: 8.0),
-                            const Divider(color: Colors.grey),
-                            const SizedBox(height: 8.0),
-                            Row(
-                              // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text('Gross pay:'),
-                                SizedBox(width: 20),
-                                Flexible(
-                                  child: Text(
-                                    payslipData!['earnings']['Total Earnings'] ??
-                                        '₹0.00',
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                    textAlign: TextAlign.right,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            SizedBox(height: 10),
-                            Row(
-                              children: [
-                                Text('TOTAL DEDUCTION:'),
-                                SizedBox(width: 20),
-                                Flexible(
-                                  child: Text(
-                                    payslipData!['deductions']['Total Deductions'] ??
-                                        '₹0.00',
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                    textAlign: TextAlign.right,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 16.0),
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                vertical: 12.0,
-                                horizontal: 16.0,
-                              ),
-                              decoration: BoxDecoration(
-                                color: Colors.blue,
-                                borderRadius: BorderRadius.circular(8.0),
-                              ),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
+                                  SizedBox(height: 10.0),
                                   Text(
-                                    'NET AMOUNT: ${payslipData!['deductions']['Net Amount'] ?? '₹0.00'}',
+                                    'Upload PDF',
                                     style: TextStyle(
-                                      color: Colors.white,
                                       fontSize: 16.0,
                                       fontWeight: FontWeight.bold,
+                                      color: Colors.blue,
                                     ),
-                                    overflow: TextOverflow.ellipsis,
+                                    textAlign: TextAlign.center,
                                   ),
-                                  Icon(Icons.check_circle, color: Colors.white),
+                                  SizedBox(height: 4.0),
+                                  Text(
+                                    'Supports PDF',
+                                    style: TextStyle(
+                                      fontSize: 12.0,
+                                      color: Colors.grey[600],
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      SizedBox(width: 16.0),
+                      Expanded(
+                        child: Card(
+                          elevation: 4.0,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12.0),
+                          ),
+                          child: InkWell(
+                            onTap: () {
+                              captureAndExtractPayslipData();
+                            },
+                            borderRadius: BorderRadius.circular(12.0),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                vertical: 24.0,
+                                horizontal: 8.0,
+                              ),
+                              child: Column(
+                                children: [
+                                  Icon(
+                                    Icons.camera_alt,
+                                    size: 40,
+                                    color: Colors.green,
+                                  ),
+                                  SizedBox(height: 10.0),
+                                  Text(
+                                    'Scan Document',
+                                    style: TextStyle(
+                                      fontSize: 16.0,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.green,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                  SizedBox(height: 4.0),
+                                  Text(
+                                    'Use your camera',
+                                    style: TextStyle(
+                                      fontSize: 12.0,
+                                      color: Colors.grey[600],
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 30.0),
+                  if (errorMessage.isNotEmpty)
+                    Text(errorMessage, style: const TextStyle(color: Colors.red)),
+                  if (payslipData != null) ...[
+                    Container(
+                      padding: EdgeInsets.all(16.0),
+                      decoration: BoxDecoration(
+                        color: Colors.blue.withOpacity(0.05),
+                        borderRadius: BorderRadius.circular(10.0),
+                        border: Border.all(color: Colors.blueAccent, width: 0.5),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Status:',
+                            style: TextStyle(
+                              fontSize: 16.0,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          SizedBox(height: 8.0),
+                          Row(
+                            children: [
+                              Icon(Icons.description, size: 24, color: Colors.blue),
+                              SizedBox(width: 8.0),
+                              Expanded(
+                                child: Text(
+                                  'payslip_${payslipData!['salary_month']?.toLowerCase().replaceAll(' ', '_') ?? 'jan_2024'}.pdf',
+                                  style: TextStyle(fontSize: 16.0),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                              SizedBox(width: 8.0),
+                              Icon(Icons.check_circle, color: Colors.green, size: 24),
+                            ],
+                          ),
+                          SizedBox(height: 10.0),
+                          Text(
+                            'Extraction Complete!',
+                            style: TextStyle(
+                              fontSize: 14.0,
+                              color: Colors.green[700],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(height: 30.0),
+                    Card(
+                      elevation: 4.0,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12.0),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(6.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Payslip for: ${payslipData!['salary_month'] ?? 'Unknown'}',
+                              style: const TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(height: 16),
+                            Container(
+                              padding: const EdgeInsets.all(16.0),
+                              decoration: BoxDecoration(
+                                color: Colors.blue[50],
+                                borderRadius: BorderRadius.circular(12.0),
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
+                                children: [
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        'EARNINGS',
+                                        style: TextStyle(
+                                          fontSize: 16.0,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.blue,
+                                        ),
+                                      ),
+                                      Text(
+                                        'DEDUCTIONS',
+                                        style: TextStyle(
+                                          fontSize: 16.0,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.red,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 8.0),
+                                  DottedLine(
+                                    direction: Axis.horizontal,
+                                    lineLength: double.infinity,
+                                    lineThickness: 1.0,
+                                    dashLength: 4.0,
+                                    dashGapLength: 2.0,
+                                    dashColor: Colors.grey,
+                                  ),
+                                  const SizedBox(height: 8.0),
+                                  _buildItemRow(
+                                    'Basic Pay:',
+                                    payslipData!['earnings']['Basic Pay'] ?? '₹0.00',
+                                    'PF:',
+                                    payslipData!['deductions']['PF'] ?? '₹0.00',
+                                  ),
+                                  _buildItemRow(
+                                    'HRA:',
+                                    payslipData!['earnings']['HRA'] ?? '₹0.00',
+                                    'Insurance:',
+                                    payslipData!['deductions']['Insurance'] ??
+                                        '₹0.00',
+                                  ),
+                                  _buildItemRow(
+                                    'Allowances:',
+                                    payslipData!['earnings']['OtherAllowances'] ??
+                                        '₹0.00',
+                                    'Deductions:',
+                                    payslipData!['deductions']['Other Deduction'] ??
+                                        '₹0.00',
+                                  ),
+                                  const SizedBox(height: 8.0),
+                                  const Divider(color: Colors.grey),
+                                  const SizedBox(height: 8.0),
+                                  Row(
+                                    // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text('Gross pay:'),
+                                      SizedBox(width: 20),
+                                      Flexible(
+                                        child: Text(
+                                          payslipData!['earnings']['Total Earnings'] ??
+                                              '₹0.00',
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                          textAlign: TextAlign.right,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  SizedBox(height: 10),
+                                  Row(
+                                    children: [
+                                      Text('TOTAL DEDUCTION:'),
+                                      SizedBox(width: 20),
+                                      Flexible(
+                                        child: Text(
+                                          payslipData!['deductions']['Total Deductions'] ??
+                                              '₹0.00',
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                          textAlign: TextAlign.right,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 16.0),
+                                  GestureDetector(
+                                    onTap: (){
+                                      print('go to income and expense page $payslipData');
+                                      widget.onDataReceived(salaryDetails);
+                                      // context.read<PayslipBloc>().add(LoadPayslipEvent(payslipdata: payslipData!));
+                                    },
+                                    
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(
+                                        vertical: 12.0,
+                                        horizontal: 16.0,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: Colors.blue,
+                                        borderRadius: BorderRadius.circular(8.0),
+                                      ),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(
+                                            'NET AMOUNT: ${payslipData!['deductions']['Net Amount'] ?? '₹0.00'}',
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 16.0,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                          Icon(Icons.check_circle, color: Colors.white),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
                                 ],
                               ),
                             ),
                           ],
                         ),
                       ),
-                    ],
-                  ),
-                ),
+                    ),
+                  ],
+                ],
               ),
-            ],
-          ],
-        ),
-      ),
-    );
+            ),
+          ),
+      );
+    
   }
 
   Widget _buildItemRow(

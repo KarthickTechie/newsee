@@ -51,6 +51,7 @@ class Recognizer {
         0,
       );
       registered.putIfAbsent(name, () => recognition);
+      print('registered => ${registered.length} :: $name');
     }
   }
 
@@ -128,6 +129,9 @@ class Recognizer {
   //TODO  looks for the nearest embeeding in the database and returns the pair which contain information of registered face with which face is most similar
   findNearest(List<double> emb) {
     Pair pair = Pair("Unknown", -5);
+    for (MapEntry<String, Recognition> item in registered.entries) {
+      print('findNearest => ${item.key}');
+    }
     for (MapEntry<String, Recognition> item in registered.entries) {
       final String name = item.key;
       List<double> knownEmb = item.value.embeddings;

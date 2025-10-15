@@ -5,7 +5,7 @@ Map<String, String> extractDLInfo(String extractedText) {
   // Adjusted to handle potential line breaks or extra spaces in OCR output
 
   final RegExp dlRegex = RegExp(
-    r'(?:(?:fDL No\.|fDL\. No\.|DL\. No\.|f\.DL\. No\.)\s*([A-Z]{2}\d{2}\s*\d{9,11}))',
+    r'(?:(?:fDL NO\. |fDL No\. |fDL\. No\. |DL\. No\. |f\.DL\. No\. )\s*([A-Z]{2}\d{2}\s*\d{9,11}))',
     multiLine: true,
   );
   final Match? dlMatch = dlRegex.firstMatch(extractedText);

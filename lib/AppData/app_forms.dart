@@ -220,4 +220,17 @@ class AppForms {
       'lasPreToCollect': FormControl<String>(validators: [Validators.required]),
     });
   }
+
+  static FormGroup SALARY_DETAILS_FORM = FormGroup({
+    'salaryMonth': FormControl<String>(validators: [Validators.required]),
+    'basic': FormControl<String>(validators: [Validators.required]),
+    'hra': FormControl<String>(validators: [Validators.required]),
+    'otherAllowance': FormControl<String>(validators: [Validators.required]),
+    'pfDeduction': FormControl<String>(validators: [Validators.required]),
+    'medicalInsurance': FormControl<String>(validators: [Validators.required]),
+    'otherDeduction': FormControl<String>(validators: [Validators.required]),
+    'grossPay': FormControl<String>(validators: [Validators.required]),
+    'totalDeduction': FormControl<String>(validators: [Validators.required]),
+    'netPay': FormControl<String>(validators: [Validators.required]),
+  });
 }

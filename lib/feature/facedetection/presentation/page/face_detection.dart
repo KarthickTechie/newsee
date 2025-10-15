@@ -11,6 +11,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_ml_kit/google_ml_kit.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:newsee/ML/LivenessDetector.dart';
 import 'package:newsee/ML/Recognition.dart';
 import 'package:newsee/ML/Recognizer.dart';
 import 'package:newsee/Utils/ocr_utils.dart';
@@ -32,6 +33,7 @@ class _FaceDetectionPageState extends State<FaceDetectionPage> {
   ui.Image? image;
   img.Image? croppedImage;
   late Recognizer recognizer;
+  late LivenessDetector livenessDetector;
   late FaceDetector faceDetector = FaceDetector(
     options: FaceDetectorOptions(
       enableClassification: true,
@@ -53,6 +55,8 @@ class _FaceDetectionPageState extends State<FaceDetectionPage> {
     // TODO: implement initState
     super.initState();
     recognizer = Recognizer();
+    livenessDetector = LivenessDetector();
+    // recognizer.loadRegisteredFaces();
   }
 
   pickImage() async {
@@ -61,7 +65,13 @@ class _FaceDetectionPageState extends State<FaceDetectionPage> {
     if (imageFilePath != null) {
       selImage = File(imageFilePath.path);
       final inputImage = InputImage.fromFile(selImage!);
-
+      if (isChecking) {
+        setState(() {
+          selImage;
+          doFaceDetection();
+        });
+        return;
+      }
       final RecognizedText recognizedText = await _textRecognizer.processImage(
         inputImage,
       );
@@ -107,16 +117,40 @@ class _FaceDetectionPageState extends State<FaceDetectionPage> {
     if (imageFilePath != null) {
       selImage = File(imageFilePath.path);
       final inputImage = InputImage.fromFile(selImage!);
+      if (isChecking) {
+        setState(() {
+          selImage;
+          doFaceDetection();
+        });
+        return;
+      }
       final RecognizedText recognizedText = await _textRecognizer.processImage(
         inputImage,
       );
       String extractedText = recognizedText.text;
-      print('extractedText : $extractedText');
-      setState(() {
-        selImage;
-        doFaceDetection();
-        //cropTheFaceData();
-      });
+      ocrresult = extractDLInfo(extractedText);
+      print(ocrresult);
+      if (ocrresult['id']!.isEmpty) {
+        isKYCInvalid = true;
+        if (isKYCInvalid) {
+          showAlertDialog(
+            title: 'Processing Error',
+            message: 'Upload Valid KYC Document',
+          );
+        }
+
+        setState(() {
+          selImage;
+          isKYCInvalid;
+          ocrresult;
+        });
+      } else {
+        setState(() {
+          selImage;
+          ocrresult;
+          doFaceDetection();
+        });
+      }
     }
   }
 
@@ -169,17 +203,32 @@ class _FaceDetectionPageState extends State<FaceDetectionPage> {
           faceRecognition,
         );
       } else {
-        print('name : ${faceRecognition.name.toString()}');
-        // if (ocrresult['name']!.toLowerCase() ==
-        //     faceRecognition.name.toString().toLowerCase()) {
-        showAlertDialog(title: 'Success', message: 'Face Matched Successfully');
-
-        // } else {
-        //   showAlertDialog(
-        //     title: 'Failure',
-        //     message: 'Your Face Not Matched with KYC. Try Again',
-        //   );
-        // }
+        /// cropped image to be scaled for liveliness detection
+        img.Image face224 = img.copyResize(
+          croppedImage!,
+          width: 224,
+          height: 224,
+        );
+        bool isLive = await livenessDetector.isLive(face224);
+        if (isLive == false) {
+          print('name : ${faceRecognition.name.toString()}');
+          if (faceRecognition.name.isNotEmpty) {
+            showAlertDialog(
+              title: 'Success',
+              message: 'Hi ${faceRecognition.name} , Liveliness verified',
+            );
+          } else {
+            showAlertDialog(
+              title: 'Failure',
+              message: 'Your Face Not Matched with KYC. Try Again',
+            );
+          }
+        } else {
+          showAlertDialog(
+            title: 'Failure',
+            message: 'Spoof Image Detected. Try Again',
+          );
+        }
       }
 
       setState(() {
@@ -220,6 +269,7 @@ class _FaceDetectionPageState extends State<FaceDetectionPage> {
                   const SizedBox(height: 20),
                   TextField(
                     controller: TextEditingController(text: ocrresult['name']),
+
                     decoration: InputDecoration(
                       hintText: "Enter Name",
                       filled: true,
@@ -253,7 +303,7 @@ class _FaceDetectionPageState extends State<FaceDetectionPage> {
                     ),
                     onPressed: () {
                       recognizer.registerFaceInDB(
-                        textEditingController.text,
+                        ocrresult['name']!,
                         recognition.embeddings,
                       );
                       textEditingController.clear();
@@ -559,7 +609,7 @@ class _FaceDetectionPageState extends State<FaceDetectionPage> {
                                 onTap: () {
                                   // open gallery image
                                   isChecking = true;
-                                  // pickImage();
+                                  pickImage();
                                 },
                                 onLongPress: () {
                                   isChecking = true;
@@ -611,7 +661,7 @@ class _FaceDetectionPageState extends State<FaceDetectionPage> {
                           // open gallery image
                           isChecking = true;
 
-                          // pickImage(context);
+                          pickImage();
                         },
                         onLongPress: () {
                           isChecking = true;

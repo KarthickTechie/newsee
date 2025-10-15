@@ -76,12 +76,12 @@ void moreActionSheet(BuildContext context, String action) {
                       'OCR Service',
                       'assets/doc_scanner.svg',
                       onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => SalarySlipPage(),
-                          ),
-                        );
+                        // Navigator.push(
+                        //   context,
+                        //   MaterialPageRoute(
+                        //     builder: (context) => SalarySlipPage(),
+                        //   ),
+                        // );
                       },
                     ),
                     LoanOption(

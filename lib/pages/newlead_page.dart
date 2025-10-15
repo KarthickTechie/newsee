@@ -10,6 +10,7 @@ import 'package:newsee/feature/dedupe/presentation/page/dedupe_page.dart';
 import 'package:newsee/feature/leadInbox/domain/modal/get_lead_response.dart';
 import 'package:newsee/feature/leadsubmit/presentation/bloc/lead_submit_bloc.dart';
 import 'package:newsee/feature/loanproductdetails/presentation/bloc/loanproduct_bloc.dart';
+import 'package:newsee/feature/ocrservice/page/income_expance_page.dart';
 import 'package:newsee/feature/personaldetails/presentation/bloc/personal_details_bloc.dart';
 import 'package:newsee/pages/address.dart';
 import 'package:newsee/pages/lead_submit_page.dart';
@@ -80,7 +81,7 @@ class NewLeadPage extends StatelessWidget {
         BlocProvider(create: (context) => LeadSubmitBloc()),
       ],
       child: DefaultTabController(
-        length: fullLeadData == null ? 6 : 4,
+        length: fullLeadData == null ? 7 : 4,
         child: Scaffold(
           appBar:
               Globalconfig.isInitialRoute
@@ -238,6 +239,12 @@ class NewLeadPage extends StatelessWidget {
                                       ),
                                       Tab(
                                         icon: Icon(
+                                          Icons.qr_code_scanner,
+                                          color: Colors.white70,
+                                        ),
+                                      ),
+                                      Tab(
+                                        icon: Icon(
                                           Icons.done_all,
                                           color: Colors.white70,
                                         ),
@@ -287,6 +294,7 @@ class NewLeadPage extends StatelessWidget {
                       Personal(title: 'personal'),
                       Address(title: 'address'),
                       CoApplicantPage(title: 'Co Applicant Details'),
+                      IncomeExpancePage(),
                       LeadSubmitPage(title: 'Lead Details'),
                     ]
                     : [
