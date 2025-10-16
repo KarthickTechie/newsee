@@ -20,7 +20,8 @@ import 'package:image/image.dart' as img;
 import 'dart:ui' as ui show Codec, FrameInfo, Image, ImmutableBuffer;
 
 class FaceDetectionPage extends StatefulWidget {
-  const FaceDetectionPage({super.key});
+  final Function(Uint8List imageArray)? onVerifed;
+  const FaceDetectionPage({required this.onVerifed});
 
   @override
   State<FaceDetectionPage> createState() => _FaceDetectionPageState();
@@ -217,6 +218,7 @@ class _FaceDetectionPageState extends State<FaceDetectionPage> {
               title: 'Success',
               message: 'Hi ${faceRecognition.name} , Liveliness verified',
             );
+            widget.onVerifed!(Uint8List.fromList(img.encodePng(croppedImage!)));
           } else {
             showAlertDialog(
               title: 'Failure',

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:newsee/AppData/app_constants.dart';
 import 'package:newsee/AppData/app_forms.dart';
@@ -7,6 +8,7 @@ import 'package:newsee/Utils/qr_nav_utils.dart';
 import 'package:newsee/Utils/utils.dart';
 import 'package:newsee/feature/aadharvalidation/domain/modal/aadharvalidate_request.dart';
 import 'package:newsee/feature/dedupe/presentation/bloc/dedupe_bloc.dart';
+import 'package:newsee/feature/facedetection/presentation/page/face_detection.dart';
 import 'package:newsee/feature/masters/domain/modal/lov.dart';
 import 'package:newsee/feature/personaldetails/presentation/bloc/personal_details_bloc.dart';
 import 'package:newsee/widgets/SearchableMultiSelectDropdown.dart';
@@ -16,13 +18,20 @@ import 'package:newsee/widgets/custom_text_field.dart';
 import 'package:newsee/widgets/integer_text_field.dart';
 import 'package:newsee/widgets/searchable_drop_down.dart';
 import 'package:reactive_forms/reactive_forms.dart';
+import 'package:image/image.dart' as img;
 
-class Personal extends StatelessWidget {
+class Personal extends StatefulWidget {
   final String title;
   // scrollcontroller is required to scroll to errorformfield
-  final _scrollController = ScrollController();
   Personal({required this.title, super.key});
 
+  @override
+  State<Personal> createState() => _PersonalState();
+}
+
+class _PersonalState extends State<Personal> {
+  final _scrollController = ScrollController();
+  Uint8List? cropedFace;
   final FormGroup form = AppForms.GET_PERSONAL_DETAILS_FORM();
   final _titleKey = GlobalKey();
   final _firstNameKey = GlobalKey();
@@ -152,7 +161,7 @@ class Personal extends StatelessWidget {
       print("mapPersonalData-catch-error $error");
     }
   }
-  
+
   /* 
     @author : karthick.d  
     @desc   : scroll to error field which identified first in the widget tree
@@ -214,6 +223,39 @@ class Personal extends StatelessWidget {
         appBar: AppBar(
           title: Text("Personal Details"),
           automaticallyImplyLeading: false,
+          actions: [
+            Padding(
+              padding: const EdgeInsets.all(5),
+              child: GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder:
+                          (context) => FaceDetectionPage(
+                            onVerifed: (imageArray) {
+                              cropedFace = imageArray;
+                              setState(() {});
+                            },
+                          ),
+                    ),
+                  );
+                },
+                child: CircleAvatar(
+                  radius: 50,
+                  child:
+                      cropedFace != null
+                          ? Image.memory(
+                            cropedFace!,
+                            width: 80,
+                            height: 80,
+                            fit: BoxFit.fill,
+                          )
+                          : Image.asset('assets/logo.jpg'),
+                ),
+              ),
+            ),
+          ],
         ),
         body: BlocConsumer<PersonalDetailsBloc, PersonalDetailsState>(
           listener: (context, state) {

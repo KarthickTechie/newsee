@@ -61,12 +61,6 @@ void moreActionSheet(BuildContext context, String action) {
                       'assets/face.svg',
                       onTap: () {
                         print('retail loan');
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => FaceDetectionPage(),
-                          ),
-                        );
                       },
                     ),
                     LoanOption(
