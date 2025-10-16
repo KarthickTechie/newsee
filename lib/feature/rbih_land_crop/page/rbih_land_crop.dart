@@ -87,6 +87,10 @@ class RbIHLandCropState extends State<RbIHLandCrop> with SingleTickerProviderSta
                               MediaQuery.of(context).size.width * 0.8, // 80% of screen width
                               50, // Fixed height
                             ),
+                            maximumSize: Size(
+                              MediaQuery.of(context).size.width * 0.8, // 80% of screen width
+                              50, // Fixed height
+                            ),
                           ),
                           child: CircularProgressIndicator(
                             color: Colors.white,
@@ -123,6 +127,10 @@ class RbIHLandCropState extends State<RbIHLandCrop> with SingleTickerProviderSta
                                 borderRadius: BorderRadius.circular(8),
                               ),
                               minimumSize: Size(
+                                MediaQuery.of(context).size.width * 0.8, // 80% of screen width
+                                50, // Fixed height
+                              ),
+                              maximumSize: Size(
                                 MediaQuery.of(context).size.width * 0.8, // 80% of screen width
                                 50, // Fixed height
                               ),

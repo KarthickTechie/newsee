@@ -83,6 +83,7 @@ dependencies:
   encrypt: ^5.0.3
   google_ml_kit: ^0.20.0
   dotted_line: ^3.2.3
+  lottie: ^3.3.1
 
 dev_dependencies:
   flutter_test:
@@ -132,6 +133,8 @@ flutter:
     - assets/data/districtlist.json
     - assets/data/documents.json
     - assets/data/RBIH_LAND_CROP_RESP.json
+    - assets/loadinganimation.json
+    - assets/No_Data_found.json
     # - assets/logo1.jpg
 
   # An image asset can refer to one or more resolution-specific "variants", see

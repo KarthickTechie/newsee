@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:newsee/feature/lottie/lottie.dart';
 import 'package:newsee/feature/rbih_land_crop/page/rbih_land_crop.dart';
 import 'package:newsee/feature/salary_slip.dart/page/salary_slip_page.dart';
 
@@ -100,7 +101,15 @@ void moreActionSheet(BuildContext context, String action) {
                       screenHeight,
                       'Home Loan',
                       'assets/Home_Loan.svg',
-                      onTap: () {},
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder:
+                                (_) => LottiAnmationWidget()
+                          ),
+                        );
+                      },
                     ),
                     LoanOption(
                       context,
