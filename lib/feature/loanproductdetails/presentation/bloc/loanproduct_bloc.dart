@@ -172,11 +172,12 @@ class LoanproductBloc extends Bloc<LoanproductEvent, LoanproductState> {
 
   Future<void> onSaveLoanProduct(SaveLoanProduct event, Emitter emit) async {
     // emit(state.copyWith(status: SaveStatus.loading));
+    print('saveloan: ${state.selectedProduct}');
     if (state.selectedProduct != null) {
       String typeOfLoan = event.choosenProduct['typeofloan'] as String;
       String mainCategory = event.choosenProduct['maincategory'] as String;
       String subCategory = event.choosenProduct['subcategory'] as String;
-
+      print('saveloan1: $typeOfLoan');
       ProductSchema productSchema = state.productSchemeList.firstWhere(
         (p) => p.optionValue == typeOfLoan,
       );
@@ -188,6 +189,7 @@ class LoanproductBloc extends Bloc<LoanproductEvent, LoanproductState> {
       );
 
       if (state.status == SaveStatus.init) {
+        print('saveloan1: ${state.status}');
         emit(
           state.copyWith(
             selectedProductScheme: productSchema,
@@ -198,6 +200,9 @@ class LoanproductBloc extends Bloc<LoanproductEvent, LoanproductState> {
           ),
         );
       } else if (state.status == SaveStatus.update) {
+        print(
+          'saveloan2: $productSchema,  $mainProduct ${state.selectedProduct}',
+        );
         emit(
           state.copyWith(
             selectedProductScheme: productSchema,

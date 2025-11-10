@@ -116,7 +116,7 @@ class Loan extends StatelessWidget {
                 // ),
               );
             }
-
+            print('poping current route, ${state.status}');
             if (state.selectedProduct != null &&
                 state.showBottomSheet == false &&
                 state.status != SaveStatus.success) {
@@ -126,6 +126,7 @@ class Loan extends StatelessWidget {
             }
 
             if (state.status == SaveStatus.success && state.getLead == false) {
+              print('poping current route, ${state.status}');
               Globalconfig.loanAmountMaximum = int.parse(
                 state.selectedProduct?.prdamtToRange ?? '0',
               );
@@ -170,6 +171,33 @@ class Loan extends StatelessWidget {
               );
               form.markAsDisabled();
             } else {
+              print('init: $state');
+              if (state.productSchemeList.isNotEmpty &&
+                  form.control('typeofloan').value == null) {
+                print(state.productSchemeList);
+                final selectedLoan = state.productSchemeList.firstWhere(
+                  (scheme) => scheme.optionValue == '80354',
+                  orElse:
+                      () => ProductSchema(
+                        optionId: '',
+                        optionDesc: '',
+                        optionValue: '',
+                      ),
+                );
+
+                print(selectedLoan);
+
+                if (selectedLoan.optionValue.isNotEmpty) {
+                  form
+                      .control('typeofloan')
+                      .updateValue(selectedLoan.optionValue);
+
+                  context.read<LoanproductBloc>().add(
+                    LoanProductDropdownChange(field: selectedLoan),
+                  );
+                }
+              }
+
               form.markAsEnabled();
             }
             return ReactiveForm(

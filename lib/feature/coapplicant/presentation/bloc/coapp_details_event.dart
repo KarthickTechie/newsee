@@ -46,7 +46,8 @@ class CoAppGurantorSearchCifEvent extends CoappDetailsEvent {
 
 class IsCoAppOrGurantorAdd extends CoappDetailsEvent {
   final String? addapplicants;
-  IsCoAppOrGurantorAdd({required this.addapplicants});
+  final bool? onNext;
+  IsCoAppOrGurantorAdd({required this.addapplicants, this.onNext = false});
 }
 
 class DeleteCoApplicantEvent extends CoappDetailsEvent {

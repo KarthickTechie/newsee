@@ -76,7 +76,16 @@ final class CoappDetailsBloc
   }
 
   addCoappOrGurantor(IsCoAppOrGurantorAdd event, Emitter emit) {
-    emit(state.copyWith(isApplicantsAdded: event.addapplicants));
+    if (event.onNext == true) {
+      emit(
+        state.copyWith(
+          isApplicantsAdded: event.addapplicants,
+          status: SaveStatus.success,
+        ),
+      );
+    } else {
+      emit(state.copyWith(isApplicantsAdded: event.addapplicants));
+    }
   }
 
   Future<void> initCoAppDetailsPage(
