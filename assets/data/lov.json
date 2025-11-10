@@ -532,21 +532,16 @@
             {
                 "Header": "Gender",
                 "optvalue": "1",
-                "optDesc": "Female",
+                "optDesc": "Yes",
                 "optCode": "F"
             },
             {
                 "Header": "Gender",
                 "optvalue": "2",
-                "optDesc": "Male",
+                "optDesc": "No",
                 "optCode": "M"
             },
-            {
-                "Header": "Gender",
-                "optvalue": "5",
-                "optDesc": "Transgender",
-                "optCode": "T"
-            },
+            
             {
                 "Header": "LandYes",
                 "optvalue": "1",

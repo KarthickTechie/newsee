@@ -8,7 +8,9 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:newsee/Utils/shared_preference_utils.dart';
 import 'package:newsee/feature/auth/domain/model/user_details.dart';
+import 'package:newsee/feature/audit_log/presentation/page/audit_log_page.dart';
 import 'package:newsee/pages/home_page.dart';
+import 'package:path/path.dart';
 
 class Sidenavigationbar extends StatelessWidget {
   final Function(int)? onTabSelected;
@@ -101,6 +103,23 @@ class Sidenavigationbar extends StatelessWidget {
               );
             },
           ),
+         
+            buildGradientTile(
+            context: sidemenucontext,
+            icon: Icons.audio_file_rounded,
+            title: "Audio Logs",
+            onTap: () {
+              Navigator.push(
+                sidemenucontext,
+                MaterialPageRoute(builder: (context) => AuditLogPage()),
+              );
+            },
+          ),
+
+
+
+
+
           buildGradientTile(
             context: sidemenucontext,
             icon: Icons.logout_rounded,

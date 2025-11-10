@@ -10,6 +10,7 @@
 */
 
 import 'package:flutter/material.dart';
+import 'package:newsee/AppData/globalconfig.dart';
 
 class OptionsSheet extends StatelessWidget {
   final IconData icon;
@@ -64,7 +65,7 @@ class OptionsSheet extends StatelessWidget {
               height: 48,
               decoration: BoxDecoration(
                 gradient: LinearGradient(
-                  colors: [Colors.teal.shade200, Colors.teal.shade700],
+                  colors: Globalconfig.isOffline? [Colors.teal, Colors.tealAccent] : [Colors.red, Colors.redAccent],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),

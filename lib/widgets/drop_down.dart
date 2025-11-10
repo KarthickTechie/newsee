@@ -14,7 +14,8 @@ Widget Dropdown({
   required String label,
   required List<String> items,
   bool? mantatory,
-  Function? onchange,
+  // Function? onchange,
+  final ReactiveFormFieldCallback? onchange
 }) {
   return Padding(
     padding: EdgeInsets.all(16),
@@ -23,10 +24,12 @@ Widget Dropdown({
       validationMessages: {
         ValidationMessage.required: (error) => '$label is required',
       },
-      onChanged: (value) {
-        print("onchanging here, $value");
-        onchange == null ? null : onchange(value);
-      },
+      // onChanged: (value) {
+      //   print("onchanging here, $value");
+      //   // onchange == null ? null : onchange(value);
+      //   onblur(value);
+      // },
+      onChanged: onchange,
       decoration: InputDecoration(
         label: RichText(
           text: TextSpan(

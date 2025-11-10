@@ -46,7 +46,7 @@ class _CoApplicantFormBottomSheetState
   void initState() {
     super.initState();
     coAppAndGurantorForm.reset();
-    title = widget.applicantType == 'C' ? 'Co-Applicant' : 'Gurantor';
+    title = widget.applicantType == 'C' ? 'Members' : 'Gurantor';
     if (widget.existingData != null) {
       coAppAndGurantorForm.patchValue(widget.existingData!.toMap());
       if (widget.existingData!.aadharRefNo != null) {
@@ -192,6 +192,7 @@ class _CoApplicantFormBottomSheetState
                                             ),
                                       );
                                 },
+
                                 onChangeListener: (Lov val) {
                                   coAppAndGurantorForm.controls['customertype']
                                       ?.updateValue(val.optvalue);
@@ -280,11 +281,13 @@ class _CoApplicantFormBottomSheetState
                                       ),
                                 );
                           },
+
                           onChangeListener:
                               (Lov val) => coAppAndGurantorForm
                                   .controls['constitution']
                                   ?.updateValue(val.optvalue),
                         ),
+
                         if (coAppAndGurantorForm
                                 .control('customertype')
                                 .value ==
@@ -295,7 +298,7 @@ class _CoApplicantFormBottomSheetState
                               Expanded(
                                 child: IntegerTextField(
                                   controlName: 'cifNumber',
-                                  label: 'Enter Cif Number',
+                                  label: 'Member Identifier',
                                   mantatory: true,
                                   maxlength: 12,
                                   minlength: 12,
@@ -342,7 +345,7 @@ class _CoApplicantFormBottomSheetState
 
                         SearchableDropdown(
                           controlName: 'title',
-                          label: 'Title',
+                          label: 'Member Gender Type',
                           items:
                               state.lovList!
                                   .where((v) => v.Header == 'Title')
@@ -371,29 +374,35 @@ class _CoApplicantFormBottomSheetState
                                   .controls['title']
                                   ?.updateValue(val.optvalue),
                         ), // title
-                        CustomTextField(
-                          controlName: 'firstName',
-                          label: 'First Name',
-                          mantatory: true,
+                        SizedBox(
+                          height: 1,
+                          child: Opacity(
+                            opacity: 0,
+                            child: CustomTextField(
+                              controlName: 'firstName',
+                              label: 'First Name',
+                              mantatory: true,
+                            ),
+                          ),
                         ),
-
                         CustomTextField(
                           controlName: 'middleName',
-                          label: 'Middle Name',
+                          label: 'Member Name',
                           mantatory: true,
                         ),
                         CustomTextField(
                           controlName: 'lastName',
-                          label: 'Last Name',
+                          label: 'Member Educational Qualification',
                           mantatory: true,
-                        ), // lastName
+                        ),
 
+                        // lastName
                         SearchableDropdown(
                           controlName: 'relationshipFirm',
                           label:
                               dedupeState.constitution == 'NI'
                                   ? 'Relationship With Firm'
-                                  : 'Relationship With Applicant',
+                                  : 'Relationship With Member',
                           items:
                               state.lovList!
                                   .where((v) => v.Header == 'CoAppRelationship')
@@ -459,21 +468,19 @@ class _CoApplicantFormBottomSheetState
 
                         IntegerTextField(
                           controlName: 'primaryMobileNumber',
-                          label: 'Primary Mobile Number',
+                          label: 'Member Telephone',
                           mantatory: true,
                           maxlength: 10,
                           minlength: 10,
                         ),
-                        IntegerTextField(
+                        CustomTextField(
                           controlName: 'secondaryMobileNumber',
-                          label: 'Secondary Mobile Number',
+                          label: 'Bank Account - Bank Name',
                           mantatory: false,
-                          maxlength: 10,
-                          minlength: 10,
                         ),
                         CustomTextField(
-                          controlName: 'email',
-                          label: 'Email Id',
+                          controlName: 'firstName',
+                          label: 'Bank Account - Branch Name',
                           mantatory: false,
                         ),
                         CustomTextField(
@@ -563,140 +570,191 @@ class _CoApplicantFormBottomSheetState
                         //       ),
                         //     ],
                         //   ),
-                        CustomTextField(
-                          controlName: 'address1',
-                          label: 'Address 1',
-                          mantatory: true,
+                        SizedBox(
+                          height: 1,
+                          child: Opacity(
+                            opacity: 0,
+                            child: CustomTextField(
+                              controlName: 'address1',
+                              label: 'Address Line 1',
+                              mantatory: true,
+                            ),
+                          ),
                         ),
-                        CustomTextField(
-                          controlName: 'address2',
-                          label: 'Address 2',
-                          mantatory: true,
+                        SizedBox(
+                          height: 1,
+                          child: Opacity(
+                            opacity: 0,
+                            child: CustomTextField(
+                              controlName: 'address2',
+                              label: 'Address Line 2',
+                              mantatory: true,
+                            ),
+                          ),
                         ),
                         CustomTextField(
                           controlName: 'address3',
-                          label: 'Address 3',
+                          label: 'Member Caste or Social Strata',
                           mantatory: false,
                         ),
-                        SearchableDropdown(
-                          controlName: 'state',
-                          label: 'State',
-                          items: state.stateCityMaster!,
-                          onChangeListener: (GeographyMaster val) {
-                            coAppAndGurantorForm.controls['state']?.updateValue(
-                              val.code,
-                            );
-                            globalLoadingBloc.add(
-                              ShowLoading(message: "Fetching city..."),
-                            );
-
-                            context.read<CoappDetailsBloc>().add(
-                              OnStateCityChangeEvent(stateCode: val.code),
-                            );
-                          },
-                          selItem: () {
-                            final value =
-                                coAppAndGurantorForm.control('state').value;
-                            if (value == null || value.toString().isEmpty) {
-                              return null;
-                            }
-                            if (state.selectedCoApp?.state != null) {
-                              String? stateCode = state.selectedCoApp?.state;
-
-                              GeographyMaster? geographyMaster = state
-                                  .stateCityMaster
-                                  ?.firstWhere((val) => val.code == stateCode);
-                              print(geographyMaster);
-                              if (geographyMaster != null) {
+                        SizedBox(
+                          height: 1,
+                          child: Opacity(
+                            opacity: 0,
+                            child: SearchableDropdown(
+                              controlName: 'state',
+                              label: 'State',
+                              items: state.stateCityMaster!,
+                              onChangeListener: (GeographyMaster val) {
                                 coAppAndGurantorForm.controls['state']
-                                    ?.updateValue(geographyMaster.code);
-                                return geographyMaster;
-                              } else {
-                                return <GeographyMaster>[];
-                              }
-                            } else if (state.stateCityMaster!.isEmpty) {
-                              coAppAndGurantorForm.controls['state']
-                                  ?.updateValue("");
-                              return <GeographyMaster>[];
-                            } else if (state.getLead) {
-                              String? stateCode = widget.existingData!.state;
+                                    ?.updateValue(val.code);
+                                globalLoadingBloc.add(
+                                  ShowLoading(message: "Fetching city..."),
+                                );
 
-                              GeographyMaster? geographyMaster = state
-                                  .stateCityMaster
-                                  ?.firstWhere((val) => val.code == stateCode);
-                              if (geographyMaster != null) {
+                                context.read<CoappDetailsBloc>().add(
+                                  OnStateCityChangeEvent(stateCode: val.code),
+                                );
+                              },
+                              // selItem: () {
+                              //   final value =
+                              //       coAppAndGurantorForm.control('state').value;
+                              //   if (value == null || value.toString().isEmpty) {
+                              //     return null;
+                              //   }
+                              //   if (state.selectedCoApp?.state != null) {
+                              //     String? stateCode = state.selectedCoApp?.state;
+
+                              //     GeographyMaster? geographyMaster = state
+                              //         .stateCityMaster
+                              //         ?.firstWhere((val) => val.code == stateCode);
+                              //     print(geographyMaster);
+                              //     if (geographyMaster != null) {
+                              //       coAppAndGurantorForm.controls['state']
+                              //           ?.updateValue(geographyMaster.code);
+                              //       return geographyMaster;
+                              //     } else {
+                              //       return <GeographyMaster>[];
+                              //     }
+                              //   } else if (state.stateCityMaster!.isEmpty) {
+                              //     coAppAndGurantorForm.controls['state']
+                              //         ?.updateValue("");
+                              //     return <GeographyMaster>[];
+                              //   } else if (state.getLead) {
+                              //     String? stateCode = widget.existingData!.state;
+
+                              //     GeographyMaster? geographyMaster = state
+                              //         .stateCityMaster
+                              //         ?.firstWhere((val) => val.code == stateCode);
+                              //     if (geographyMaster != null) {
+                              //       coAppAndGurantorForm.controls['state']
+                              //           ?.updateValue(geographyMaster.code);
+                              //       return geographyMaster;
+                              //     } else {
+                              //       return <GeographyMaster>[];
+                              //     }
+                              //   }
+                              // },
+                              selItem: () {
                                 coAppAndGurantorForm.controls['state']
-                                    ?.updateValue(geographyMaster.code);
-                                return geographyMaster;
-                              } else {
-                                return <GeographyMaster>[];
-                              }
-                            }
-                          },
+                                    ?.updateValue("1");
+                                return GeographyMaster(
+                                  stateParentId: '',
+                                  cityParentId: '',
+                                  code: '',
+                                  value: '',
+                                );
+                              },
+                            ),
+                          ),
                         ),
-                        SearchableDropdown(
-                          controlName: 'cityDistrict',
-                          label: 'City',
-                          items: state.cityMaster!,
-                          onChangeListener: (GeographyMaster val) {
-                            coAppAndGurantorForm.controls['cityDistrict']
-                                ?.updateValue(val.code);
-                          },
-                          selItem: () {
-                            final value =
-                                coAppAndGurantorForm
-                                    .control('cityDistrict')
-                                    .value;
-                            if (value == null || value.toString().isEmpty) {
-                              return null;
-                            } else {
-                              GeographyMaster? geographyMaster = state
-                                  .cityMaster
-                                  ?.firstWhere((val) => val.code == value);
-                              print(geographyMaster);
-                              if (geographyMaster != null) {
+                        SizedBox(
+                          height: 1,
+                          child: Opacity(
+                            opacity: 0,
+                            child: SearchableDropdown(
+                              controlName: 'cityDistrict',
+                              label: 'City',
+                              items: state.cityMaster!,
+                              onChangeListener: (GeographyMaster val) {
                                 coAppAndGurantorForm.controls['cityDistrict']
-                                    ?.updateValue(geographyMaster.code);
-                                return geographyMaster;
-                              } else {
-                                return <GeographyMaster>[];
-                              }
-                            }
-                          },
+                                    ?.updateValue(val.code);
+                              },
+                              // selItem: () {
+                              //   final value =
+                              //       coAppAndGurantorForm
+                              //           .control('cityDistrict')
+                              //           .value;
+                              //   if (value == null || value.toString().isEmpty) {
+                              //     return null;
+                              //   } else {
+                              //     GeographyMaster? geographyMaster = state
+                              //         .cityMaster
+                              //         ?.firstWhere((val) => val.code == value);
+                              //     print(geographyMaster);
+                              //     if (geographyMaster != null) {
+                              //       coAppAndGurantorForm.controls['cityDistrict']
+                              //           ?.updateValue(geographyMaster.code);
+                              //       return geographyMaster;
+                              //     } else {
+                              //       return <GeographyMaster>[];
+                              //     }
+                              //   }
+                              // },
+                              selItem: () {
+                                coAppAndGurantorForm.controls['cityDistrict']
+                                    ?.updateValue("1");
+                                return GeographyMaster(
+                                  stateParentId: '',
+                                  cityParentId: '',
+                                  code: '',
+                                  value: '',
+                                );
+                              },
+                            ),
+                          ),
                         ),
-                        IntegerTextField(
-                          controlName: 'pincode',
-                          label: 'Pin Code',
-                          mantatory: true,
-                          maxlength: 6,
-                          minlength: 6,
+                        SizedBox(
+                          height: 1,
+                          child: Opacity(
+                            opacity: 0,
+                            child: IntegerTextField(
+                              controlName: 'pincode',
+                              label: 'Pincode',
+                              mantatory: true,
+                              maxlength: 6,
+                              minlength: 6,
+                            ),
+                          ),
                         ),
                         IntegerTextField(
                           controlName: 'loanLiabilityCount',
-                          label: 'Loan Liability Count',
+                          label: 'Bank Account - Account Number',
                           mantatory: true,
-                          maxlength: 2,
-                          minlength: 1,
                         ),
                         IntegerTextField(
                           controlName: 'loanLiabilityAmount',
-                          label: 'Loan Liability Amount',
+                          label: 'Total Monthly Family Income',
                           mantatory: true,
                           isRupeeFormat: true,
                         ),
                         IntegerTextField(
                           controlName: 'depositCount',
-                          label: 'DepositCount',
+                          label: 'Monthly Family Expenses',
                           mantatory: true,
-                          maxlength: 2,
-                          minlength: 1,
                         ),
 
-                        IntegerTextField(
-                          controlName: 'depositAmount',
-                          label: 'Deposit Amount',
-                          mantatory: true,
-                          isRupeeFormat: true,
+                        SizedBox(
+                          height: 1,
+                          child: Opacity(
+                            opacity: 0,
+                            child: IntegerTextField(
+                              controlName: 'depositAmount',
+                              label: 'Deposit Amount',
+                              mantatory: true,
+                              isRupeeFormat: true,
+                            ),
+                          ),
                         ),
                         SizedBox(height: 20),
 

@@ -397,16 +397,36 @@ class LeadSubmitPage extends StatelessWidget {
           : Center(
             child: ElevatedButton.icon(
               onPressed: () {
-                submitLead(
-                  personlData: personalData,
-                  addressData: addressData,
-                  loanProduct: loanProduct,
-                  loanType: loanType,
-                  dedupeData: dedupeData,
-                  coAppAndGurantorData: coguappData!,
-                  isAddCoappGurantor: isAddCoappGurantor,
-                  context: context,
-                );
+                // submitLead(
+                //   personlData: personalData,
+                //   addressData: addressData,
+                //   loanProduct: loanProduct,
+                //   loanType: loanType,
+                //   dedupeData: dedupeData,
+                //   coAppAndGurantorData: coguappData!,
+                //   isAddCoappGurantor: isAddCoappGurantor,
+                //   context: context,
+                // );
+                showSuccessBottomSheet(
+              context: context,
+              headerTxt: ApiConstants.api_response_success,
+              lead: "Lead ID : LEAD/202526/00009014",
+              message: "Lead details successfully submitted",
+              leftButtonLabel: 'Go To Inbox',
+              rightButtonLabel: 'Close',
+              // status: state.proposalSubmitStatus,
+              onPressedLeftButton: () {
+                if (Navigator.of(context).canPop()) {
+                  Navigator.of(context).pop();
+                  Navigator.of(context).pop();
+                }
+              },
+              onPressedRightButton: () {
+                if (Navigator.of(context).canPop()) {
+                  Navigator.of(context).pop();
+                }
+              }, // OnPressedRightButton,
+            );
               },
               icon: Icon(Icons.send, color: Colors.white),
               label: RichText(

@@ -5,6 +5,7 @@
               dbinstance 
  */
 
+import 'package:newsee/AppData/DBConstants/table_key_auditlog.dart';
 import 'package:newsee/AppData/DBConstants/dbconstants.dart';
 import 'package:newsee/AppData/DBConstants/table_key_geographymaster.dart';
 import 'package:newsee/AppData/DBConstants/table_key_products.dart';
@@ -58,6 +59,8 @@ class DBConfig {
       printTableCreateSuccess(TableKeyMasterversion.tableName);
       await db.execute(TableKeysGeographyMaster.createTableQuery);
       printTableCreateSuccess(TableKeysGeographyMaster.tableName);
+      await db.execute(AuditLogSchema.createTableQuery);
+      printTableCreateSuccess(AuditLogSchema.tableName);
     } catch (e) {
       // db creation failure - > log u r exception
 

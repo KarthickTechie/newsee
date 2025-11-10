@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:newsee/AppData/app_constants.dart';
 import 'package:newsee/AppData/app_forms.dart';
+import 'package:newsee/AppData/globalconfig.dart';
 import 'package:newsee/Model/personal_data.dart';
 import 'package:newsee/Utils/qr_nav_utils.dart';
 import 'package:newsee/Utils/utils.dart';
@@ -9,10 +10,13 @@ import 'package:newsee/feature/aadharvalidation/domain/modal/aadharvalidate_requ
 import 'package:newsee/feature/dedupe/presentation/bloc/dedupe_bloc.dart';
 import 'package:newsee/feature/draft/draft_service.dart';
 import 'package:newsee/feature/draft/presentation/pages/draft_inbox.dart';
+import 'package:newsee/feature/loanproductdetails/presentation/bloc/loanproduct_bloc.dart';
 import 'package:newsee/feature/masters/domain/modal/lov.dart';
 import 'package:newsee/feature/personaldetails/presentation/bloc/personal_details_bloc.dart';
 import 'package:newsee/widgets/SearchableMultiSelectDropdown.dart';
+import 'package:newsee/widgets/drop_down.dart';
 import 'package:newsee/widgets/k_willpopscope.dart';
+import 'package:newsee/widgets/radio.dart';
 import 'package:newsee/widgets/sysmo_alert.dart';
 import 'package:newsee/widgets/custom_text_field.dart';
 import 'package:newsee/widgets/integer_text_field.dart';
@@ -190,6 +194,7 @@ class Personal extends StatelessWidget {
       {'key': _religionKey, 'controlName': 'religion'},
       {'key': _casteKey, 'controlName': 'caste'},
       {'key': _genderKey, 'controlName': 'gender'},
+      {'key': _subActivityKey, 'controlName': 'subActivity'},
     ];
 
     for (var field in fields) {
@@ -252,6 +257,8 @@ class Personal extends StatelessWidget {
             }
           },
           builder: (context, state) {
+            final loanBloc = context.watch<LoanproductBloc>().state;
+            final loanTypeLabel = loanBloc.selectedProductScheme == null ? "SHG" : loanBloc.selectedProductScheme!.optionValue == "61" ? "SHG" : "JLG" ;
             DedupeState? dedupeState;
             if (state.status == SaveStatus.init && state.aadhaarData != null) {
               mapAadhaarData(state.aadhaarData);
@@ -286,6 +293,7 @@ class Personal extends StatelessWidget {
                   child: Column(
                     children: [
                       SearchableDropdown(
+                        
                         fieldKey: _titleKey,
                         controlName: 'title',
                         label: 'Title',
@@ -323,20 +331,32 @@ class Personal extends StatelessWidget {
                       CustomTextField(
                         fieldKey: _firstNameKey,
                         controlName: 'firstName',
-                        label: 'First Name',
+                        label: 'Name of the $loanTypeLabel',
                         mantatory: true,
                       ),
-                      CustomTextField(
-                        fieldKey: _middleNameKey,
-                        controlName: 'middleName',
-                        label: 'Middle Name',
-                        mantatory: true,
+                      SizedBox(
+                        height: 1,
+                        child: Opacity(
+                          opacity: 0,
+                          child: CustomTextField(
+                            fieldKey: _middleNameKey,
+                            controlName: 'middleName',
+                            label: 'Middle Name',
+                            mantatory: false,
+                          ),
+                        ),
                       ),
-                      CustomTextField(
-                        fieldKey: _lastNameKey,
-                        controlName: 'lastName',
-                        label: 'Last Name',
-                        mantatory: true,
+                      SizedBox(
+                        height: 1,
+                        child: Opacity(
+                          opacity: 0,
+                          child: CustomTextField(
+                            fieldKey: _lastNameKey,
+                            controlName: 'lastName',
+                            label: 'Last Name',
+                            mantatory: true,
+                          ),
+                        ),
                       ),
                       Padding(
                         padding: const EdgeInsets.all(12.0),
@@ -345,11 +365,11 @@ class Personal extends StatelessWidget {
                           formControlName: 'dob',
                           validationMessages: {
                             ValidationMessage.required:
-                                (error) => 'Date of Birth is required',
+                                (error) => 'Date of Formation',
                           },
                           readOnly: true,
                           decoration: InputDecoration(
-                            labelText: 'Date Of Birth',
+                            labelText: 'Date of Formation',
                             suffixIcon: Icon(Icons.calendar_today),
                           ),
                           onTap: (control) async {
@@ -393,85 +413,98 @@ class Personal extends StatelessWidget {
                         label: 'Email Id',
                         mantatory: true,
                       ),
-                      CustomTextField(
-                        fieldKey: _panNumberKey,
-                        controlName: 'panNumber',
-                        label: 'Pan No',
-                        mantatory: true,
-                        autoCapitalize: true,
-                        maxlength: 10,
-                      ),
-                      refAadhaar
-                          ? Row(
-                            children: [
-                              Expanded(
-                                child: IntegerTextField(
-                                  fieldKey: _aadharRefNoKey,
-                                  controlName: 'aadharRefNo',
-                                  label: 'Aadhaar No',
-                                  mantatory: true,
-                                  maxlength: 12,
-                                  minlength: 12,
-                                ),
-                              ),
-                              const SizedBox(width: 8),
-                              ElevatedButton.icon(
-                                icon: Icon(Icons.qr_code_scanner),
-                                label: Text('Scan'),
-                                onPressed: () => showScannerOptions(context),
-                              ),
-                            ],
-                          )
-                          : Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Expanded(
-                                child: IntegerTextField(
-                                  fieldKey: _aadhaarKey,
-                                  controlName: 'aadhaar',
-                                  label: 'Aadhaar Number',
-                                  mantatory: true,
-                                  maxlength: 12,
-                                  minlength: 12,
-                                ),
-                              ),
-                              const SizedBox(width: 8),
-                              ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: const Color.fromARGB(
-                                    255,
-                                    3,
-                                    9,
-                                    110,
-                                  ),
-                                  foregroundColor: Colors.white,
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 16,
-                                    vertical: 10,
-                                  ),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                ),
-                                onPressed: () {
-                                  final AadharvalidateRequest
-                                  aadharvalidateRequest = AadharvalidateRequest(
-                                    aadhaarNumber:
-                                        form.control('aadhaar').value,
-                                  );
-                                  context.read<PersonalDetailsBloc>().add(
-                                    AadhaarValidateEvent(
-                                      request: aadharvalidateRequest,
-                                    ),
-                                  );
-                                },
-                                child:
-                                    state.status == SaveStatus.loading
-                                        ? CircularProgressIndicator()
-                                        : const Text("Validate"),
-                              ),
-                            ],
+                      SizedBox(
+                        height: 1,
+                        child: Opacity(
+                          opacity: 0,
+                          child: CustomTextField(
+                            fieldKey: _panNumberKey,
+                            controlName: 'panNumber',
+                            label: 'Pan No',
+                            mantatory: true,
+                            autoCapitalize: true,
+                            maxlength: 10,
                           ),
+                        ),
+                      ),
+
+                      SizedBox(
+                        height: 1,
+                        child: Opacity(
+                          opacity: 0,
+                          child: refAadhaar
+                              ? Row(
+                                children: [
+                                  Expanded(
+                                    child: IntegerTextField(
+                                      fieldKey: _aadharRefNoKey,
+                                      controlName: 'aadharRefNo',
+                                      label: 'Aadhaar No',
+                                      mantatory: true,
+                                      maxlength: 12,
+                                      minlength: 12,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  ElevatedButton.icon(
+                                    icon: Icon(Icons.qr_code_scanner),
+                                    label: Text('Scan'),
+                                    onPressed: () => showScannerOptions(context),
+                                  ),
+                                ],
+                              )
+                              : Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Expanded(
+                                    child: IntegerTextField(
+                                      fieldKey: _aadhaarKey,
+                                      controlName: 'aadhaar',
+                                      label: 'Aadhaar Number',
+                                      mantatory: true,
+                                      maxlength: 12,
+                                      minlength: 12,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: const Color.fromARGB(
+                                        255,
+                                        3,
+                                        9,
+                                        110,
+                                      ),
+                                      foregroundColor: Colors.white,
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 16,
+                                        vertical: 10,
+                                      ),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                    ),
+                                    onPressed: () {
+                                      final AadharvalidateRequest
+                                      aadharvalidateRequest = AadharvalidateRequest(
+                                        aadhaarNumber:
+                                            form.control('aadhaar').value,
+                                      );
+                                      context.read<PersonalDetailsBloc>().add(
+                                        AadhaarValidateEvent(
+                                          request: aadharvalidateRequest,
+                                        ),
+                                      );
+                                    },
+                                    child:
+                                        state.status == SaveStatus.loading
+                                            ? CircularProgressIndicator()
+                                            : const Text("Validate"),
+                                  ),
+                                ],
+                              ),
+                        ),
+                      ),
                       IntegerTextField(
                         fieldKey: _loanAmountRequestedKey,
                         controlName: 'loanAmountRequested',
@@ -479,43 +512,49 @@ class Personal extends StatelessWidget {
                         mantatory: true,
                         isRupeeFormat: true,
                       ),
-                      SearchableDropdown<Lov>(
-                        fieldKey: _residentialStatusKey,
-                        controlName: 'residentialStatus',
-                        label: 'Residential Status',
-                        items:
-                            state.lovList!
-                                .where((v) => v.Header == 'ResidentialStatus')
-                                .toList(),
-                        onChangeListener: (Lov val) {
-                          form.controls['residentialStatus']?.updateValue(
-                            val.optvalue,
-                          );
-                        },
-                        selItem: () {
-                          final value = form.control('residentialStatus').value;
-                          if (value == null || value.toString().isEmpty) {
-                            return null;
-                          }
-                          return state.lovList!
-                              .where((v) => v.Header == 'ResidentialStatus')
-                              .firstWhere(
-                                (lov) => lov.optvalue == value,
-                                orElse:
-                                    () => Lov(
-                                      Header: 'ResidentialStatus',
-                                      optvalue: '',
-                                      optDesc: '',
-                                      optCode: '',
-                                    ),
+                      SizedBox(
+                         height: 1,
+                        child: Opacity(
+                          opacity: 0,
+                          child: SearchableDropdown<Lov>(
+                            fieldKey: _residentialStatusKey,
+                            controlName: 'residentialStatus',
+                            label: 'Residential Status',
+                            items:
+                                state.lovList!
+                                    .where((v) => v.Header == 'ResidentialStatus')
+                                    .toList(),
+                            onChangeListener: (Lov val) {
+                              form.controls['residentialStatus']?.updateValue(
+                                val.optvalue,
                               );
-                        },
+                            },
+                            selItem: () {
+                              final value = form.control('residentialStatus').value;
+                              if (value == null || value.toString().isEmpty) {
+                                return null;
+                              }
+                              return state.lovList!
+                                  .where((v) => v.Header == 'ResidentialStatus')
+                                  .firstWhere(
+                                    (lov) => lov.optvalue == value,
+                                    orElse:
+                                        () => Lov(
+                                          Header: 'ResidentialStatus',
+                                          optvalue: '',
+                                          optDesc: '',
+                                          optCode: '',
+                                        ),
+                                  );
+                            },
+                          ),
+                        ),
                       ),
 
                       SearchableDropdown<Lov>(
                         fieldKey: _natureOfActivityKey,
                         controlName: 'natureOfActivity',
-                        label: 'Nature of Activity',
+                        label: 'Purpose of Loan',
                         items:
                             state.lovList!
                                 .where((v) => v.Header == 'NatureOfActivity')
@@ -543,43 +582,59 @@ class Personal extends StatelessWidget {
                                     ),
                               );
                         },
+                        
                       ),
-                      SearchableDropdown<Lov>(
-                        fieldKey: _occupationTypeKey,
-                        controlName: 'occupationType',
-                        label: 'Occupation Type',
-                        items:
-                            state.lovList!
-                                .where((v) => v.Header == 'OccupationType')
-                                .toList(),
-                        onChangeListener: (Lov val) {
-                          form.controls['occupationType']?.updateValue(
-                            val.optvalue,
+                      SizedBox(
+                        height: 1,
+                        child: Opacity(
+                          opacity: 0,
+                          child: SearchableDropdown<Lov>(
+                            fieldKey: _occupationTypeKey,
+                            controlName: 'occupationType',
+                            label: 'Occupation Type',
+                            items:
+                                state.lovList!
+                                    .where((v) => v.Header == 'OccupationType')
+                                    .toList(),
+                            onChangeListener: (Lov val) {
+                              form.controls['occupationType']?.updateValue(
+                                val.optvalue,
+                              );
+                            }, 
+                            selItem: () {
+                          form.controls['occupationType']?.updateValue("1");
+                          return Lov(
+                            Header: "OccupationType",
+                            optvalue: "01",
+                            optDesc: "SALARIED",
+                            optCode: "01",
                           );
                         },
-                        selItem: () {
-                          final value = form.control('occupationType').value;
-                          if (value == null || value.toString().isEmpty) {
-                            return null;
-                          }
-                          return state.lovList!
-                              .where((v) => v.Header == 'OccupationType')
-                              .firstWhere(
-                                (lov) => lov.optvalue == value,
-                                orElse:
-                                    () => Lov(
-                                      Header: 'OccupationType',
-                                      optvalue: '',
-                                      optDesc: '',
-                                      optCode: '',
-                                    ),
-                              );
-                        },
+                            // selItem: () {
+                            //   final value = form.control('occupationType').value;
+                            //   if (value == null || value.toString().isEmpty) {
+                            //     return null;
+                            //   }
+                            //   return state.lovList!
+                            //       .where((v) => v.Header == 'OccupationType')
+                            //       .firstWhere(
+                            //         (lov) => lov.optvalue == value,
+                            //         orElse:
+                            //             () => Lov(
+                            //               Header: 'OccupationType',
+                            //               optvalue: '',
+                            //               optDesc: '',
+                            //               optCode: '',
+                            //             ),
+                            //       );
+                            // },
+                          ),
+                        ),
                       ),
                       SearchableDropdown<Lov>(
                         fieldKey: _agriculturistTypeKey,
                         controlName: 'agriculturistType',
-                        label: 'Agriculturist Type',
+                        label: 'Proposed Linkage',
                         items:
                             state.lovList!
                                 .where((v) => v.Header == 'AgricultType')
@@ -607,136 +662,197 @@ class Personal extends StatelessWidget {
                                     ),
                               );
                         },
+                        
                       ),
-                      SearchableDropdown<Lov>(
-                        fieldKey: _farmerCategoryKey,
-                        controlName: 'farmerCategory',
-                        label: 'Farmer Category',
-                        items:
-                            state.lovList!
-                                .where((v) => v.Header == 'FarmerCategory')
-                                .toList(),
-                        onChangeListener: (Lov val) {
-                          form.controls['farmerCategory']?.updateValue(
-                            val.optvalue,
+                      SizedBox(
+                        height: 1,
+                        child: Opacity(
+                          opacity: 0,
+                          child: SearchableDropdown<Lov>(
+                            fieldKey: _farmerCategoryKey,
+                            controlName: 'farmerCategory',
+                            label: 'Farmer Category',
+                            items:
+                                state.lovList!
+                                    .where((v) => v.Header == 'FarmerCategory')
+                                    .toList(),
+                            onChangeListener: (Lov val) {
+                              form.controls['farmerCategory']?.updateValue(
+                                val.optvalue,
+                              );
+                            },
+                            // selItem: () {
+                            //   final value = form.control('farmerCategory').value;
+                            //   if (value == null || value.toString().isEmpty) {
+                            //     return null;
+                            //   }
+                            //   return state.lovList!
+                            //       .where((v) => v.Header == 'FarmerCategory')
+                            //       .firstWhere(
+                            //         (lov) => lov.optvalue == value,
+                            //         orElse:
+                            //             () => Lov(
+                            //               Header: 'FarmerCategory',
+                            //               optvalue: '',
+                            //               optDesc: '',
+                            //               optCode: '',
+                            //             ),
+                            //       );
+                            // },
+                            selItem: () {
+                          form.controls['farmerCategory']?.updateValue("1");
+                          return Lov(
+                            Header: "FarmerCategory",
+                            optvalue: "2",
+                            optDesc: "Sharecropper",
+                            optCode: "1",
                           );
                         },
-                        selItem: () {
-                          final value = form.control('farmerCategory').value;
-                          if (value == null || value.toString().isEmpty) {
-                            return null;
-                          }
-                          return state.lovList!
-                              .where((v) => v.Header == 'FarmerCategory')
-                              .firstWhere(
-                                (lov) => lov.optvalue == value,
-                                orElse:
-                                    () => Lov(
-                                      Header: 'FarmerCategory',
-                                      optvalue: '',
-                                      optDesc: '',
-                                      optCode: '',
-                                    ),
-                              );
-                        },
+                          ),
+                        ),
                       ),
-                      SearchableDropdown<Lov>(
-                        fieldKey: _farmerTypeKey,
-                        controlName: 'farmerType',
-                        label: 'Farmer Type',
-                        items:
-                            state.lovList!
-                                .where((v) => v.Header == 'FarmerType')
-                                .toList(),
-                        onChangeListener: (Lov val) {
-                          form.controls['farmerType']?.updateValue(
-                            val.optvalue,
+                      SizedBox(
+                        height: 1,
+                        child: Opacity(
+                          opacity: 0,
+                          child: SearchableDropdown<Lov>(
+                            fieldKey: _farmerTypeKey,
+                            controlName: 'farmerType',
+                            label: 'Farmer Type',
+                            items:
+                                state.lovList!
+                                    .where((v) => v.Header == 'FarmerType')
+                                    .toList(),
+                            onChangeListener: (Lov val) {
+                              form.controls['farmerType']?.updateValue(
+                                val.optvalue,
+                              );
+                            },
+                            // selItem: () {
+                            //   final value = form.control('farmerType').value;
+                            //   if (value == null || value.toString().isEmpty) {
+                            //     return null;
+                            //   }
+                            //   return state.lovList!
+                            //       .where((v) => v.Header == 'FarmerType')
+                            //       .firstWhere(
+                            //         (lov) => lov.optvalue == value,
+                            //         orElse:
+                            //             () => Lov(
+                            //               Header: 'FarmerType',
+                            //               optvalue: '',
+                            //               optDesc: '',
+                            //               optCode: '',
+                            //             ),
+                            //       );
+                            // },
+                            selItem: () {
+                          form.controls['farmerType']?.updateValue("1");
+                          return Lov(
+                            Header: "FarmerType",
+                            optvalue: "2",
+                            optDesc: "Marginal",
+                            optCode: "1",
                           );
                         },
-                        selItem: () {
-                          final value = form.control('farmerType').value;
-                          if (value == null || value.toString().isEmpty) {
-                            return null;
-                          }
-                          return state.lovList!
-                              .where((v) => v.Header == 'FarmerType')
-                              .firstWhere(
-                                (lov) => lov.optvalue == value,
-                                orElse:
-                                    () => Lov(
-                                      Header: 'FarmerType',
-                                      optvalue: '',
-                                      optDesc: '',
-                                      optCode: '',
-                                    ),
-                              );
-                        },
+                          ),
+                        ),
                       ),
-                      SearchableDropdown<Lov>(
-                        fieldKey: _religionKey,
-                        controlName: 'religion',
-                        label: 'Religion',
-                        items:
-                            state.lovList!
-                                .where((v) => v.Header == 'Religion')
-                                .toList(),
-                        onChangeListener: (Lov val) {
-                          form.controls['religion']?.updateValue(val.optvalue);
+                      SizedBox(
+                        height: 1,
+                        child: Opacity(
+                          opacity: 0,
+                          child: SearchableDropdown<Lov>(
+                            fieldKey: _religionKey,
+                            controlName: 'religion',
+                            label: 'Religion',
+                            items:
+                                state.lovList!
+                                    .where((v) => v.Header == 'Religion')
+                                    .toList(),
+                            onChangeListener: (Lov val) {
+                              form.controls['religion']?.updateValue(val.optvalue);
+                            },
+                            // selItem: () {
+                            //   final value = form.control('religion').value;
+                            //   if (value == null || value.toString().isEmpty) {
+                            //     return null;
+                            //   }
+                            //   return state.lovList!
+                            //       .where((v) => v.Header == 'Religion')
+                            //       .firstWhere(
+                            //         (lov) => lov.optvalue == value,
+                            //         orElse:
+                            //             () => Lov(
+                            //               Header: 'Religion',
+                            //               optvalue: '',
+                            //               optDesc: '',
+                            //               optCode: '',
+                            //             ),
+                            //       );
+                            // },
+                            selItem: () {
+                          form.controls['religion']?.updateValue("1");
+                          return Lov(
+                            Header: "Religion",
+                            optvalue: "1",
+                            optDesc: "Buddhist",
+                            optCode: "1",
+                          );
                         },
-                        selItem: () {
-                          final value = form.control('religion').value;
-                          if (value == null || value.toString().isEmpty) {
-                            return null;
-                          }
-                          return state.lovList!
-                              .where((v) => v.Header == 'Religion')
-                              .firstWhere(
-                                (lov) => lov.optvalue == value,
-                                orElse:
-                                    () => Lov(
-                                      Header: 'Religion',
-                                      optvalue: '',
-                                      optDesc: '',
-                                      optCode: '',
-                                    ),
-                              );
-                        },
+                          ),
+                        ),
                       ),
-                      SearchableDropdown<Lov>(
-                        fieldKey: _casteKey,
-                        controlName: 'caste',
-                        label: 'Caste',
-                        items:
-                            state.lovList!
-                                .where((v) => v.Header == 'Caste')
-                                .toList(),
-                        onChangeListener: (Lov val) {
-                          form.controls['caste']?.updateValue(val.optvalue);
+                      SizedBox(
+                        height: 1,
+                        child: Opacity(
+                          opacity: 0,
+                          child: SearchableDropdown<Lov>(
+                            fieldKey: _casteKey,
+                            controlName: 'caste',
+                            label: 'Caste',
+                            items:
+                                state.lovList!
+                                    .where((v) => v.Header == 'Caste')
+                                    .toList(),
+                            onChangeListener: (Lov val) {
+                              form.controls['caste']?.updateValue(val.optvalue);
+                            },
+                          
+                            // selItem: () {
+                            //   final value = form.control('caste').value;
+                            //   if (value == null || value.toString().isEmpty) {
+                            //     return null;
+                            //   }
+                            //   return state.lovList!
+                            //       .where((v) => v.Header == 'Caste')
+                            //       .firstWhere(
+                            //         (lov) => lov.optvalue == value,
+                            //         orElse:
+                            //             () => Lov(
+                            //               Header: 'Caste',
+                            //               optvalue: '',
+                            //               optDesc: '',
+                            //               optCode: '',
+                            //             ),
+                            //       );
+                            // },
+                            selItem: () {
+                          form.controls['caste']?.updateValue("1");
+                          return Lov(
+                            Header: "Caste",
+                            optvalue: "CAS000001",
+                            optDesc: "GENERAL",
+                            optCode: "CAS000001",
+                          );
                         },
-
-                        selItem: () {
-                          final value = form.control('caste').value;
-                          if (value == null || value.toString().isEmpty) {
-                            return null;
-                          }
-                          return state.lovList!
-                              .where((v) => v.Header == 'Caste')
-                              .firstWhere(
-                                (lov) => lov.optvalue == value,
-                                orElse:
-                                    () => Lov(
-                                      Header: 'Caste',
-                                      optvalue: '',
-                                      optDesc: '',
-                                      optCode: '',
-                                    ),
-                              );
-                        },
+                          ),
+                        ),
                       ),
                       SearchableDropdown<Lov>(
                         fieldKey: _genderKey,
                         controlName: 'gender',
-                        label: 'Gender',
+                        label: 'Whether classified as special $loanTypeLabel',
                         items:
                             state.lovList!
                                 .where((v) => v.Header == 'Gender')
@@ -762,38 +878,46 @@ class Personal extends StatelessWidget {
                                     ),
                               );
                         },
+                      
                       ),
-                      SearchableMultiSelectDropdown<Lov>(
-                        fieldKey: _subActivityKey,
-                        controlName: 'subActivity',
-                        label: 'Sub Activity',
-                        items:
-                            state.lovList!
-                                .where((v) => v.Header == 'SubActivity')
-                                .toList(),
-                        selItems: () {
-                          final currentValues =
-                              form.control('subActivity').value;
-                          if (currentValues == null || currentValues.isEmpty) {
-                            return <Lov>[];
-                          }
-                          return state.lovList!
-                              .where(
-                                (v) =>
-                                    v.Header == 'SubActivity' &&
-                                    currentValues.contains(v.optvalue),
-                              )
-                              .toList();
-                        },
-                        onChangeListener: (List<Lov>? selectedItems) {
-                          final selectedValues =
-                              selectedItems?.map((e) => e.optvalue).toList() ??
-                              [];
-                          String subactivities = selectedValues.join(',');
-                          form.controls['subActivity']?.updateValue(
-                            subactivities,
-                          );
-                        },
+                      SizedBox(
+                        height: 1,
+                        child: Opacity(
+                          opacity:0 ,
+                          child: SearchableMultiSelectDropdown<Lov>(
+                            fieldKey: _subActivityKey,
+                            controlName: 'subActivity',
+                            label: 'Sub Activity',
+                            items:
+                                state.lovList!
+                                    .where((v) => v.Header == 'SubActivity')
+                                    .toList(),
+                            selItems: () {
+                              final currentValues =
+                                  form.control('subActivity').value;
+                              if (currentValues == null || currentValues.isEmpty) {
+                                return <Lov>[];
+                              }
+                              return state.lovList!
+                                  .where(
+                                    (v) =>
+                                        v.Header == 'SubActivity' &&
+                                        currentValues.contains(v.optvalue),
+                                  )
+                                  .toList();
+                            },
+                            
+                            onChangeListener: (List<Lov>? selectedItems) {
+                              final selectedValues =
+                                  selectedItems?.map((e) => e.optvalue).toList() ??
+                                  [];
+                              String subactivities = selectedValues.join(',');
+                              form.controls['subActivity']?.updateValue(
+                                subactivities,
+                              );
+                            },
+                          ),
+                        ),
                       ),
                       SizedBox(height: 20),
 
