@@ -7,11 +7,7 @@ class CropDetailsResponse extends Equatable {
   Map<String, dynamic>? responseData;
   String? ErrorMessage;
   bool? Success;
-  CropDetailsResponse({
-    this.responseData,
-    this.ErrorMessage,
-    this.Success,
-  });
+  CropDetailsResponse({this.responseData, this.ErrorMessage, this.Success});
 
   CropDetailsResponse copyWith({
     Map<String, dynamic>? responseData,
@@ -35,15 +31,22 @@ class CropDetailsResponse extends Equatable {
 
   factory CropDetailsResponse.fromMap(Map<String, dynamic> map) {
     return CropDetailsResponse(
-      responseData: map['responseData'] != null ? Map<String, dynamic>.from((map['responseData'] as Map<String, dynamic>)) : null,
-      ErrorMessage: map['ErrorMessage'] != null ? map['ErrorMessage'] as String : null,
+      responseData:
+          map['responseData'] != null
+              ? Map<String, dynamic>.from(
+                (map['responseData'] as Map<String, dynamic>),
+              )
+              : null,
+      ErrorMessage:
+          map['ErrorMessage'] != null ? map['ErrorMessage'] as String : null,
       Success: map['Success'] != null ? map['Success'] as bool : null,
     );
   }
 
   String toJson() => json.encode(toMap());
 
-  factory CropDetailsResponse.fromJson(String source) => CropDetailsResponse.fromMap(json.decode(source) as Map<String, dynamic>);
+  factory CropDetailsResponse.fromJson(String source) =>
+      CropDetailsResponse.fromMap(json.decode(source) as Map<String, dynamic>);
 
   @override
   bool get stringify => true;

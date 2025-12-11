@@ -46,6 +46,6 @@ class OnStateCityChangeEvent extends LandHoldingEvent {
 }
 
 class RBIHDetailsLoadEvent extends LandHoldingEvent {
-  final dynamic rbihFormData;
+  final Map<String, dynamic>? rbihFormData;
   const RBIHDetailsLoadEvent({this.rbihFormData});
 }
