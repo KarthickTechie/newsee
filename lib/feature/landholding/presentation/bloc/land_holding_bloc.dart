@@ -391,7 +391,8 @@ final class LandHoldingBloc extends Bloc<LandHoldingEvent, LandHoldingState> {
               lslLandIrriLand: 3,
               lslLandVillage: 'Kolathur',
 
-              lslLandApplicantName: ownerDetail['owner']['fullname'],
+              // lslLandApplicantName: ownerDetail['owner']['fullname'],
+              lslLandApplicantName: event.rbihFormData?['applicant'],
               // lslLandFarmLoc: ownerDetail['landParcel']['geocoordinates'],
               // lslLandFarmLoc: "80.2546, 12.9483",
               // lslLandFarmDistance: 1,

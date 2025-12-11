@@ -137,6 +137,7 @@ class CropyieldpageBloc extends Bloc<CropyieldpageEvent, CropyieldpageState> {
           "cropResponse.right.agriCropDetails-gettime ${cropResponse.right.agriCropDetails}",
         );
         // List<LandData> landData = landresponse.right.agriLandHoldingsList.map((e) => LandData.fromMap(e)).toList();
+
         emit(
           state.copyWith(
             lovlist: listOfLov,
@@ -373,16 +374,15 @@ class CropyieldpageBloc extends Bloc<CropyieldpageEvent, CropyieldpageState> {
             }
             return CropDetailsModal(
               lasSeason: lasSeason,
-
               lasAreaofculti: cropDetail['croparea'].toString(),
               // lasScaloffin: '0',
               lasCrop: crop,
               // lcdCropType: '2',
               lasTypOfLand: '1',
               // lasEligibleamt: 0,
-              lasPrePerAcre: '',
+              // lasPrePerAcre: '',
               // lasReqScaloffin: 0,
-              lasPreToCollect: '',
+              // lasPreToCollect: '',
               // lcdCovOfCrop:
               //     (crop == '1' ||
               //             crop == '2' ||
