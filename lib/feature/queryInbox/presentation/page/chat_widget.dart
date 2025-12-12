@@ -67,7 +67,7 @@ class ChatWidgetState extends State<ChatWidget> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
         setState(() {
-          refreshChatListNew();
+          refreshChatList();
         });
       }
     });
@@ -318,52 +318,10 @@ class ChatWidgetState extends State<ChatWidget> {
             sendTextMessageToAPI(textMsg: text);
           },
           onAttachmentTap:
-          // widget.status == "Closed"
-          //     ? null
-          //     :
-          () async {
-            FilePickerResult? result = await FilePicker.platform.pickFiles(
-              allowMultiple: false,
-              type: FileType.custom,
-              allowedExtensions: [
-                'jpg',
-                'jpeg',
-                'png',
-                'webp',
-                'pdf',
-                'doc',
-                'docx',
-              ],
-            );
-
-            if (result == null) return;
-
-            final path = result.files.single.path!;
-            final name = result.files.single.name;
-
-            final file = File(path);
-
-            final ext = name.split('.').last.toLowerCase();
-            final fileType = getFileType(ext);
-
-            if (fileType == "image") {
-              final compressed = await compressImage(file);
-              sendDocumentsToAPI(
-                file: compressed,
-                imgPath: compressed.path,
-                size: await compressed.length(),
-              );
-              print(
-                'here.. original..${await file.length()}....${await compressed.length()}',
-              );
-              return;
-            }
-            sendDocumentsToAPI(
-              file: file,
-              imgPath: file.path,
-              size: await file.length(),
-            );
-          },
+              // widget.status == "Closed"
+              //     ? null
+              //     :
+              () => showAttachmentSheet(),
 
           resolveUser: (UserID id) async {
             if (id == 'user1') {
@@ -597,7 +555,8 @@ class ChatWidgetState extends State<ChatWidget> {
           error: true,
         ),
       );
-
+      final originalName = file.path.split('/').last;
+      final safeName = getSafeFileName(originalName);
       FormData formData = FormData.fromMap({
         "userid": "IOB3",
         "timestamp": DateTime.now().toIso8601String(),
@@ -606,10 +565,7 @@ class ChatWidgetState extends State<ChatWidget> {
         "propNo": widget.proposalNo,
         "deviceId": ApiConfig.DEVICE_ID,
 
-        "file": await MultipartFile.fromFile(
-          file.path,
-          filename: file.path.split('/').last,
-        ),
+        "file": await MultipartFile.fromFile(file.path, filename: safeName),
       });
 
       // for shimmer effect while loading
@@ -650,43 +606,79 @@ class ChatWidgetState extends State<ChatWidget> {
       final isSuccess = responseData['Success'] == true;
       print('here...$isSuccess');
       if (isSuccess) {
-        Map<String, dynamic> imageData = {
-          "id": '${Random().nextInt(100000)}',
-          "authorId": "user1",
-          "createdAt": DateTime.now(),
-          "text": "",
-          "type": "image",
-          "source": imgPath,
-          "size": size,
-        };
         final msg = findMessageById(loadingId);
         if (msg != null) {
           _chatController.removeMessage(msg);
         }
-        safeShowSnack("Attachments Uploaded");
-        Future.delayed(Duration(seconds: 1), () => hideSnackBar());
 
-        setState(() {
+        final newId = '${Random().nextInt(100000)}';
+        final now = DateTime.now();
+
+        if (fileType == "image") {
+          Map<String, dynamic> imageData = {
+            "id": newId,
+            "authorId": "user1",
+            "createdAt": now,
+            "text": "",
+            "type": "image",
+            "source": imgPath,
+            "size": size,
+          };
+
           storedMessages.add(imageData);
 
           _chatController.insertMessage(
             ImageMessage(
-              id: imageData["id"],
-              authorId: imageData["authorId"],
-              createdAt: imageData["createdAt"],
-              source: imageData["source"],
-              size: imageData["size"],
+              id: newId,
+              authorId: "user1",
+              createdAt: now,
+              source: imgPath,
+              size: size,
             ),
           );
-        });
+        } else {
+          final fileName = file.path.split("/").last;
+
+          Map<String, dynamic> fileData = {
+            "id": newId,
+            "authorId": "user1",
+            "createdAt": now,
+            "text": fileName,
+            "type": "file",
+            "metadata": {
+              "fileType": fileType,
+              "fileName": fileName,
+              "rowId": responseData["responseData"]["rowId"],
+              "createdBy": "IOB3",
+            },
+          };
+
+          storedMessages.add(fileData);
+
+          _chatController.insertMessage(
+            TextMessage(
+              id: newId,
+              authorId: "user1",
+              createdAt: now,
+              text: fileName,
+              metadata: fileData["metadata"],
+            ),
+          );
+        }
+
+        safeShowSnack("Attachments Uploaded");
+        Future.delayed(Duration(seconds: 1), () => hideSnackBar());
 
         saveMessagesToPrefs();
-
         print('success bro');
       } else {
         final errorMessage = responseData['ErrorMessage'] ?? "Unknown error";
         print('Error: $errorMessage');
         safeShowSnack('Technical Issue occurred, please try again later.');
+        final msg = findMessageById(loadingId);
+        if (msg != null) {
+          _chatController.removeMessage(msg);
+        }
       }
     } on DioException catch (e) {
       final failure = DioHttpExceptionParser(exception: e).parse();
@@ -697,7 +689,7 @@ class ChatWidgetState extends State<ChatWidget> {
   }
 
   void hideSnackBar() {
-    if (!_isMounted) return;
+    if (!mounted) return;
     ScaffoldMessenger.of(context).removeCurrentSnackBar();
   }
 
@@ -822,46 +814,117 @@ class ChatWidgetState extends State<ChatWidget> {
     return "file";
   }
 
-  Future<void> onFileTap(TextMessage message) async {
-    print('came here...${message.metadata!['fileName']}');
+  // Future<void> onFileTap(TextMessage message) async {
+  //   print('came here...${message.metadata!['fileName']}');
 
+  //   final fileName = message.metadata!["fileName"];
+  //   final rowId = message.metadata!["rowId"];
+  //   final fileType = message.metadata!["fileType"];
+
+  //   final cacheDir = await getTemporaryDirectory();
+  //   final localFile = File("${cacheDir.path}/$rowId-$fileName");
+  //   print('here...1');
+  //   if (await localFile.exists()) {
+  //     print("Loading from cache...");
+  //     openFileViewer(localFile, fileType);
+  //     return;
+  //   }
+  //   print('here...12');
+  //   // Not cached → Fetch from API
+  //   safeShowSnack("Fetching attachment...");
+  //   print('here...13');
+  //   try {
+  //     Dio dio = Dio();
+  //     dio.options.baseUrl = ApiConfig.BASE_URL_QUERY;
+  //     dio.options
+  //       ..connectTimeout = Duration(seconds: 20)
+  //       ..receiveTimeout = Duration(seconds: 20);
+  //     dio.options.headers = {
+  //       'token': ApiConfig.AUTH_TOKEN,
+  //       'deviceId': ApiConfig.DEVICE_ID,
+  //       'userid': 'IOB3',
+  //     };
+  //     print('here...14');
+  //     final response = await dio.post(
+  //       ApiConfig.GET_SINGLEDOCUMENT_IMAGE,
+  //       data: {"rowId": rowId, "propNo": widget.proposalNo},
+  //     );
+  //     print('here...15');
+
+  //     if (!(response.data["Success"] ?? false)) {
+  //       safeShowSnack("Error: Cannot fetch file");
+  //       return;
+  //     }
+
+  //     final base64String = response.data["responseData"]["file"];
+  //     final bytes = base64Decode(base64String);
+
+  //     await localFile.writeAsBytes(bytes);
+  //     print("Saved in cache: ${localFile.path}");
+
+  //     _chatController.removeMessage(message);
+
+  //     if (fileType == "image") {
+  //       final imgMsg = ImageMessage(
+  //         id: message.id,
+  //         authorId: message.authorId,
+  //         createdAt: message.createdAt,
+  //         source: localFile.path,
+  //         size: await localFile.length(),
+  //       );
+  //       setState(() {
+  //         _chatController.insertMessage(imgMsg);
+  //       });
+  //     }
+
+  //     for (var m in storedMessages) {
+  //       if (m["id"] == message.id) {
+  //         m["type"] = "image";
+  //         m["source"] = localFile.path;
+  //         m["size"] = await localFile.length();
+  //       }
+  //     }
+  //     hideSnackBar();
+  //     // await saveMessagesToPrefs();
+  //     // refreshChatList();
+  //     openFileViewer(localFile, fileType);
+  //   } catch (e) {
+  //     hideSnackBar();
+  //     safeShowSnack("Failed to load file");
+  //     print("File fetch error: $e");
+  //   }
+  // }
+  Future<void> onFileTap(TextMessage message) async {
     final fileName = message.metadata!["fileName"];
     final rowId = message.metadata!["rowId"];
     final fileType = message.metadata!["fileType"];
 
     final cacheDir = await getTemporaryDirectory();
     final localFile = File("${cacheDir.path}/$rowId-$fileName");
-    print('here...1');
+
     if (await localFile.exists()) {
-      print("Loading from cache...");
       openFileViewer(localFile, fileType);
       return;
     }
-    print('here...12');
-    // Not cached → Fetch from API
+
     safeShowSnack("Fetching attachment...");
-    print('here...13');
+
     try {
       Dio dio = Dio();
       dio.options.baseUrl = ApiConfig.BASE_URL_QUERY;
-      dio.options
-        ..connectTimeout = Duration(seconds: 20)
-        ..receiveTimeout = Duration(seconds: 20);
       dio.options.headers = {
         'token': ApiConfig.AUTH_TOKEN,
         'deviceId': ApiConfig.DEVICE_ID,
         'userid': 'IOB3',
       };
-      print('here...14');
+
       final response = await dio.post(
         ApiConfig.GET_SINGLEDOCUMENT_IMAGE,
         data: {"rowId": rowId, "propNo": widget.proposalNo},
       );
-      print('here...15');
-      hideSnackBar();
 
       if (!(response.data["Success"] ?? false)) {
-        safeShowSnack("Error: Cannot fetch file");
+        safeShowSnack("Error fetching file");
         return;
       }
 
@@ -869,38 +932,30 @@ class ChatWidgetState extends State<ChatWidget> {
       final bytes = base64Decode(base64String);
 
       await localFile.writeAsBytes(bytes);
-      print("Saved in cache: ${localFile.path}");
 
-      _chatController.removeMessage(message);
+      final newMessage = ImageMessage(
+        id: message.id,
+        authorId: message.authorId,
+        createdAt: message.createdAt,
+        source: localFile.path,
+        size: bytes.length,
+      );
 
-      if (fileType == "image") {
-        final imgMsg = ImageMessage(
-          id: message.id,
-          authorId: message.authorId,
-          createdAt: message.createdAt,
-          source: localFile.path,
-          size: await localFile.length(),
-        );
-
-        _chatController.insertMessage(imgMsg);
-      }
+      await _chatController.updateMessage(message, newMessage);
 
       for (var m in storedMessages) {
         if (m["id"] == message.id) {
           m["type"] = "image";
           m["source"] = localFile.path;
-          m["size"] = await localFile.length();
+          m["size"] = bytes.length;
         }
       }
 
-      setState(() {});
-      // await saveMessagesToPrefs();
-      refreshChatList();
+      hideSnackBar();
       openFileViewer(localFile, fileType);
     } catch (e) {
       hideSnackBar();
       safeShowSnack("Failed to load file");
-      print("File fetch error: $e");
     }
   }
 
@@ -963,7 +1018,9 @@ class ChatWidgetState extends State<ChatWidget> {
             size: msg["size"],
           ),
         );
-      } else if (msg["type"] == "file") {
+      } else if (msg["type"] == "file" ||
+          msg["type"] == "pdf" ||
+          msg["type"] == "doc") {
         _chatController.insertMessage(
           TextMessage(
             id: msg["id"],
@@ -1027,22 +1084,19 @@ class ChatWidgetState extends State<ChatWidget> {
   //       ..showSnackBar(SnackBar(content: Text(msg)));
   //   });
   // }
-  void safeShowSnack(String msg) {
+  Future<void> safeShowSnack(String msg) async {
     if (!mounted) return;
 
-    // Delay 1 frame to avoid setState() during build
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!mounted) return;
+    await Future.delayed(Duration(milliseconds: 50));
 
-      final messenger = ScaffoldMessenger.maybeOf(context);
-      if (messenger == null) return;
+    if (!mounted) return;
 
-      messenger
-        ..removeCurrentSnackBar()
-        ..showSnackBar(
-          SnackBar(duration: Duration(minutes: 10), content: Text(msg)),
-        );
-    });
+    final messenger = ScaffoldMessenger.of(context);
+    messenger
+      ..removeCurrentSnackBar()
+      ..showSnackBar(
+        SnackBar(duration: Duration(seconds: 10), content: Text(msg)),
+      );
   }
 
   // void safeShowSnack(String message) {
@@ -1287,4 +1341,170 @@ class ChatWidgetState extends State<ChatWidget> {
       print(" QueryResponseHandler Exception: $error\n$st");
     }
   }
+
+  void showAttachmentSheet() {
+    showModalBottomSheet(
+      context: context,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (_) {
+        return SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Wrap(
+              children: [
+                ListTile(
+                  leading: Icon(Icons.camera_alt, color: Colors.blue),
+                  title: Text("Take Photo"),
+                  onTap: () async {
+                    Navigator.pop(context);
+                    await pickFromCamera();
+                  },
+                ),
+                ListTile(
+                  leading: Icon(Icons.photo, color: Colors.green),
+                  title: Text("Pick from Gallery"),
+                  onTap: () async {
+                    Navigator.pop(context);
+                    await pickFromGallery();
+                  },
+                ),
+                // ListTile(
+                //   leading: Icon(Icons.attach_file, color: Colors.purple),
+                //   title: Text("Pick Document"),
+                //   onTap: () async {
+                //     Navigator.pop(context);
+                //     await pickDocument();
+                //   },
+                // ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> pickFromCamera() async {
+    final ImagePicker picker = ImagePicker();
+    final XFile? photo = await picker.pickImage(source: ImageSource.camera);
+
+    if (photo == null) return;
+
+    final file = File(photo.path);
+    final compressed = await compressImage(file);
+
+    sendDocumentsToAPI(
+      file: compressed,
+      imgPath: compressed.path,
+      size: await compressed.length(),
+    );
+  }
+
+  Future<void> pickFromGallery() async {
+    final ImagePicker picker = ImagePicker();
+    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+
+    if (image == null) return;
+
+    final file = File(image.path);
+    final compressed = await compressImage(file);
+
+    sendDocumentsToAPI(
+      file: compressed,
+      imgPath: compressed.path,
+      size: await compressed.length(),
+    );
+  }
+
+  Future<void> pickDocument() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      allowMultiple: false,
+      type: FileType.custom,
+      allowedExtensions: ['pdf', 'doc', 'docx', 'jpg', 'jpeg', 'png'],
+    );
+
+    if (result == null) return;
+
+    final path = result.files.single.path!;
+    final file = File(path);
+    final ext = result.files.single.extension!.toLowerCase();
+
+    if (["jpg", "jpeg", "png"].contains(ext)) {
+      final compressed = await compressImage(file);
+      sendDocumentsToAPI(
+        file: compressed,
+        imgPath: compressed.path,
+        size: await compressed.length(),
+      );
+    } else {
+      sendDocumentsToAPI(
+        file: file,
+        imgPath: file.path,
+        size: await file.length(),
+      );
+    }
+  }
+
+  String getSafeFileName(String originalName) {
+    final ext = originalName.split('.').last;
+    String base = originalName.replaceAll('.$ext', '');
+
+    if (base.length > 40) {
+      base = base.substring(0, 40);
+    }
+
+    final newName = "$base.$ext";
+    return newName;
+  }
+
+  //without camera file only:
+  // onAttachmentTap:
+  //           // widget.status == "Closed"
+  //           //     ? null
+  //           //     :
+  //           () async {
+  //             FilePickerResult? result = await FilePicker.platform.pickFiles(
+  //               allowMultiple: false,
+  //               type: FileType.custom,
+  //               allowedExtensions: [
+  //                 'jpg',
+  //                 'jpeg',
+  //                 'png',
+  //                 'webp',
+  //                 'pdf',
+  //                 'doc',
+  //                 'docx',
+  //               ],
+  //             );
+
+  //             if (result == null) return;
+
+  //             final path = result.files.single.path!;
+  //             final name = result.files.single.name;
+
+  //             final file = File(path);
+
+  //             final ext = name.split('.').last.toLowerCase();
+  //             final fileType = getFileType(ext);
+
+  //             if (fileType == "image") {
+  //               final compressed = await compressImage(file);
+  //               sendDocumentsToAPI(
+  //                 file: compressed,
+  //                 imgPath: compressed.path,
+  //                 size: await compressed.length(),
+  //               );
+  //               print(
+  //                 'here.. original..${await file.length()}....${await compressed.length()}',
+  //               );
+  //               return;
+  //             }
+  //             sendDocumentsToAPI(
+  //               file: file,
+  //               imgPath: file.path,
+  //               size: await file.length(),
+  //             );
+  //           },
 }

@@ -174,15 +174,13 @@ final routes = GoRouter(
         final body = data?['body'] ?? "No Body";
         final queryId = data?['queryId'] ?? "";
         final proposalNo = num.tryParse("${data?['proposalNo']}") ?? 0;
-        final queryType = data?['queryType'] ?? "";
-        final userName = data?['userName'] ?? "";
 
         return ChatWidget(
           queryId: queryId,
           status: 'Open',
           proposalNo: proposalNo,
           queryType: body,
-          userName: userName,
+          userName: title,
         );
       },
     ),
