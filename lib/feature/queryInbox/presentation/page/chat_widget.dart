@@ -10,6 +10,7 @@ import 'package:flyer_chat_text_message/flyer_chat_text_message.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:cross_cache/cross_cache.dart';
 import 'package:flyer_chat_image_message/flyer_chat_image_message.dart';
+import 'package:newsee/core/api/api_client.dart';
 import 'package:newsee/core/api/api_config.dart';
 import 'package:newsee/core/api/http_exception_parser.dart';
 import 'package:newsee/feature/queryInbox/presentation/page/pdf_viewer.dart';
@@ -338,7 +339,8 @@ class ChatWidgetState extends State<ChatWidget> {
   loadTextMessageFromAPI() async {
     try {
       print('came here');
-      Dio dio = Dio();
+      // Dio dio = Dio();
+      Dio dio = ApiClient().getDio();
       // dio.options.baseUrl = ApiConfig.BASE_URL;
       dio.options
         ..baseUrl = ApiConfig.BASE_URL
@@ -433,7 +435,8 @@ class ChatWidgetState extends State<ChatWidget> {
   sendTextMessageToAPI({required String textMsg}) async {
     try {
       print('came here');
-      Dio dio = Dio();
+      // Dio dio = Dio();
+      Dio dio = ApiClient().getDio();
       dio.options
         ..baseUrl = ApiConfig.BASE_URL
         ..connectTimeout = Duration(seconds: 20)
@@ -532,7 +535,8 @@ class ChatWidgetState extends State<ChatWidget> {
       print('came here');
       final ext = file.path.split('.').last.toLowerCase();
       final fileType = getFileType(ext); // image/pdf/doc
-      Dio dio = Dio();
+      // Dio dio = Dio();
+      Dio dio = ApiClient().getDio();
       // dio.options.baseUrl = ApiConfig.BASE_URL;
       dio.options
         ..baseUrl = ApiConfig.BASE_URL
@@ -696,8 +700,8 @@ class ChatWidgetState extends State<ChatWidget> {
   loadImagesFromAPI() async {
     try {
       print('came here');
-      Dio dio = Dio();
-
+      // Dio dio = Dio();
+      Dio dio = ApiClient().getDio();
       dio.options
         ..baseUrl = ApiConfig.BASE_URL
         ..connectTimeout = Duration(seconds: 50)
@@ -910,7 +914,8 @@ class ChatWidgetState extends State<ChatWidget> {
     safeShowSnack("Fetching attachment...");
 
     try {
-      Dio dio = Dio();
+      // Dio dio = Dio();
+      Dio dio = ApiClient().getDio();
       dio.options.baseUrl = ApiConfig.BASE_URL;
       dio.options.headers = {
         'token': ApiConfig.AUTH_TOKEN,
@@ -1111,12 +1116,12 @@ class ChatWidgetState extends State<ChatWidget> {
   loadImagesFromAPINew() async {
     try {
       print('came here');
-      Dio dio = Dio();
-
-      dio.options
-        ..baseUrl = ApiConfig.BASE_URL
-        ..connectTimeout = Duration(seconds: 50)
-        ..receiveTimeout = Duration(seconds: 50);
+      // Dio dio = Dio();
+      Dio dio = ApiClient().getDio();
+      // dio.options
+      //   ..baseUrl = ApiConfig.BASE_URL
+      //   ..connectTimeout = Duration(seconds: 50)
+      //   ..receiveTimeout = Duration(seconds: 50);
 
       dio.options.headers = {
         'token': ApiConfig.AUTH_TOKEN,
@@ -1245,12 +1250,13 @@ class ChatWidgetState extends State<ChatWidget> {
   loadTextMessageFromAPINew2() async {
     try {
       print('came here');
-      Dio dio = Dio();
+      // Dio dio = Dio();
+      Dio dio = ApiClient().getDio();
 
-      dio.options
-        ..baseUrl = ApiConfig.BASE_URL
-        ..connectTimeout = Duration(seconds: 20)
-        ..receiveTimeout = Duration(seconds: 20);
+      // dio.options
+      //   ..baseUrl = ApiConfig.BASE_URL
+      //   ..connectTimeout = Duration(seconds: 20)
+      //   ..receiveTimeout = Duration(seconds: 20);
 
       dio.options.headers = {
         'token': ApiConfig.AUTH_TOKEN,
