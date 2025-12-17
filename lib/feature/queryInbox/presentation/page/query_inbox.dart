@@ -9,6 +9,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:newsee/core/api/AsyncResponseHandler.dart';
+import 'package:newsee/core/api/api_client.dart';
 import 'package:newsee/core/api/api_config.dart';
 import 'package:newsee/core/api/http_exception_parser.dart';
 import 'package:newsee/feature/queryInbox/domain/modal/queryInbox_response_modal.dart';
@@ -42,12 +43,13 @@ class QueryInboxState extends State<QueryInbox> {
   Future<void> getQueryList() async {
     try {
       print('came here');
-      Dio dio = Dio();
+      // Dio dio = Dio();
+      Dio dio = ApiClient().getDio();
       // dio.options.baseUrl = ApiConfig.BASE_URL_QUERY_QUERY_Query;
-      dio.options
-        ..baseUrl = ApiConfig.BASE_URL_QUERY
-        ..connectTimeout = Duration(seconds: 50)
-        ..receiveTimeout = Duration(seconds: 50);
+      // dio.options
+      //   ..baseUrl = ApiConfig.BASE_URL_QUERY
+      //   ..connectTimeout = Duration(seconds: 50)
+      //   ..receiveTimeout = Duration(seconds: 50);
 
       dio.options.headers = {
         'token': ApiConfig.AUTH_TOKEN,
@@ -120,8 +122,8 @@ class QueryInboxState extends State<QueryInbox> {
             details: [item.senderName, item.date.toString().split(' ')[0]],
             detailsName: ['Sent By', 'Date'],
 
-            onTap: () {
-              Navigator.push(
+            onTap: () async {
+              await Navigator.push(
                 context,
                 MaterialPageRoute(
                   builder:
@@ -134,6 +136,7 @@ class QueryInboxState extends State<QueryInbox> {
                       ),
                 ),
               );
+              getQueryList();
             },
           );
         },
