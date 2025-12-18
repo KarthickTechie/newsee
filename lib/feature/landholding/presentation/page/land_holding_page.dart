@@ -223,7 +223,11 @@ class _LandHoldingPageState extends State<LandHoldingPage> {
                               () async {
                                 // await loadRBIHData(); // Call _loadData
                                 parentContext.read<LandHoldingBloc>().add(
-                                  RBIHDetailsLoadEvent(rbihFormData: {}),
+                                  RBIHDetailsLoadEvent(
+                                    rbihFormData: {
+                                      'applicant': widget.applicantName,
+                                    },
+                                  ),
                                 );
                                 setState(() {
                                   status = 'loaded';

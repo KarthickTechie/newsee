@@ -14,7 +14,7 @@ class CropDetailsModal {
   final String? lasPrePerAcre;
   final String? lasPreToCollect;
   CropDetailsModal({
-    this.lasSeqno = '0',
+    this.lasSeqno = '',
     this.lasSeason,
     this.lasCrop,
     this.lasAreaofculti,
@@ -80,7 +80,7 @@ class CropDetailsModal {
       'lasEligibleamt': lasEligibleamt,
       'lasTypOfLand': lasTypOfLand,
       'lasScaloffin': lasScaloffin,
-      'lasReqScaloffin': lasReqScaloffin.toString(),
+      'lasReqScaloffin': lasReqScaloffin?.toString() ?? "",
       'notifiedCropFlag': notifiedCropFlag,
       'lasPrePerAcre': lasPrePerAcre,
       'lasPreToCollect': lasPreToCollect,
@@ -92,20 +92,34 @@ class CropDetailsModal {
       lasSeqno: map['lasSeqno'],
       lasSeason: map['lasSeason'] != null ? map['lasSeason'] as String : null,
       lasCrop: map['lasCrop'] != null ? map['lasCrop'] as String : null,
-      lasAreaofculti: map['lasAreaofculti'] != null ? map['lasAreaofculti'] as String : null,
-      lasEligibleamt: map['lasReqScaloffin'] != null ? map['lasReqScaloffin'] as int : null,
-      lasTypOfLand: map['lasTypOfLand'] != null ? map['lasTypOfLand'] as String : null,
-      lasScaloffin: map['lasScaloffin'] != null ? map['lasScaloffin'] as String : null,
-      lasReqScaloffin: map['lasReqScaloffin'] != null ? map['lasReqScaloffin'] as int : null,
-      notifiedCropFlag: map['notifiedCropFlag'] != null ? map['notifiedCropFlag'] as bool : null,
-      lasPrePerAcre: map['lasPrePerAcre'] != null ? map['lasPrePerAcre'] as String : null,
-      lasPreToCollect: map['lasPreToCollect'] != null ? map['lasPreToCollect'] as String : null,
+      lasAreaofculti:
+          map['lasAreaofculti'] != null
+              ? map['lasAreaofculti'] as String
+              : null,
+      lasEligibleamt:
+          map['lasReqScaloffin'] != null ? map['lasReqScaloffin'] as int : null,
+      lasTypOfLand:
+          map['lasTypOfLand'] != null ? map['lasTypOfLand'] as String : null,
+      lasScaloffin:
+          map['lasScaloffin'] != null ? map['lasScaloffin'] as String : null,
+      lasReqScaloffin:
+          map['lasReqScaloffin'] != null ? map['lasReqScaloffin'] as int : null,
+      notifiedCropFlag:
+          map['notifiedCropFlag'] != null
+              ? map['notifiedCropFlag'] as bool
+              : null,
+      lasPrePerAcre:
+          map['lasPrePerAcre'] != null ? map['lasPrePerAcre'] as String : null,
+      lasPreToCollect:
+          map['lasPreToCollect'] != null
+              ? map['lasPreToCollect'] as String
+              : null,
     );
   }
 
   factory CropDetailsModal.fromForm(Map<String, dynamic> form) {
     return CropDetailsModal(
-      lasSeqno: form['lasSeqno'] ?? '0',
+      lasSeqno: form['lasSeqno'] ?? '',
       lasSeason: form['lasSeason'] ?? '',
       lasCrop: form['lasCrop'] ?? '',
       lasAreaofculti: form['lasAreaofculti'] ?? '',
@@ -121,17 +135,21 @@ class CropDetailsModal {
 
   factory CropDetailsModal.fromGetApi(Map<String, dynamic> map) {
     return CropDetailsModal(
-      lasSeqno: map['lasSeqno']?.toString() ?? '0',
+      lasSeqno: map['lasSeqno']?.toString() ?? '',
       lasSeason: map['lasSeason']?.toString() ?? '',
       lasCrop: map['lasCrop']?.toString() ?? '',
       lasAreaofculti: map['lasAreaofculti']?.toString() ?? '',
-      lasEligibleamt: map['lasReqScaloffin'] != null ? map['lasReqScaloffin'] as int : null,
-      lasTypOfLand: map['lasTypOfLand'] != null ? map['lasTypOfLand'] as String : null,
+      lasEligibleamt:
+          map['lasReqScaloffin'] != null ? map['lasReqScaloffin'] as int : null,
+      lasTypOfLand:
+          map['lasTypOfLand'] != null ? map['lasTypOfLand'] as String : null,
       lasScaloffin: map['lasScaloffin']?.toString() ?? '',
-      lasReqScaloffin: map['lasReqScaloffin'] != null ? map['lasReqScaloffin'] as int : null,
-      notifiedCropFlag: 
-        map['notifiedCropFlag'] != null ? 
-        (map['notifiedCropFlag'] == 'true' ? true : false) : null,
+      lasReqScaloffin:
+          map['lasReqScaloffin'] != null ? map['lasReqScaloffin'] as int : null,
+      notifiedCropFlag:
+          map['notifiedCropFlag'] != null
+              ? (map['notifiedCropFlag'] == 'true' ? true : false)
+              : null,
       lasPrePerAcre: map['lasPrePerAcre']?.toString() ?? '',
       lasPreToCollect: map['lasPreToCollect']?.toString() ?? '',
     );
@@ -139,7 +157,8 @@ class CropDetailsModal {
 
   String toJson() => json.encode(toMap());
 
-  factory CropDetailsModal.fromJson(String source) => CropDetailsModal.fromMap(json.decode(source) as Map<String, dynamic>);
+  factory CropDetailsModal.fromJson(String source) =>
+      CropDetailsModal.fromMap(json.decode(source) as Map<String, dynamic>);
 
   @override
   String toString() {
@@ -149,31 +168,30 @@ class CropDetailsModal {
   @override
   bool operator ==(covariant CropDetailsModal other) {
     if (identical(this, other)) return true;
-  
-    return 
-      other.lasSeason == lasSeason &&
-      other.lasCrop == lasCrop &&
-      other.lasAreaofculti == lasAreaofculti &&
-      other.lasEligibleamt == lasEligibleamt &&
-      other.lasTypOfLand == lasTypOfLand &&
-      other.lasScaloffin == lasScaloffin &&
-      other.lasReqScaloffin == lasReqScaloffin &&
-      other.notifiedCropFlag == notifiedCropFlag &&
-      other.lasPrePerAcre == lasPrePerAcre &&
-      other.lasPreToCollect == lasPreToCollect;
+
+    return other.lasSeason == lasSeason &&
+        other.lasCrop == lasCrop &&
+        other.lasAreaofculti == lasAreaofculti &&
+        other.lasEligibleamt == lasEligibleamt &&
+        other.lasTypOfLand == lasTypOfLand &&
+        other.lasScaloffin == lasScaloffin &&
+        other.lasReqScaloffin == lasReqScaloffin &&
+        other.notifiedCropFlag == notifiedCropFlag &&
+        other.lasPrePerAcre == lasPrePerAcre &&
+        other.lasPreToCollect == lasPreToCollect;
   }
 
   @override
   int get hashCode {
     return lasSeason.hashCode ^
-      lasCrop.hashCode ^
-      lasAreaofculti.hashCode ^
-      lasEligibleamt.hashCode ^
-      lasTypOfLand.hashCode ^
-      lasScaloffin.hashCode ^
-      lasReqScaloffin.hashCode ^
-      notifiedCropFlag.hashCode ^
-      lasPrePerAcre.hashCode ^
-      lasPreToCollect.hashCode;
+        lasCrop.hashCode ^
+        lasAreaofculti.hashCode ^
+        lasEligibleamt.hashCode ^
+        lasTypOfLand.hashCode ^
+        lasScaloffin.hashCode ^
+        lasReqScaloffin.hashCode ^
+        notifiedCropFlag.hashCode ^
+        lasPrePerAcre.hashCode ^
+        lasPreToCollect.hashCode;
   }
 }
