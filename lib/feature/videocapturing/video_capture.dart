@@ -12,8 +12,7 @@ import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:newsee/Utils/media_service.dart';
 import 'package:newsee/feature/videocapturing/video_preview.dart';
-
-
+import 'package:video_compress/video_compress.dart';
 
 class VideoCapture extends StatefulWidget {
   String capturedTime;
@@ -125,7 +124,24 @@ class _VideoCaptureState extends State<VideoCapture> {
         videoBytes,
         '${Random().nextInt(100000).toString()}-videorecord.mp4',
       );
-      widget.videoFile = videoFile.path;
+
+      //       final MediaInfo info = await VideoCompress.compressVideo(
+      //   filePath,
+      //   quality: VideoQuality.LowQuality, // Choose a quality setting
+      //   deleteOrigin: false, // Keep the original file
+      // )
+
+      final mediaInfo = await VideoCompress.compressVideo(
+        videoFile.path,
+        quality: VideoQuality.DefaultQuality,
+        deleteOrigin: false, 
+      );
+      print("mediaInfo ${mediaInfo.toString()}");
+      print("videoFile ${videoFile.path}");
+      print("VideoQuality ${VideoQuality.DefaultQuality}");
+
+
+      widget.videoFile = mediaInfo!.path!;
 
       // capture current data
       final String capturedDate =

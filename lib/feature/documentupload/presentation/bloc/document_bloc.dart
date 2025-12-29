@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:typed_data';
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:go_router/go_router.dart';
 import 'package:newsee/Utils/pdf_viewer.dart';
 import 'package:newsee/Utils/shared_preference_utils.dart';
@@ -277,6 +278,25 @@ class DocumentBloc extends Bloc<DocumentEvent, DocumentState> {
     }
   }
 
+  Future<Uint8List?> convertImageToWebP(String imagePath) async {
+    // Read the image file into bytes
+    Uint8List originalBytes = await File(imagePath).readAsBytes();
+
+    // Compress the bytes to WebP format
+    var result = await FlutterImageCompress.compressWithList(
+      originalBytes,
+      minHeight: 1080, // Optional: specify min height
+      minWidth: 1080, // Optional: specify min width
+      quality: 90, // Quality (0-100)
+      format: CompressFormat.webp, // Set the format to WebP
+    );
+
+    print('Original size: ${originalBytes.length} bytes');
+    print('WebP size: ${result.length} bytes');
+
+    return result;
+  }
+
   Future<void> _onUploadDocumentByBytes(
     UploadDocumentByBytesEvent event,
     Emitter<DocumentState> emit,
@@ -295,37 +315,55 @@ class DocumentBloc extends Bloc<DocumentEvent, DocumentState> {
         event.imageBytes,
         filename,
       );
-      final file = File(imagePath.path);
-      final uploadedImg = await _uploadFile(file, doc);
+      Uint8List? webpBytes = await convertImageToWebP(imagePath.path);
+      print("Converted WebP size: ${webpBytes?.length} bytes");
+      if (webpBytes != null) {
+        // Define the path for the new WebP file
+        String webpPath = imagePath.path.replaceAll('.jpg', '.webp');
+        File newFile = File(webpPath);
 
-      if (uploadedImg != null) {
-        final currentList = [...state.documentsList];
-        final newImages =
-            uploadedImg.map<DocumentImage>((img) {
-              return DocumentImage(
-                fileName: img['ldaDocName'] ?? '',
-                fileLocation: file.path,
-                docId: img['ldaDocId']?.toString() ?? '',
-                rowId: img['ldaRowId']?.toString() ?? '',
-              );
-            }).toList();
+        // Write the WebP bytes to a new file
+        await newFile.writeAsBytes(webpBytes);
+        print('Image successfully converted and saved to $webpPath');
 
-        // final List<DocumentImage> updatedImgs = [...doc.imgs, ...newImages];
+        final uploadedImg = await _uploadFile(newFile, doc);
 
-        currentList[event.docIndex] = doc.copyWith(imgs: newImages);
+        if (uploadedImg != null) {
+          final currentList = [...state.documentsList];
+          final newImages =
+              uploadedImg.map<DocumentImage>((img) {
+                return DocumentImage(
+                  fileName: img['ldaDocName'] ?? '',
+                  fileLocation: newFile.path,
+                  docId: img['ldaDocId']?.toString() ?? '',
+                  rowId: img['ldaRowId']?.toString() ?? '',
+                );
+              }).toList();
 
-        emit(
-          state.copyWith(
-            documentsList: currentList,
-            fetchStatus: SubmitStatus.success,
-            uploadMessage: "Uploaded Successfully",
-          ),
-        );
+          // final List<DocumentImage> updatedImgs = [...doc.imgs, ...newImages];
+
+          currentList[event.docIndex] = doc.copyWith(imgs: newImages);
+
+          emit(
+            state.copyWith(
+              documentsList: currentList,
+              fetchStatus: SubmitStatus.success,
+              uploadMessage: "Uploaded Successfully",
+            ),
+          );
+        } else {
+          emit(
+            state.copyWith(
+              fetchStatus: SubmitStatus.failure,
+              uploadMessage: "Upload failed",
+            ),
+          );
+        }
       } else {
         emit(
           state.copyWith(
             fetchStatus: SubmitStatus.failure,
-            uploadMessage: "Upload failed",
+            uploadMessage: "WebP conversion failed",
           ),
         );
       }

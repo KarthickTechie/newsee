@@ -72,3 +72,111 @@ this way user can see the auditlog data and can identify the rootcause at ease
 further download logdata provision and upload to lendperfect server backend to be added
 
 ---
+
+## Media Compression Techniques
+
+### 1. WebP Image Compression
+
+**Purpose:** Optimize image file sizes for document uploads while maintaining acceptable visual quality.
+
+**Implementation Location:** [lib/feature/documentupload/presentation/bloc/document_bloc.dart](lib/feature/documentupload/presentation/bloc/document_bloc.dart#L190)
+
+**Library Used:** `flutter_image_compress`
+
+**Compression Method:**
+```dart
+Future<Uint8List?> convertImageToWebP(String imagePath) async {
+  Uint8List originalBytes = await File(imagePath).readAsBytes();
+  
+  var result = await FlutterImageCompress.compressWithList(
+    originalBytes,
+    minHeight: 1080,      // Minimum height threshold
+    minWidth: 1080,       // Minimum width threshold
+    quality: 90,          // Quality level (0-100)
+    format: CompressFormat.webp,  // Target format
+  );
+  return result;
+}
+```
+
+**Key Features:**
+- **Format:** WebP (modern, efficient image format)
+- **Quality Setting:** 90/100 (maintains high visual quality with smaller file size)
+- **Minimum Dimensions:** 1080x1080 (scales down oversized images)
+- **Use Cases:** Document uploads, user identity verification, property images
+
+**Benefits:**
+- Reduces file size by 30-50% compared to JPEG
+- Faster upload times
+- Maintains acceptable image quality for document validation
+
+**Workflow:**
+1. User selects image from camera or gallery
+2. Image is saved temporarily as JPG
+3. WebP conversion is applied automatically
+4. Converted file is uploaded to the server with reduced file size
+
+---
+
+### 2. Video Compression
+
+**Purpose:** Reduce video file sizes for efficient storage and transmission of recorded videos.
+
+
+**Library Used:** `video_compress`
+
+**Compression Method:**
+```dart
+final mediaInfo = await VideoCompress.compressVideo(
+  videoFile.path,
+  quality: VideoQuality.DefaultQuality,  // Compression quality setting
+  deleteOrigin: false,                    // Preserve original file
+);
+```
+
+**Key Features:**
+- **Quality Setting:** DefaultQuality (optimal balance between size and quality)
+- **Compression Format:** MP4 (compatible with most devices)
+- **Original File Preservation:** Disabled by default (can be enabled)
+- **Recording Duration:** Maximum 15 seconds (auto-stops)
+- **Video Codec:** Hardware-accelerated compression when available
+
+**Compression Quality Levels:**
+- **LowQuality:** Maximum compression, lowest visual quality (~30-40% of original size)
+- **DefaultQuality:** Balanced compression, good visual quality (~50-60% of original size)
+- **HighQuality:** Minimal compression, high visual quality (~70-80% of original size)
+
+**Benefits:**
+- Reduces video file size significantly (40-70% reduction)
+- Faster upload to server
+- Reduced storage requirements
+- Maintains acceptable video quality for document verification
+
+**Workflow:**
+1. User initiates video capture with camera
+2. Auto-stop timer triggers after 15 seconds of recording
+3. Raw video file is saved temporarily
+4. Compression is applied automatically
+5. Compressed video is stored and ready for upload
+
+**Additional Metadata Captured:**
+- **Captured Date:** Format `DD-MM-YYYY`
+- **Captured Time:** Format `HH:MM:SS`
+- **GPS Location Details:** Captured during recording initiation
+  - Address components (street, locality, postal code, country, etc.)
+  - Coordinates (latitude, longitude)
+
+---
+
+### Dependency Configuration
+
+Add the following to `pubspec.yaml` for media compression:
+
+```yaml
+dependencies:
+  flutter_image_compress: ^2.1.0     # Image compression library
+  video_compress: ^3.1.1              # Video compression library
+```
+
+---
+
