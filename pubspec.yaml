@@ -66,7 +66,7 @@ dependencies:
   shimmer: ^3.0.0
   keyboard_detection: ^0.8.0
   popover: ^0.3.1
-  intl: 0.19.0
+  intl: 0.20.2
   path_provider: ^2.1.2
   biometric_signature: ^6.2.0
   mobile_scanner: ^7.0.1
